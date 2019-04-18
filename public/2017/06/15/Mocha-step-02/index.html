@@ -1,0 +1,803 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Mocha Tutorial - Step 02. Chai - Dev. DY</title>
+    <meta name="author" content="DY, Kim">
+    
+        <meta name="keywords" content="javascript,mocha,chai,Assertion,unit test,javascript mocha,mocha test,mocha tdd,mocha tutorial">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Step 01: Hello World!에서는 기본적인 Mocha 사용법에 대해 알아보았다.이번 Step 02에서는 Step 01: Hello World!에서 언급한 Assertion library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.">
+<meta name="keywords" content="javascript,mocha,chai,Assertion,unit test,javascript mocha,mocha test,mocha tdd,mocha tutorial">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Mocha Tutorial - Step 02. Chai">
+<meta property="og:url" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Step 01: Hello World!에서는 기본적인 Mocha 사용법에 대해 알아보았다.이번 Step 02에서는 Step 01: Hello World!에서 언급한 Assertion library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/chai_logo.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/result_thumbnail_01.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/result_thumbnail_02.png">
+<meta property="og:updated_time" content="2019-04-06T06:53:43.149Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mocha Tutorial - Step 02. Chai">
+<meta name="twitter:description" content="Step 01: Hello World!에서는 기본적인 Mocha 사용법에 대해 알아보았다.이번 Step 02에서는 Step 01: Hello World!에서 언급한 Assertion library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.">
+<meta name="twitter:image" content="https://kdydesign.github.io/2017/06/15/Mocha-step-02/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-sxklfps8ywgfyyjcowvnb4gxdgt0zjts3hsguljmv9uqanxjbnitrovtbrek.min.css">
+    <!--STYLES END-->
+    <link rel="canonical" href="https://kdydesign.github.io/2017/06/15/mocha-step-02/"/>
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-46198235-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    
+    <link rel="stylesheet" href="/assets/css/search.css">
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Dev. DY</a>
+    </div>
+    
+        
+            <a class="header-right-icon " href="/search">
+        
+        
+            <i class="fa fa-lg fa-search"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">DY, Kim</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web front-end technology lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ ">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/search">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/atom.xml">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title" itemprop="headline">
+            Mocha Tutorial - Step 02. Chai
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2017-06-15T23:10:33+09:00">
+	
+		    Jun 15, 2017
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/Mocha/">Mocha</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+<!-- excerpt -->
+<p><img src="cover.png" alt="cover"></p>
+<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서는 기본적인 Mocha 사용법에 대해 알아보았다.<br>이번 Step 02에서는 <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 언급한 <code>Assertion</code> library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.</p>
+<hr>
+<h2 id="Chai"><a href="#Chai" class="headerlink" title="Chai"></a>Chai</h2><div class="figure center" style="width:;"><a class="fancybox" href="chai_logo.png" title data-fancybox-group="chai"><img class="fig-img" src="chai_logo.png" alt></a></div><div style="clear:both;"></div>
+<p><a href="https://mochajs.org/" target="_blank" rel="noopener">mochjs.org</a>에서 리스팅 된 <code>Assertion</code>에는 <code>Should.js</code>, <code>expect.js</code>, Chai, <code>better-assert</code>, <code>unexpected</code> 가 있다. 이 중 어떤 <code>Assertion</code>를 사용하는지는 사용자의 판단에 있다. 궁극적으로는 같은 목적을 가지기 때문에 어떤 스타일을 선호하냐는 것에 따라 나뉠 수 있다.<br>대게 Mocha는 Chai와 같이 사용되며, <a href="https://npmcompare.com/compare/chai,expect,should" target="_blank" rel="noopener">NPM COMAPRE</a>를 참고로 보았을 때도 Chai가 다른 <code>Assertion</code> 보다 선호하는 것을 볼 수 있다.</p>
+<p>먼저 Chai는 Node.js 기반의 <code>Assertion</code> library로 <code>BDD</code>와 <code>TDD</code> 스타일을 지원하고 있으며, 지원하는 아래와 같은 인터페이스를 지원한다.</p>
+<div class="alert info"><p><strong>Should</strong><br><strong>Expect</strong><br><strong>Assert</strong></p>
+</div>
+<h2 id="Chai-설치하기"><a href="#Chai-설치하기" class="headerlink" title="Chai 설치하기"></a>Chai 설치하기</h2><p>먼저 <code>npm</code>을 통해 Chai를 설치해보자.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm i chai --save-dev</span><br></pre></td></tr></table></figure>
+<p>매우 쉽다. :)<br>너무 간단해서 <code>Chai 설치하기.</code> 란 부제를 지워버리고 싶을 정도지만 그래도 Tutorial이니 삭제하지는 않겠다.</p>
+<h2 id="Chai-사용하기"><a href="#Chai-사용하기" class="headerlink" title="Chai 사용하기."></a>Chai 사용하기.</h2><p>우리는 이제 Chai까지 설치를 하였다. 이렇게 설치한 Chai를 불러와서 사용하기만 하면 된다. <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 이미 <code>test.js</code>파일을 생성했으니 새롭게 <code>test-chai.js</code>라는 파일을 생성해보자. 아니면 그대로 사용해도 된다. 그리고 아래처럼 코드를 입력해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chai = <span class="built_in">require</span>(<span class="string">'chai'</span>);</span><br><span class="line"><span class="keyword">var</span> expect = chai.expect;</span><br><span class="line"><span class="keyword">var</span> assert = chai.assert;</span><br><span class="line"><span class="keyword">var</span> should = chai.should();</span><br></pre></td></tr></table></figure>
+<p><code>require</code>를 통해 Chai 모듈을 사용하기로 한다. 그런데 그 아래를 보니 <code>expect</code>, <code>assert</code>, <code>should</code>가 체이닝을 통해 불러왔다. 위에서 먼저 설명을 했지만 Chai는 이 스타일들을 지원하기 때문에 사용할 수가 있는 것이다. 굳이 저 3개를 모두 사용할 필요는 없다. 어떤 것을 사용해야 하는지 모르겠다면 각각의 API를 보고 마음에 드는 것을 사용하기로 하자. 왜냐하면 <code>Assertion</code>이기 때문이다. (내 생각..)<br>이제 테스트 스위트를 작성해보자.</p>
+<h3 id="expect"><a href="#expect" class="headerlink" title="expect"></a>expect</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chai = <span class="built_in">require</span>(<span class="string">'chai'</span>);</span><br><span class="line"><span class="keyword">var</span> expect = chai.expect;</span><br><span class="line"><span class="keyword">var</span> assert = chai.assert;</span><br><span class="line"><span class="keyword">var</span> should = chai.should();</span><br><span class="line"></span><br><span class="line">describe(<span class="string">'#Expect Test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    it(<span class="string">'expect - Array'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line">        expect(arr).to.have.lengthOf(<span class="number">5</span>);                        <span class="comment">//array length</span></span><br><span class="line">        expect(arr).to.be.not.empty;                            <span class="comment">//empty</span></span><br><span class="line">        expect(arr).to.have.ordered.members([<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>]);   <span class="comment">//arr === members</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>간단하다. 바로 실행해 보자.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mocha test-chai.js</span><br></pre></td></tr></table></figure>
+<p><img src="result_thumbnail_01.png" alt="result01"></p>
+<p>정상적으로 출력이 되는 것을 확인할 수 있다.</p>
+<p>위 예제는 <code>expect</code>를 사용한 코드이다. <code>expect</code>는 <code>BDD Style</code>의 인터페이스이며, 자연어에 가까운 <code>Assertion</code>이다. 아직 감이 오지 않을 수도 있다. 다른 코드를 보고 감을 잡아보자.<br>위 코드에 이어서 코딩하면 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">'expect - String'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">'Awesome!!'</span>;</span><br><span class="line">    </span><br><span class="line">    expect(str).to.be.a(<span class="string">'String'</span>);                  <span class="comment">//str type</span></span><br><span class="line">    expect(str).to.equal(<span class="string">'Awesome!!'</span>);              <span class="comment">//str === 'Awesome!!'</span></span><br><span class="line">    expect(str).to.have.lengthOf(<span class="number">7</span>, <span class="string">'Why fail?'</span>);   <span class="comment">//Error</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">it(<span class="string">'expect - Object'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> obj = &#123;</span><br><span class="line">        assertion: [<span class="string">'assert'</span>, <span class="string">'expect'</span>, <span class="string">'should'</span>],</span><br><span class="line">        framework: <span class="string">'mocha'</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    expect(obj).to.have.property(<span class="string">'assertion'</span>).with.lengthOf(<span class="number">3</span>);     <span class="comment">//assertion value length</span></span><br><span class="line">    expect(obj).to.have.all.keys(<span class="string">'framework'</span>, <span class="string">'assertion'</span>);         <span class="comment">//obj key === keys</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>위 예제에서 주목할 만한 곳은 아래 코드이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">expect(str).to.have.lengthOf(<span class="number">7</span>, <span class="string">'Why fail?'</span>);</span><br></pre></td></tr></table></figure>
+<p><code>expect</code>는 임의의 실패한 <code>assertion</code> 앞에 메시지를 포함할 수 있다. 예제를 실행해 보면 아래와 같이 실패한 결과에 메시지가 출력되는 것을 볼 수 있다.</p>
+<p><img src="result_thumbnail_02.png" alt="result02"></p>
+<p>처음 접할 때는 다소 생소할 수 있다. 하지만 걱정하지 않아도 된다. 잘 정리된 <a href="http://chaijs.com/api/bdd/" target="_blank" rel="noopener">expect API</a>가 있으니까 말이다.<br><code>expect api</code>에 리스팅 되어 있는 체이닝이다. 이 체이닝은 뒤에 있을 <code>should</code>에서도 같은 방식을 사용하고 있다.</p>
+<blockquote>
+<ul>
+<li>to</li>
+<li>be</li>
+<li>been</li>
+<li>that</li>
+<li>which</li>
+<li>and</li>
+<li>has</li>
+<li>have</li>
+<li>with</li>
+<li>at</li>
+<li>of</li>
+<li>same</li>
+<li>but</li>
+<li>does</li>
+</ul>
+</blockquote>
+<p>코드에 대한 설명은 주석을 참고하자!.</p>
+<h3 id="should"><a href="#should" class="headerlink" title="should"></a>should</h3><p>위에서 언급했지만 <code>should</code>는 <code>expect</code>와 같은 체이닝 방식을 사용한다. <code>should</code>는 <code>IE</code>와 사용할 때 몇 가지의 문제가 있으므로 브라우저 호환성을 알고 있어야 한다.<br>자, 그럼 이제 예제를 통해 <code>should</code>와 <code>expect</code>가 어떻게 같은 체이닝 방식을 사용하는지 확인해 보겠다. 새로운 테스트 스위트 <code>#Should Test</code>를 추가하겠다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">describe(<span class="string">'#Should Test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    it(<span class="string">'should - Array'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line">        arr.should.have.lengthOf(<span class="number">5</span>);                        <span class="comment">//array length</span></span><br><span class="line">        arr.should.be.not.empty;                            <span class="comment">//empty</span></span><br><span class="line">        arr.should.have.ordered.members([<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>]);   <span class="comment">//arr === members</span></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    it(<span class="string">'should - String'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> str = <span class="string">'Awesome!!'</span>;</span><br><span class="line"></span><br><span class="line">        str.should.be.a(<span class="string">'String'</span>);                  <span class="comment">//str type</span></span><br><span class="line">        str.should.equal(<span class="string">'Awesome!!'</span>);              <span class="comment">//str === 'Awesome!!'</span></span><br><span class="line">        str.should.have.lengthOf(<span class="number">7</span>, <span class="string">'Why fail?'</span>);   <span class="comment">//Error</span></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    it(<span class="string">'should - Object'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> obj = &#123;</span><br><span class="line">            assertion: [<span class="string">'assert'</span>, <span class="string">'expect'</span>, <span class="string">'should'</span>],</span><br><span class="line">            framework: <span class="string">'mocha'</span></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        obj.should.have.property(<span class="string">'assertion'</span>).with.lengthOf(<span class="number">3</span>);     <span class="comment">//assertion value length</span></span><br><span class="line">        obj.should.have.all.keys(<span class="string">'framework'</span>, <span class="string">'assertion'</span>);         <span class="comment">//obj key === keys</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>결과는 <code>expect</code>와 같음을 알 수 있다. 두 코드를 비교해 보면 어느 부분이 다른지 명확하게 보인다. 거의 다른 부분이 없다. 그럼 <code>expect</code>와 <code>should</code>가 다른 점이 무엇일까?</p>
+<h4 id="expect와-should의-차이"><a href="#expect와-should의-차이" class="headerlink" title="expect와 should의 차이"></a>expect와 should의 차이</h4><p>우리가 처음 Chai를 설치하고 <code>test-chai.js</code>만들고 이렇게 코딩하였다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chai = <span class="built_in">require</span>(<span class="string">'chai'</span>);</span><br><span class="line"><span class="keyword">var</span> expect = chai.expect;</span><br><span class="line"><span class="keyword">var</span> assert = chai.assert;</span><br><span class="line"><span class="keyword">var</span> should = chai.should();</span><br></pre></td></tr></table></figure>
+<p><code>()</code>가 있고 없고의 차이이다… 굳이 풀이하자면 이렇다.</p>
+<div class="alert info"><p><em><strong>expect</strong>는 함수에 대한 참조일 뿐이고 <strong>should</strong>는 함수가 실행되고 있음</em></p>
+</div>
+<h3 id="Assert"><a href="#Assert" class="headerlink" title="Assert"></a>Assert</h3><p><code>assert</code>는 <code>Node.js</code>에서 제공하는 <code>assert</code>의 표기법을 제공한다. 하지만 이 Chai의 <code>assert</code>가 좀 더 풍부한 표현을 제공하고 있다.<br><code>assert</code>는 간단한 예제만으로 넘어가도록 하겠다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">describe(<span class="string">'#Assert Test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    it(<span class="string">'assert - Array'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> str = <span class="string">'Awesome!!'</span>;</span><br><span class="line">        <span class="keyword">var</span> obj = &#123;</span><br><span class="line">            assertion: [<span class="string">'assert'</span>, <span class="string">'expect'</span>, <span class="string">'should'</span>],</span><br><span class="line">            framework: <span class="string">'mocha'</span></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        assert.equal(str, <span class="string">'Awesome!!'</span>);         <span class="comment">//str === 'Awesome!!'</span></span><br><span class="line">        assert.typeOf(str, <span class="string">'String'</span>);           <span class="comment">//str type</span></span><br><span class="line">        assert.lengthOf(obj.assertion, <span class="number">3</span>);      <span class="comment">//assertion value length</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/kdydesign/Mocha-Tutorial/tree/master/step02-chai" target="_blank" rel="noopener">예제 코드</a></p>
+<hr>
+<p>Mocha를 사용하다 보면 처음에 이 <code>Assertion</code>에 대해 다소 낯선 기분이 들 수도 있다. 하지만 걱정 할 필요가 없다. <a href="http://chaijs.com/api/bdd/" target="_blank" rel="noopener">API</a>에서 모든 것을 확인하고 테스트해 볼 수 있기 때문이다.<br>이제 Chai 사용법에 대해 알아 보았다. 기본적인 Mocha를 모두 터득한 것이다. 지금까지 배운 것만으로도 쉽지는 않겠지만 그럴싸한 단위 테스트를 진행할 수 있다.<br>다음 Tutorial에서는 <code>Hooks</code>와 Mocha에서 <code>BDD</code>, <code>TDD</code>의 다른점을 알아보겠다.</p>
+<p><a href="https://kdydesign.github.io/2017/06/16/Mocha-step-03/">Step 03: Hooks</a></p>
+            
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Assertion/">Assertion</a> <a class="tag tag--primary tag--small t-link" href="/tags/chai/">chai</a> <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">javascript</a> <a class="tag tag--primary tag--small t-link" href="/tags/mocha/">mocha</a> <a class="tag tag--primary tag--small t-link" href="/tags/단위-테스트/">단위 테스트</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/16/Mocha-step-03/" data-tooltip="Mocha Tutorial - Step 03. Hooks">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-01/" data-tooltip="Mocha Tutorial - Step 01. Hello World!">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 DY, Kim. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/16/Mocha-step-03/" data-tooltip="Mocha Tutorial - Step 03. Hooks">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-01/" data-tooltip="Mocha Tutorial - Step 01. Hello World!">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                    <i class="fa fa-google-plus"></i><span>Share on Google+</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">DY, Kim</h4>
+        
+            <div id="about-card-bio"><p>Web front-end technology lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>Front-end web developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-close"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/08/Mocha/">
+                            <h3 class="media-heading">JavaScript 단위 테스트 프레임워크 - Mocha</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 8, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>기술이 나날히 발전함에 따라 Web Front-End에도 테스트 방법론들을 적용하여 보다 효율적이고 효과적으로 프로젝트를 진행할 수 있다. JavaScript기반의 테스트 프레임워크는 무수히 많다. 그 중 대표적으로 <code>Mocha</code>와 <code>jasmine</code>을 말 할수 있다. 이 두 프레임워크 중 어떤 프레임워크가 더욱 뛰어난지 비교할 수 없다. 그저 어떤 프레임워크를 사용하느냐는 진행하고자하는 프로젝트와 주변 환경의 요소에 따라 다르다. 이번 포스팅에서는 <code>Mocha</code>를 먼저 말하고 싶다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 01. Hello World!</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 15, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 <em>Hello World</em>. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 <em>Hello World</em>를 고집해 보겠다. <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>에서 Mocha를 설치하였다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 02. Chai</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 15, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서는 기본적인 Mocha 사용법에 대해 알아보았다.<br>이번 Step 02에서는 <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 언급한 <code>Assertion</code> library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-03/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 03. Hooks</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>이번 Tutorial에서는 Mocha의 <code>Hooks</code>를 알아보겠다. <strong>Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 <code>Hooks</code>를 지원</strong>한다. Mocha에서는 기본적으로 <code>BDD</code> 스타일을 지원하지만 <code>TDD</code> 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 <code>Hooks</code>도 정의할 수 있다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-04/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 04. 동기/비동기 처리</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>Mocha에서의 비동기 처리는 매우 간단 명료하다. 어떻게 보면 <code>동기 처리</code>보다 더욱 간단하다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-05/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 05. 외부 모듈 테스트</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>어느 프로그램 언어나 마찮가지겠지만 JavaScript 역시 하나의 <code>.js</code>파일에 코딩하진 않는다. Mocha 역시 하나의 <code>test.js</code> 파일에 모두 테스트 케이스를 적진 않는다.<br>이번 Tutorial에서는 외부 모듈을 불러와서 테스트하는 방법을 알아보겠다. 생각보다 분량이 적지만 매우 효율적인 방법이 될 것이다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-06/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 06. Mocha 브라우저 구동</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>부터 시작으로 지금까지 우리는 <code>$ mocha</code> 명령을 통해 터미널에서 실행하였다. Mocha는 터미널 뿐만 아니라 <code>gulp</code>의 <code>task</code>를 통해 실행도 가능하지만, 이 밖에도 <code>브라우저에서 구동</code>되도록 지원하고 있다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-07/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 07. Mocha Options</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 19, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>이제 Mocha의 기본적인 사용법을 모두 터득하였다. 지금까지 배운 것만으로도 어느 정도의 Test가 가능하다. 하지만 우리가 항상 개발할 떄에 Framework를 찾는 이유는 무엇인가 개발을 할 때 손쉽게 개발하기 위해서이다. Mocha 역시 옵션을 조정하여 좀 더 편리하게 사용할 수 있는데 이번 Tutorial에서는 이 옵션에 대해서 알아보겠다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-08/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 19, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 <code>IntelliJ</code>를 사용하고 있다. 이 <code>IntelliJ</code>에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. <code>IntelliJ</code>뿐만 아니라 <code>Webstorm</code> 등의 <code>JETBRAIN</code> 제품군에서 지원하고있다.<br>이번 Tutorial은 <code>IntelliJ</code>에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. <code>JETBRAINS</code> 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/21/Mocha-step-09/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 09. Mocha로 실제 TDD 해보기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 21, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>지금까지의 Tutorial을 통해 Mocha에 대해서 어느 정도 인지하고 습득하였다. 아직도 Mocha에 대해 애매모호한 기분이 들거나 뭔가 아쉬움이 남는다면 다시 돌아가 <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>부터 살펴보도록 하자.<br>이제 지금까지 배운 내용을 토대로 실제로 Mocha를 가지고 TDD를 진행해 보자. 이 Tutorial을 추가한 이유는 두 가지로 분류하였다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                19 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+<div id="cover" style="background-image:url('/assets/images/cover-dy-v1.png');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-ivwiy10zeb8fifc4swnhkwneuk64y53w2scmdmtp8thi9cqfxh31aowtroaz.min.js"></script>
+<script src="/assets/js/search.js"></script>
+<script type="text/javascript">      
+     var search_path = "search.xml";
+     if (search_path.length == 0) {
+        search_path = "search.xml";
+     }
+     var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+</script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://kdydesign.github.io/2017/06/15/Mocha-step-02/';
+                 
+                    this.page.identifier = 'step02mochachai';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'kdydesign';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    </body>
+</html>

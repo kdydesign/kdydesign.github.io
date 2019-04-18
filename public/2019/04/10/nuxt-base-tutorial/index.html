@@ -1,0 +1,984 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Nuxt.js 개념부터 설치까지 빠르게 배우기 - Dev. DY</title>
+    <meta name="author" content="DY, Kim">
+    
+        <meta name="keywords" content="javascript,nuxt.js,vue.js,vue.js tutorial,nuxt.js tutorial,nuxt.js 설치,nuxt.js 기초">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Vue Application을 만들기 위한 강력한 Framework 인 Nuxt.js에 대해 알아보자. Nuxt.js는 Vue.js 응용 프로그램을 만들기 위한 Framework이며, Vue.js Application을 좀 더 손쉽게 만들 수 있으며 Server-Side-Rendering을 지원한다.">
+<meta name="keywords" content="javascript,nuxt.js,vue.js,vue.js tutorial,nuxt.js tutorial,nuxt.js 설치,nuxt.js 기초">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Nuxt.js 개념부터 설치까지 빠르게 배우기">
+<meta property="og:url" content="https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Vue Application을 만들기 위한 강력한 Framework 인 Nuxt.js에 대해 알아보자. Nuxt.js는 Vue.js 응용 프로그램을 만들기 위한 Framework이며, Vue.js Application을 좀 더 손쉽게 만들 수 있으며 Server-Side-Rendering을 지원한다.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/cover.png">
+<meta property="og:updated_time" content="2019-04-14T08:28:07.128Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nuxt.js 개념부터 설치까지 빠르게 배우기">
+<meta name="twitter:description" content="Vue Application을 만들기 위한 강력한 Framework 인 Nuxt.js에 대해 알아보자. Nuxt.js는 Vue.js 응용 프로그램을 만들기 위한 Framework이며, Vue.js Application을 좀 더 손쉽게 만들 수 있으며 Server-Side-Rendering을 지원한다.">
+<meta name="twitter:image" content="https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-sxklfps8ywgfyyjcowvnb4gxdgt0zjts3hsguljmv9uqanxjbnitrovtbrek.min.css">
+    <!--STYLES END-->
+    <link rel="canonical" href="https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/"/>
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-46198235-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    
+    <link rel="stylesheet" href="/assets/css/search.css">
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Dev. DY</a>
+    </div>
+    
+        
+            <a class="header-right-icon " href="/search">
+        
+        
+            <i class="fa fa-lg fa-search"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">DY, Kim</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web front-end technology lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ ">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/search">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/atom.xml">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title" itemprop="headline">
+            Nuxt.js 개념부터 설치까지 빠르게 배우기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2019-04-10T21:09:08+09:00">
+	
+		    Apr 10, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/vue-js/">vue.js</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/">nuxt.js</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/">vue.js tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/">nuxt.js tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/">nuxt.js 설치</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/nuxt-js-기초/">nuxt.js 기초</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+<!-- excerpt -->
+<p><img src="cover.png" alt="cover"></p>
+<p>이번 포스팅에서는 Vue.js Application을 쉽게 생성하고 만들 수 있는 프레임 워크인 Nuxt.js에 대해서 알아볼까 한다.<br>Nuxt.js는 React의 Next.js에서 영감을 받아 진행된 프로젝트로 온전히 겉으로만 본다면 프레임워크이기 때문에 leaning curve가 있을 것 같지만 사실상 그렇지는 않다. Nuxt.js를 설치하고 사용해 본다면 그저 Nuxt.js는 Vue.js를 사용할 때 하나하나 작업해줘야 할 요소들을 생성해주고 처리해주는 것임을 알 수 있다.</p>
+<p>본 포스팅으로 써 Nuxt.js 도입에 고민하는 개발자에게 도움이 되었으면 한다. 장담하건데 Nuxt.js를 1년간 사용한 개발자로써 적극 추천하며 프로젝트에 도입해도 문제가 되지 않음을 알려주고 싶다.</p>
+<p>본격적으로 Nuxt.js에 대해서 알아보자.</p>
+<h1 id="Nuxt-js-소개"><a href="#Nuxt-js-소개" class="headerlink" title="Nuxt.js 소개"></a>Nuxt.js 소개</h1><p>먼저 <a href="https://nuxtjs.org/guide" target="_blank" rel="noopener">Nuxt.js의 공식 사이트</a> 이다. Vue.js와 마찬가지로 한국어 문서가 존재하지만 Nuxt.js의 발빠른 업데이트에 한국어 문서가 따라가지 못하는 것 같다. Vue.js 역시 동일하지만.. 그렇다고 번역하시는 분을 욕하는 게 아니라 그만큼 Nuxt.js의 활동이 활발하다는 이야기이다. 아무튼 이러한 이유로 영문본으로 보기를 바란다.</p>
+<p>Nuxt.js의 소개를 본다면 이렇게 명시하고 있다.</p>
+<div class="alert info no-icon"><ul>
+<li>주요 범위는 UI Rendering이며, 클라이언트/서버 배포를 추상화한다.</li>
+<li>Nuxt.js의 목표는 기본 프로젝트 베이스로 사용할 수 있으며 Node.js 기반의 프로젝트를 유연하게 사용할 수 있는 프레임 워크를 만드는 것이다.</li>
+<li>Nuxt.js는 서버 사이드 렌더링 된 Vue.js 응용 프로그램의 개발을 위해 이에 필요한 모든 구성을 사전 설정한다.</li>
+<li>Nuxt.js는 nuxt generate 라는 배포 옵션을 제공한다. nuxt gererate를 통해 vue.js를 정적인 응용 프로그램으로 빌드한다. 우리는 이 옵션이 마이크로 서비스가 있는 웹 응용 프로그램 개발의 다음 단계일 수 있다고 생각한다.</li>
+<li>Nuxt.js는 단일 응용 페이지(SPA)를 신속하게 만들 수 있다.</li>
+<li>Nuxt.js는 비동기 데이터, 미들웨어, 레이아웃 등과 같이 클라이언트 측과 서버 측 사이에서 개발하는 데 도움이 되는 많은 기능을 제공한다.</li>
+</ul>
+</div>
+<p>어려운 말들이 많을 수 있겠지만 아직도 Nuxt.js를 사용을 해야 할지 말아야 할지 고민하는 당신을 위해 쉽게 설명을 해본다면 이렇다.</p>
+<div class="alert success no-icon"><ul>
+<li>Nuxt.js 설치만으로 이미 scaffolding(프로젝트 구조화)을 해주므로 딱히 프로젝트 구조에 대해서 고민할 필요가 없다.</li>
+<li>Vue.js 하나하나 잡아줘야 할 라우팅을 Nuxt.js에서 파일을 생성하는 것만으로 라우팅을 자동으로 생성해 준다.</li>
+<li>layout, store, middleware와 같은 요소들을 이미 구분을 지어주고 필요한 항목들을 처리해주기 때문에 순전히 개발에만 집중하면 된다.</li>
+<li>Server-Side-Rendering에 필요한 요소가 이미 준비가 되어있다.</li>
+<li>webpack을 통한 빌드 시스템이 이미 구현되어 있다. 그저 npm run만 해주면 된다.</li>
+</ul>
+</div>
+<h1 id="Nuxt-js의-활동성"><a href="#Nuxt-js의-활동성" class="headerlink" title="Nuxt.js의 활동성"></a>Nuxt.js의 활동성</h1><p>Nuxt.js의 활용성과 기능이 아무리 좋다고 하더라고 결국 MIT 라이센스를 가진 오픈 소스이다. 오픈 소스의 단점은 버그 픽스를 하지 않고 버전 업데이트가 거의 없다면 사용할 수 없다는 것이다. 하지만 nuxt.js의 업데이트 주기는 매우 빠르다. (요즘 들어 더 빨라진 듯….). 해당 포스트 작성자는 Nuxt.js를 1.0.0-rc 버전부터 프로젝트에 도입하였고 현재 버전은 2.4.3을 사용하지만, 이제는 업데이트된 버전으로 마이그레이션하기가 힘들 정도로 업데이트 주기가 빠르다. 포스트 작성 날짜 기준으로 현재 Nuxt.js의 버전은 2.5.0이다.</p>
+<p>아래 표를 통해 현재 nuxt.js가 얼마나 업데이트가 활발한지 확인해 보자. Nuxt.js의 버전 계획은 <a href="https://github.com/nuxt/nuxt.js/blob/dev/RELEASE_PLAN.md" target="_blank" rel="noopener">Nuxt.js Realease Plan</a>에서 확인이 가능하다.</p>
+<table>
+<thead>
+<tr>
+<th>버전</th>
+<th>업데이트 날짜</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.0.0-rc6</td>
+<td>2017-08-22</td>
+</tr>
+<tr>
+<td>v1.0.0-rc7</td>
+<td>2017-08-29</td>
+</tr>
+<tr>
+<td>v1.0.0-rc8</td>
+<td>2017-08-31</td>
+</tr>
+<tr>
+<td>v1.0.0-rc9</td>
+<td>2017-09-06</td>
+</tr>
+<tr>
+<td>v1.0.0-rc10</td>
+<td>2017-09-07</td>
+</tr>
+<tr>
+<td>v1.0.0-rc11</td>
+<td>2017-09-07</td>
+</tr>
+<tr>
+<td>v1.0.0</td>
+<td>2018-01-09</td>
+</tr>
+<tr>
+<td>v1.1.0</td>
+<td>2018-01-13</td>
+</tr>
+<tr>
+<td>v1.0.1</td>
+<td>2018-01-13</td>
+</tr>
+<tr>
+<td>v1.2.0</td>
+<td>2018-01-26</td>
+</tr>
+<tr>
+<td>v1.2.1</td>
+<td>2018-01-26</td>
+</tr>
+<tr>
+<td>v1.3.0</td>
+<td>2018-02-01</td>
+</tr>
+<tr>
+<td>v1.4.0</td>
+<td>2018-03-02</td>
+</tr>
+<tr>
+<td>v1.4.1</td>
+<td>2018-08-02</td>
+</tr>
+<tr>
+<td>v1.4.2</td>
+<td>2018-08-02</td>
+</tr>
+<tr>
+<td>v1.4.1</td>
+<td>2018-08-02</td>
+</tr>
+<tr>
+<td>v1.4.4</td>
+<td>2018-10-19</td>
+</tr>
+<tr>
+<td>v1.4.5</td>
+<td>2018-11-28</td>
+</tr>
+<tr>
+<td>v2.0.0</td>
+<td>2018-09-21</td>
+</tr>
+<tr>
+<td>v2.1.0</td>
+<td>2018-10-01</td>
+</tr>
+<tr>
+<td>v2.2.0</td>
+<td>2018-10-14</td>
+</tr>
+<tr>
+<td>v2.3.1</td>
+<td>2018-11-17</td>
+</tr>
+<tr>
+<td>v2.3.2</td>
+<td>2018-11-21</td>
+</tr>
+<tr>
+<td>v2.3.4</td>
+<td>2018-11-27</td>
+</tr>
+<tr>
+<td>v2.4.0</td>
+<td>2019-01-09</td>
+</tr>
+<tr>
+<td>v2.4.2</td>
+<td>2019-01-30</td>
+</tr>
+<tr>
+<td>v2.4.3</td>
+<td>2019-02-07</td>
+</tr>
+<tr>
+<td>v2.4.5</td>
+<td>2019-02-26</td>
+</tr>
+<tr>
+<td>v2.5.0</td>
+<td>2019-03-21</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Nuxt-js-설치"><a href="#Nuxt-js-설치" class="headerlink" title="Nuxt.js 설치"></a>Nuxt.js 설치</h1><p>Nuxt.js 팀이 스캐폴딩 해둔 템플릿을 사용하려면 create-nuxt-app을 npx를 통해서 설치하면된다. <code>npx</code>는 NPM 5.2.0 버전 이후 기본적으로 제공되기 때문에 별도로 설치할 필요는 없다.<br>Node.js에 대해서 <a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a>를 참고하자.</p>
+<h2 id="npx를-통한-Nuxt-js-설치"><a href="#npx를-통한-Nuxt-js-설치" class="headerlink" title="npx를 통한 Nuxt.js 설치"></a>npx를 통한 Nuxt.js 설치</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npx create-nuxt-app &lt;project-name&gt;</span><br></pre></td></tr></table></figure>
+<p>위와 같이 실행을 하게 되면 몇 가지 질문들이 나오는데 진행하는 프로젝트에 맞게 선택하여 설치하면 된다.</p>
+<h2 id="vue-cli를-통한-Nuxt-js-설치"><a href="#vue-cli를-통한-Nuxt-js-설치" class="headerlink" title="vue-cli를 통한 Nuxt.js 설치"></a>vue-cli를 통한 Nuxt.js 설치</h2><p>Nuxt.js 버전이 올라가기 전에는 nuxt starter-template을 vue-cli를 통해서 설치하였다. CLI가 아닌 <a href="https://github.com/nuxt-community/starter-template/archive/master.zip" target="_blank" rel="noopener">ZIP</a> 파일로 받아 압축을 풀어도 된다.</p>
+<p>먼저 vue-cli를 설치하자. vue-cli에 대해서는 <a href="https://cli.vuejs.org/guide/" target="_blank" rel="noopener">Vue CLI 공식 사이트</a>를 참고하자.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm i -g @vue/cli</span><br><span class="line">$ npm i -g @vue/cli-init</span><br></pre></td></tr></table></figure>
+<p>그다음으로 template를 설치하고 npm module을 설치하면 된다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vue init nuxt-community/starter-template &lt;project-name&gt;</span><br><span class="line">$ <span class="built_in">cd</span> &lt;project-name&gt;</span><br><span class="line">$ npm i</span><br></pre></td></tr></table></figure>
+<h3 id="offline-설치-방법"><a href="#offline-설치-방법" class="headerlink" title="offline 설치 방법"></a>offline 설치 방법</h3><p>간혹 당신이 속한 소속에서 보안상 문제로 해당 사이트나 커맨드를 차단하여 nuxt-community에 속한 tempate을 vue-cli로 설치가 되지 안는 경우가 있다.<br>이런 경우에는 <code>offline</code>으로 설치가 가능하다.</p>
+<p>우선 사용자 경로에 <strong>.vue-templates</strong> 폴더를 하나 생성하자.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\사용자이름\.vue-templates</span><br></pre></td></tr></table></figure></p>
+<p>그다음 <a href="https://github.com/nuxt-community/starter-template" target="_blank" rel="noopener">Starter-Template</a>의 Github에서 해당 소스를 clone을 받고 위에서 생성한 폴더로 옮겨놓자.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/nuxt-community/starter-template</span><br></pre></td></tr></table></figure>
+<p>이 상태로 우리는 vue-cli를 통해서 github가 아닌 로컬에 저장된 템플릿을 사용할 수 있다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vue init starter-template &lt;project-name&gt; --offline</span><br></pre></td></tr></table></figure>
+<h2 id="Nuxt-js-단일-설치"><a href="#Nuxt-js-단일-설치" class="headerlink" title="Nuxt.js 단일 설치"></a>Nuxt.js 단일 설치</h2><p>Nuxt.js 단독으로 설치할 경우엔 아래와 같이 명령어를 실행한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm i nuxt</span><br></pre></td></tr></table></figure>
+<h1 id="Nuxt-js-디렉토리-구조"><a href="#Nuxt-js-디렉토리-구조" class="headerlink" title="Nuxt.js 디렉토리 구조"></a>Nuxt.js 디렉토리 구조</h1><p>Nuxt.js의 기본 템플릿을 사용하였다면 이미 스캐폴딩이 되어 있을 것이다. 만약 단일로 Nuxt.js를 설치하였다 하더라도 해당 섹션을 보아야 하는 이유는 Nuxt.js 자체 내에서 필수로 있어야 하는 폴더들이 있기 때문이다.</p>
+<p>디렉토리 구조를 파악해 보자.</p>
+<h2 id="assets"><a href="#assets" class="headerlink" title="assets"></a>assets</h2><p>css, image, font와 같은 리소스들을 포함한다.</p>
+<h2 id="components"><a href="#components" class="headerlink" title="components"></a>components</h2><p>애플리케이션에서 사용될 컴포넌트들을 포함하며 해당 경로에 위치된 컴포넌트들은 Nuxt.js의 비동기 데이터 함수인 <code>asyncData</code>또는 <code>fetch</code>를 사용할 수 없다.</p>
+<h2 id="layouts"><a href="#layouts" class="headerlink" title="layouts"></a>layouts</h2><p>애플리케이션 전체에 대한 레이아웃을 포함한다. 기본으로 default.vue가 생성되어 있을 것이고 상황에 맞게 layout을 생성할 수 있다. <code>해당 디렉토리는 이름을 변경할 수 없다.</code></p>
+<h2 id="middleware"><a href="#middleware" class="headerlink" title="middleware"></a>middleware</h2><p>애플리케이션에서 사용될 middleware를 포함한다. middleware는 페이지 또는 레이아웃이 렌더링 되기 전에 실행이 되며, middleware를 페이지나 레이아웃에 바인딩하였다면 해당 페이지나 레이아웃이 실행되기 전에 매번 실행된다.</p>
+<h2 id="pages"><a href="#pages" class="headerlink" title="pages"></a>pages</h2><p>실제 애플리케이션의 페이지 구성을 포함하며 해당 디렉토리의 구조에 따라 router가 자동으로 생성된다. <code>해당 디렉토리는 이름을 변경할 수 없다.</code></p>
+<h2 id="plugins"><a href="#plugins" class="headerlink" title="plugins"></a>plugins</h2><p>애플리케이션에 바인딩 될 외부 혹은 내부 plugins를 포함한다.plugins는 애플리케이션이 인스턴스 화 되기 전에 실행하며 전역적으로 구성 요소를 등록하고 함수 또는 상수를 삽입할 수 있다.</p>
+<h2 id="static"><a href="#static" class="headerlink" title="static"></a>static</h2><p>해당 디렉토리는 정적인 파일들을 포함한다. 구성에 따라서 html, Javascript 파일도 포함 시킬 수 있다. <code>해당 디렉토리는 이름을 변경할 수 없다.</code></p>
+<h2 id="store"><a href="#store" class="headerlink" title="store"></a>store</h2><p>애플리케이션에서 사용될 vuex store 파일들을 포함한다. 기본적으로 비활성화 상태이고 store 디렉토리에 index.js 파일을 작성하면 store가 활성화된다. 구성에 따라서 모듈 형태의 store를 형성할 수 있다.  <code>해당 디렉토리는 이름을 변경할 수 없다.</code></p>
+<h1 id="Nuxt-js-실행"><a href="#Nuxt-js-실행" class="headerlink" title="Nuxt.js 실행"></a>Nuxt.js 실행</h1><p>최초 템플릿을 설치하면 커맨드는 4가지가 존재한다.</p>
+<table>
+<thead>
+<tr>
+<th>COMMAND</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev</td>
+<td>개발 서버를 Hot-reloading 상태로 localhost:3000으로 실행된다.</td>
+</tr>
+<tr>
+<td>build</td>
+<td>Webpack을 통해 애플리케이션을 빌드한다.</td>
+</tr>
+<tr>
+<td>start</td>
+<td>프로덕션(배포)모드로 서버를 시작한다.(build 실행 후 진행된다.)</td>
+</tr>
+<tr>
+<td>generate</td>
+<td>애플리케이션을 빌드하고 모든 라우트를 HTML 파일로 생성한다.(정적 호스팅)  </td>
+</tr>
+</tbody>
+</table>
+<p>지금까지 설치를 진행했으니 실행을 해보자.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm run dev</span><br></pre></td></tr></table></figure>
+<p>설명대로 <code>localhost:3000</code>으로 접속하여 실행된 페이지를 확인해보자.</p>
+<h1 id="Nuxt-js-개발-서버-Host-Port-변경"><a href="#Nuxt-js-개발-서버-Host-Port-변경" class="headerlink" title="Nuxt.js 개발 서버 Host/Port 변경"></a>Nuxt.js 개발 서버 Host/Port 변경</h1><p>개발 서버는 기본 localhost와 Port는 3000로 잡혀져 있지만, 해당 값을 변경하는 방법에는 몇 가지가 있지만 가장 기본적이고 보편적으로 사용되는 방법은 npm script를 수정하는 방법이다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nuxt --hostname &lt;host&gt; --port &lt;port&gt;</span><br></pre></td></tr></table></figure>
+<p>하지만 이런 경우는 드물고 우리는 이미 <code>package.json</code>에 명시되어 있기 때문에 <code>package.json</code>을 수정하자.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"scripts"</span>: &#123;</span><br><span class="line">    <span class="attr">"dev"</span>: <span class="string">"nuxt --hostname &lt;host&gt; --port &lt;port&gt;"</span></span><br><span class="line">  &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Nuxt-js-Module"><a href="#Nuxt-js-Module" class="headerlink" title="Nuxt.js Module"></a>Nuxt.js Module</h1><p>여기까지 Nuxt.js를 설치하고 초기 상태까지 왔지만 앞으로 더 해야 할 일이 많을 것이다. 그중 가장 많이 처리되는 게 API 통신을 위한 <code>Axios</code>의 설치와 로컬 환경에서 CORS문제를 해결하여 개발을 하기 위한 <code>proxy</code>의 설치이다.</p>
+<p>이 둘 다 <code>plugins</code>를 통해 설치하고 삽입할 수 있지만, 해당 포스트는 Nuxt.js 사용을 위한 포스트이기 때문에 <code>plugins</code>가 아닌 Nuxt.js의 <code>Module</code> 시스템을 설명하려 한다.</p>
+<p>Nuxt.js <code>Module</code>은 핵심 기능은 <strong>확장하고 통합할 수 있는 Nuxt.js의 확장</strong>이다. 직접 Custom 하게 모듈을 만들 수 있으며, 이미 만들어진 모듈을 가져다 쓸 수 있다.</p>
+<h2 id="Axios-Proxy-Module-사용"><a href="#Axios-Proxy-Module-사용" class="headerlink" title="Axios/Proxy Module 사용"></a>Axios/Proxy Module 사용</h2><p>Axios는 http 통신을 위해 사용되는 훌륭한 오픈 소스이다. 물론 Nuxt.js를 사용할 때 직접이 Axios를 사용해도 무방하다. 하지만 이 Axios를 가지고 Nuxt.js의 모듈화로 만들어진 것 있다. 우리는 그 <a href="https://axios.nuxtjs.org/setup" target="_blank" rel="noopener">Axios module</a>을 사용해보자. Axios를 기반으로 생성된 모듈이라 Axios API를 참고해도 무방하며, Axios의 경량화로 볼 수 있다. Axios 모듈은 <a href="https://github.com/nuxt-community/proxy-module" target="_blank" rel="noopener">Proxy</a> 모듈과 통합이 가능하기 때문에 Proxy 모듈도 같이 설치를 하자.</p>
+<p>설치는 NPM으로 진행하자.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm i @nuxtjs/axios</span><br><span class="line">$ npm i @nuxtjs/proxy</span><br></pre></td></tr></table></figure>
+<p>nuxt.config.js를 열어 설치된 모듈을 import 하자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    modules: [</span><br><span class="line">        <span class="string">'@nuxtjs/axios'</span></span><br><span class="line">    ],</span><br><span class="line">    axios: &#123;</span><br><span class="line">        proxy: <span class="literal">true</span>     <span class="comment">// proxy 사용</span></span><br><span class="line">    &#125;,</span><br><span class="line">    proxy: &#123;</span><br><span class="line">        <span class="string">'/prefix-url'</span>: <span class="string">'proxy-url'</span>    <span class="comment">// proxy url</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 처럼 <code>proxy</code> 옵션에 url-prefix를 지정하게 되면 <code>/prefix-url</code>로 시작되는 API는 모두 <code>proxy-url</code>로 Proxy 된다.</p>
+<p>이제부턴 Axios의 사용이 가능하며 심지어 proxy까지 연동이 되어 있다.</p>
+<h2 id="Module-생성하기"><a href="#Module-생성하기" class="headerlink" title="Module 생성하기"></a>Module 생성하기</h2><p>이번에는 간단하게 <code>console.log</code>를 nuxt의 module로 직접 만들어보자.<br>먼저 프로젝트 Root 경로에 <code>modules</code> 폴더를 만들어 보자. 명칭은 상관없다. 그다음 <code>logs.js</code>와 <code>logs.template.js</code> 파일을 생성하자.</p>
+<p>module을 생성하는데 필요한 파일은 두 가지이다.</p>
+<div class="alert info no-icon"><ol>
+<li>logs.js: 실제 nuxt.config.js의 modules에 사용될 index 파일</li>
+<li>logs.template.js: nuxt module에 삽입될 템플릿 파일</li>
+</ol>
+</div>
+<h3 id="logs-js"><a href="#logs-js" class="headerlink" title="logs.js"></a>logs.js</h3><p>logs.js에서는 module의 사용될 템플릿 역할을 하는 소스를 실제 nuxt 인스턴스에 삽입하는 과정을 한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params">_moduleOpts</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> moduleOptions = <span class="built_in">Object</span>.assign(&#123;&#125;, <span class="keyword">this</span>.options.log, _moduleOptions)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.addPlugin(&#123;</span><br><span class="line">        src: path.resolve(__dirname, <span class="string">'logs.template.js'</span>),</span><br><span class="line">        moduleOptions</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports.meta = <span class="built_in">require</span>(<span class="string">'../../../package.json'</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="logs-template-js"><a href="#logs-template-js" class="headerlink" title="logs.template.js"></a>logs.template.js</h3><p>logs.template.js는 실제 비즈니스 로직이 코딩되며 프로토타입의 명칭을 정한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (ctx, inject) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> logs = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(...args)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    inject(<span class="string">'log'</span>, logs)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="사용"><a href="#사용" class="headerlink" title="사용"></a>사용</h3><p>우리는 logs.template.js에서 inject에 <code>log</code>라고 정의를 하였고 nuxt 프로토타입에 삽입하였기 때문에 사용 시에는 <code>log</code> 앞에 <code>$</code>를 붙여서 사용하면 된다. 실제로 <code>this</code>를 확인해 보면 <code>$log</code>가 생긴 것을 확인해 볼 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.$log(<span class="string">'test log'</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="Root-Source-디렉토리-변경하기"><a href="#Root-Source-디렉토리-변경하기" class="headerlink" title="Root Source 디렉토리 변경하기"></a>Root Source 디렉토리 변경하기</h1><p>현재의 디렉토리 구조를 보면 layout, pages, components 등 모든 폴더가 root 경로로 지정되어있다. 하지만 결국 우리는 어떤 프로젝트에 Nuxt.js를 도입을 하게 되면 현재의 디렉토리 구조대로 쓰지 못할 경우가 발생된다. 예를 들어 root의 경로를 App으로 지정해보자.</p>
+<p>디렉토리 구조는 다음과 같다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- App</span><br><span class="line">    - assets/</span><br><span class="line">    - components/</span><br><span class="line">    - layouts/</span><br><span class="line">    - middleware/</span><br><span class="line">    - pages/</span><br><span class="line">    - plugins/</span><br><span class="line">    - static/</span><br><span class="line">    - store/</span><br><span class="line">- node_modules/</span><br><span class="line">- package.json</span><br></pre></td></tr></table></figure></p>
+<p>위 구조를 보면 모든 리소스는 <code>App</code> 경로 하위에 존재한다. 이럴 경우 우리는 <code>source directory</code>를 수정해줄 필요가 있다.</p>
+<p>nuxt.config.js 파일을 열어 수정해주자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    srcDir: <span class="string">'App/'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>Nuxt.js 는 스캐폴딩부터 Vue.js를 사용하면서 귀찮은 작업을 대신해 주기에 많이 사용하고 있다. 다만 좀 어려운 점은 처음에 제공되는 템플릿에서 좀 더 확장성을 가진 구조를 만들기 위해서는 nuxt.config.js의 옵션들을 자세히 알아야 하고 수정해야 한다는 점이다. nuxt.js에서 옵션이 워낙 많다 보니 프로젝트 구조를 잡을 때는 API 문서를 항상 열어 두는 것이 좋다.</p>
+<p>해당 포스트는 Nuxt.js의 기초를 다루려고 하였지만 Nuxt.js의 API가 워낙 잘 되어있나 보니 불필요한 내용이 끼워지게 되었다. 다음 포스트에서는 Nuxt.js에서 middleware 처리를 어떻게 하는지, 또 pages 구조를 어떻게 잡아야 vue-route의 기능을 사용할 수 있는지 등에 대한 좀 더 깊이 있게 다루는 포스트를 올리도록 하겠다.</p>
+            
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/nuxt-js/">nuxt.js</a> <a class="tag tag--primary tag--small t-link" href="/tags/nuxt-js-tutorial/">nuxt.js tutorial</a> <a class="tag tag--primary tag--small t-link" href="/tags/nuxt-js-기초/">nuxt.js 기초</a> <a class="tag tag--primary tag--small t-link" href="/tags/nuxt-js-설치/">nuxt.js 설치</a> <a class="tag tag--primary tag--small t-link" href="/tags/vue-js/">vue.js</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/10/vuejs-performance/" data-tooltip="[Vue.js Tutorial] Vue.js에 대용량 데이터의 처리 (Vue.js Performance)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 DY, Kim. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/10/vuejs-performance/" data-tooltip="[Vue.js Tutorial] Vue.js에 대용량 데이터의 처리 (Vue.js Performance)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/">
+                    <i class="fa fa-google-plus"></i><span>Share on Google+</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">DY, Kim</h4>
+        
+            <div id="about-card-bio"><p>Web front-end technology lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>Front-end web developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-close"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/08/Mocha/">
+                            <h3 class="media-heading">JavaScript 단위 테스트 프레임워크 - Mocha</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 8, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>기술이 나날히 발전함에 따라 Web Front-End에도 테스트 방법론들을 적용하여 보다 효율적이고 효과적으로 프로젝트를 진행할 수 있다. JavaScript기반의 테스트 프레임워크는 무수히 많다. 그 중 대표적으로 <code>Mocha</code>와 <code>jasmine</code>을 말 할수 있다. 이 두 프레임워크 중 어떤 프레임워크가 더욱 뛰어난지 비교할 수 없다. 그저 어떤 프레임워크를 사용하느냐는 진행하고자하는 프로젝트와 주변 환경의 요소에 따라 다르다. 이번 포스팅에서는 <code>Mocha</code>를 먼저 말하고 싶다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 01. Hello World!</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 15, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 <em>Hello World</em>. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 <em>Hello World</em>를 고집해 보겠다. <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>에서 Mocha를 설치하였다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 02. Chai</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 15, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서는 기본적인 Mocha 사용법에 대해 알아보았다.<br>이번 Step 02에서는 <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 언급한 <code>Assertion</code> library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-03/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 03. Hooks</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>이번 Tutorial에서는 Mocha의 <code>Hooks</code>를 알아보겠다. <strong>Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 <code>Hooks</code>를 지원</strong>한다. Mocha에서는 기본적으로 <code>BDD</code> 스타일을 지원하지만 <code>TDD</code> 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 <code>Hooks</code>도 정의할 수 있다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-04/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 04. 동기/비동기 처리</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>Mocha에서의 비동기 처리는 매우 간단 명료하다. 어떻게 보면 <code>동기 처리</code>보다 더욱 간단하다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-05/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 05. 외부 모듈 테스트</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>어느 프로그램 언어나 마찮가지겠지만 JavaScript 역시 하나의 <code>.js</code>파일에 코딩하진 않는다. Mocha 역시 하나의 <code>test.js</code> 파일에 모두 테스트 케이스를 적진 않는다.<br>이번 Tutorial에서는 외부 모듈을 불러와서 테스트하는 방법을 알아보겠다. 생각보다 분량이 적지만 매우 효율적인 방법이 될 것이다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-06/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 06. Mocha 브라우저 구동</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 16, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>부터 시작으로 지금까지 우리는 <code>$ mocha</code> 명령을 통해 터미널에서 실행하였다. Mocha는 터미널 뿐만 아니라 <code>gulp</code>의 <code>task</code>를 통해 실행도 가능하지만, 이 밖에도 <code>브라우저에서 구동</code>되도록 지원하고 있다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-07/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 07. Mocha Options</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 19, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>이제 Mocha의 기본적인 사용법을 모두 터득하였다. 지금까지 배운 것만으로도 어느 정도의 Test가 가능하다. 하지만 우리가 항상 개발할 떄에 Framework를 찾는 이유는 무엇인가 개발을 할 때 손쉽게 개발하기 위해서이다. Mocha 역시 옵션을 조정하여 좀 더 편리하게 사용할 수 있는데 이번 Tutorial에서는 이 옵션에 대해서 알아보겠다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-08/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 19, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 <code>IntelliJ</code>를 사용하고 있다. 이 <code>IntelliJ</code>에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. <code>IntelliJ</code>뿐만 아니라 <code>Webstorm</code> 등의 <code>JETBRAIN</code> 제품군에서 지원하고있다.<br>이번 Tutorial은 <code>IntelliJ</code>에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. <code>JETBRAINS</code> 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/21/Mocha-step-09/">
+                            <h3 class="media-heading">Mocha Tutorial - Step 09. Mocha로 실제 TDD 해보기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jun 21, 2017
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
+<p>지금까지의 Tutorial을 통해 Mocha에 대해서 어느 정도 인지하고 습득하였다. 아직도 Mocha에 대해 애매모호한 기분이 들거나 뭔가 아쉬움이 남는다면 다시 돌아가 <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>부터 살펴보도록 하자.<br>이제 지금까지 배운 내용을 토대로 실제로 Mocha를 가지고 TDD를 진행해 보자. 이 Tutorial을 추가한 이유는 두 가지로 분류하였다.<br><!-- more --></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                19 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+<div id="cover" style="background-image:url('/assets/images/cover-dy-v1.png');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-ivwiy10zeb8fifc4swnhkwneuk64y53w2scmdmtp8thi9cqfxh31aowtroaz.min.js"></script>
+<script src="/assets/js/search.js"></script>
+<script type="text/javascript">      
+     var search_path = "search.xml";
+     if (search_path.length == 0) {
+        search_path = "search.xml";
+     }
+     var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+</script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/';
+                 
+                    this.page.identifier = 'nuxt.js-tutorial-1';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'kdydesign';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    </body>
+</html>
