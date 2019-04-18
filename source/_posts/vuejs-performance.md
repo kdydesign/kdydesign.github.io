@@ -1,5 +1,5 @@
 ---
-title: "[Vue.js Tutorial] Vue.js에 대용량 데이터의 처리 (Vue.js Performance)"
+title: "Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
 date: 2019-04-10 01:10:14
 tags: 
 - vue.js
@@ -17,6 +17,12 @@ keywords:
 - javascript
 - nuxt.js
 - vue.js
+- vue 성능
+- vue 성능 최적화
+- vue 메모리
+- vuejs 성능
+- vue tutorial
+- vue 튜토리얼
 - vue.js tutorial
 - nuxt.js tutorial
 disqusIdentifier: vue.js01
@@ -33,8 +39,7 @@ actions: true
 
 <!-- more -->
 1년간의 대규모 프로젝트를 진행하면서 해결한 Vue.js 성능 최적화 방법 노하우 공유!!
-
-Vue.js에서 빅 데이터 처리 시에 성능을 최적화하는 방법에 대해 알아보자.
+Vue.js에서 대용량 데이터 처리 시에 성능을 최적화하는 방법에 대해 알아보자. 남들은 모르는 Vue.js 성능 개선과 Vue.js에서 대용량 데이터를 처리하는 방법을 배워보자. Vue.js 성능 개선에서 가장 중요한 핵심은 Observe이며, 부가적으로 defineReactive를 이해하여야 하며 나아가 computed와 getter의 사용을 최소한으로 하는 것이다. 
 <!-- more -->
 
 <!-- excerpt -->

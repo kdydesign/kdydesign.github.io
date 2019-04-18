@@ -2,10 +2,135 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0f5be92d-9550-4408-90bb-632ec590d1ae" name="Default Changelist" comment="theme">
-      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.json" beforeDir="false" afterPath="$PROJECT_DIR$/db.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/08/Mocha/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/08/Mocha/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/15/Mocha-step-01/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/15/Mocha-step-01/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/15/Mocha-step-02/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/15/Mocha-step-02/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-03/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-03/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-04/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-04/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-05/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-05/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-06/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/16/Mocha-step-06/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/19/Mocha-step-07/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/19/Mocha-step-07/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/19/Mocha-step-08/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/19/Mocha-step-08/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/21/Mocha-step-09/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/06/21/Mocha-step-09/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/06/23/start-hexo-blog/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/07/07/hexo-themes/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/07/15/nodejs-npm-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/07/15/nodejs-npm-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/07/27/webpack/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/07/27/webpack/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/11/04/webpack-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2017/11/04/webpack-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2017/11/15/vuejs-concept/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2019/04/06/vuejs-vuex-helper-style/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2019/04/10/nuxt-base-tutorial/cover.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2019/04/10/nuxt-base-tutorial/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/2019/04/10/vuejs-performance/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/2019/04/10/vuejs-performance/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/all-archives/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/all-archives/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/all-categories/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/all-categories/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/all-tags/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/all-tags/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/06/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/06/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/06/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/06/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/07/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/07/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/11/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/11/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2017/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2017/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2019/04/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2019/04/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/2019/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/2019/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/archives/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/archives/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/css/tranquilpeak.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/assets/css/tranquilpeak.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/atom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/atom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/Mocha/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/Mocha/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/build-tool/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/build-tool/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/build-tool/webpack/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/build-tool/webpack/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/github/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/github/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/github/theme/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/github/theme/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/hexo/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/nodejs/npm/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/nodejs/npm/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/nuxt-js-기초/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-설치/nuxt-js-기초/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/vue-js-big-data/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/vue-js-big-data/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/vuex-helper/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/vuex-helper/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/category-sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/category-sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/post-sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/post-sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/search.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/search.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/search/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/search/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tag-sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/tag-sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/Assertion/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/Assertion/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/BDD/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/BDD/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/IDE/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/IDE/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/TDD/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/TDD/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/assert/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/assert/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/build-tool/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/build-tool/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/chai/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/chai/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/git/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/git/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/github/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/github/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/gulp/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/gulp/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/hexo-theme/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/hexo-theme/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/hexo/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/hexo/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/hooks/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/hooks/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/intelliJ/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/intelliJ/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/javascript/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/javascript/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/javscript/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/javscript/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/mocha/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/mocha/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/nodejs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/nodejs/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/npm/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/npm/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/nuxt-js-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/nuxt-js-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/nuxt-js-기초/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/nuxt-js-기초/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/nuxt-js-설치/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/nuxt-js-설치/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/nuxt-js/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/nuxt-js/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/store/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/store/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vue-js-big-data/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vue-js-big-data/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vue-js-performance/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vue-js-performance/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vue-js-tutorial/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vue-js-tutorial/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vue-js/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vue-js/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vuex-component-binding/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vuex-component-binding/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/vuex/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/vuex/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/webpack/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/webpack/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/단위-테스트/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/단위-테스트/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/동기/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/동기/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/블로그/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/블로그/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/tags/비동기/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/tags/비동기/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/hexo-themes.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-theme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/hexo-themes/cover.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-theme/cover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/hexo-themes/thumb01.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-theme/thumb01.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/hexo-themes/thumb02.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-theme/thumb02.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/nuxt-base-tutorial.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/nuxtjs-tutorial.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/nuxt-base-tutorial/cover.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/nuxtjs-tutorial/cover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/start-hexo-blog.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-blog.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/start-hexo-blog/cover.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-blog/cover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/start-hexo-blog/thumb01.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-blog/thumb01.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/start-hexo-blog/thumb02.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/hexo-blog/thumb02.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/vuejs-concept.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/vuejs-tutorial.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/vuejs-concept/cover.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/vuejs-tutorial/cover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/vuejs-performance.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/vuejs-performance.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper-style.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper-style/cover.png" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper/cover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/webpack-tutorial.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/webpack-tutorial.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/webpack.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/webpack.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/head.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/head.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/script.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/script.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/source/_css/utils/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/source/_css/utils/_variables.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style-vkevryr90y64n9v2mzvoxhr46wu8jjpq0skc0dxy5ygogfjmn2d7jw1mprqw.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/tranquilpeak.css" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/tranquilpeak.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/js/script-fym5v8affzietupbwsdfn3l3l5jqmwje4z99mcwd2uzlvm7dbx8b5oqhyhye.min.js" beforeDir="false" />
     </list>
     <list id="b132788b-6f5c-4d93-8558-cb637f00717a" name="ignore" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,52 +143,26 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/_config.yml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="265">
-                  <caret line="52" column="19" selection-start-line="52" selection-start-column="19" selection-end-line="52" selection-end-column="19" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="575">
-                  <caret line="80" column="33" selection-start-line="80" selection-start-column="33" selection-end-line="80" selection-end-column="33" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/package.json">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="51">
-                  <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/_config.yml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="132">
-                  <caret line="21" column="9" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/_config.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="396">
+              <caret line="27" column="12" lean-forward="true" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/_config.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="183">
+              <caret line="152" column="19" selection-start-line="152" selection-start-column="19" selection-end-line="152" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -76,23 +175,33 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/themes/tranquilpeak" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md" />
-        <option value="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" />
-        <option value="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css" />
         <option value="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/tranquilpeak.css" />
         <option value="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper-style.md" />
         <option value="$PROJECT_DIR$/source/_posts/vuejs-concept.md" />
-        <option value="$PROJECT_DIR$/source/_posts/vuejs-performance.md" />
         <option value="$PROJECT_DIR$/source/_posts/nuxt-base-tutorial.md" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/themes/hexo-theme-tranquilpeak/_config.yml" />
-        <option value="$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml" />
         <option value="$PROJECT_DIR$/_config.yml" />
+        <option value="$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml" />
+        <option value="$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css" />
+        <option value="$PROJECT_DIR$/themes/tranquilpeak/source/_css/utils/_variables.scss" />
+        <option value="$PROJECT_DIR$/source/_posts/electron-base-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/electron-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/hexo-theme.md" />
+        <option value="$PROJECT_DIR$/source/_posts/nuxtjs-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/vuejs-performance.md" />
+        <option value="$PROJECT_DIR$/source/_posts/vuejs-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/vuejs-vuex-helper.md" />
+        <option value="$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/webpack-tutorial.md" />
+        <option value="$PROJECT_DIR$/source/_posts/webpack.md" />
+        <option value="$PROJECT_DIR$/source/_posts/hexo-blog.md" />
+        <option value="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" />
       </list>
     </option>
   </component>
@@ -117,6 +226,11 @@
             <path>
               <item name="kdydesign.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="kdydesign.io" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kdydesign.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kdydesign.io" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -124,6 +238,17 @@
               <item name="kdydesign.io" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
               <item name="_posts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kdydesign.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kdydesign.io" type="462c0819:PsiDirectoryNode" />
+              <item name="themes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kdydesign.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kdydesign.io" type="462c0819:PsiDirectoryNode" />
+              <item name="themes" type="462c0819:PsiDirectoryNode" />
+              <item name="tranquilpeak" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -144,6 +269,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -206,7 +332,7 @@
       <workItem from="1555230021350" duration="489000" />
       <workItem from="1555332303006" duration="333000" />
       <workItem from="1555546238277" duration="663000" />
-      <workItem from="1555565930113" duration="6250000" />
+      <workItem from="1555565930113" duration="9598000" />
     </task>
     <task id="LOCAL-00001" summary="create vue tutorial post">
       <created>1554825748955</created>
@@ -268,14 +394,14 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25381000" />
+    <option name="totallyTimeSpent" value="28729000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="npm" sideWeight="0.50155765" side_tool="true" weight="0.27106228" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49844238" visible="true" weight="0.27106228" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49844238" visible="true" weight="0.27106228" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -284,15 +410,15 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3291536" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3291536" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.28213167" />
+      <window_info anchor="bottom" id="Version Control" order="8" visible="true" weight="0.28213167" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.28554362" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.28526646" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -318,26 +444,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="nuxt.js tutorial" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/source/_posts/start-hexo-blog.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-286">
-            <caret line="6" column="8" lean-forward="true" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="126">
-            <caret line="75" selection-start-line="75" selection-end-line="78" selection-end-column="3" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/2017/06/15/Mocha-step-01/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -348,13 +454,6 @@
     <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/assets/images/cover-dy-v1.0.png" />
     <entry file="file://$PROJECT_DIR$/public/assets/css/all.css" />
     <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/thumbs.css" />
-    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="4020" column="151" selection-start-line="4020" selection-start-column="151" selection-end-line="4020" selection-end-column="151" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/assets/css/style.css">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -371,24 +470,6 @@
     <entry file="file://$PROJECT_DIR$/source/assets/images/auth.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/webpack-tutorial.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="432">
-            <caret line="553" column="16" selection-start-line="553" selection-start-column="9" selection-end-line="553" selection-end-column="16" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/webpack.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-1555" />
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/themes/hexo-theme-tranquilpeak/package.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -399,48 +480,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/nuxt-base-tutorial.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="263">
-            <caret line="246" selection-start-line="246" selection-end-line="246" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-performance.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="558">
-            <caret line="42" selection-start-line="42" selection-end-line="42" selection-end-column="19" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-vuex-helper-style.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="558">
-            <caret line="42" selection-start-line="42" selection-end-line="42" selection-end-column="19" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-concept.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="136">
-            <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/themes/hexo-theme-tranquilpeak/_config.yml">
       <provider selected="true" editor-type-id="text-editor">
@@ -469,20 +510,6 @@
         <state relative-caret-position="-9" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/_config.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="21" column="9" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="80" column="33" selection-start-line="80" selection-start-column="33" selection-end-line="80" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
@@ -490,10 +517,165 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/source/all-categories/index.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/all.css">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/languages/en.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="80" column="25" selection-start-line="80" selection-start-column="25" selection-end-line="80" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/assets/css/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/_css/base/_base.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="37" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/source/_css/utils/_variables.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="78" selection-start-line="4" selection-start-column="78" selection-end-line="4" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/2019/04/15/electron-base-tutorial/build.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/electron-tutorial.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="281">
+            <caret line="30" column="19" selection-start-line="30" selection-start-column="19" selection-end-line="30" selection-end-column="19" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-performance.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="408">
+            <caret line="24" column="10" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-tutorial.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="374">
+            <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/vuejs-vuex-helper.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="371">
+            <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="10" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/nodejs-npm-tutorial.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="306">
+            <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/webpack-tutorial.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="476">
+            <caret line="28" selection-start-line="28" selection-end-line="28" selection-end-column="13" />
+            <folding>
+              <element signature="e#11#32#0" expanded="true" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/webpack.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="476">
+            <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/hexo-theme.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="493">
+            <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/hexo-blog.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="391">
+            <caret line="23" column="9" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/nuxtjs-tutorial.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="459">
+            <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="27" selection-end-column="9" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/_config.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="52" column="19" selection-start-line="52" selection-start-column="19" selection-end-line="52" selection-end-column="19" />
+        <state relative-caret-position="396">
+          <caret line="27" column="12" lean-forward="true" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/themes/tranquilpeak/_config.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="152" column="19" selection-start-line="152" selection-start-column="19" selection-end-line="152" selection-end-column="19" />
         </state>
       </provider>
     </entry>

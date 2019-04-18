@@ -15,6 +15,8 @@ keywords:
 - npm
 - npm tutorial
 - nodejs tutorial
+- npm 설치
+- npm
 disqusIdentifier: nodejsnpmtutorial01
 clearReading: true
 thumbnailImagePosition: left

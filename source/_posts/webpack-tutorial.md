@@ -18,7 +18,15 @@ keywords:
 - nodejs
 - webpack
 - gulp
-- javscript build tool
+- javascript build tool
+- webpack build
+- webpack 설치
+- 웹팩 설치
+- webpack tutorial
+- webpack 강좌
+- webpack 튜토리얼
+- webpack 배우기
+- webpack 사용법
 disqusIdentifier: webpacktutorial
 clearReading: true
 thumbnailImagePosition: left

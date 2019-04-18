@@ -7,40 +7,8 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/2019/04/10/nuxt-base-tutorial/</loc>
-        <lastmod>2019-04-14T08:28:07.128Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2019/04/10/vuejs-performance/</loc>
-        <lastmod>2019-04-10T12:23:51.232Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2017/11/15/vuejs-concept/</loc>
-        <lastmod>2019-04-10T12:21:46.455Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper-style/</loc>
-        <lastmod>2019-04-09T15:55:20.795Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2017/07/27/webpack/</loc>
-        <lastmod>2019-04-06T06:53:43.165Z</lastmod>
+        <loc>https://kdydesign.github.io/2017/06/23/hexo-blog/</loc>
+        <lastmod>2019-04-18T11:17:09.340Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -48,7 +16,15 @@
 
     <url>
         <loc>https://kdydesign.github.io/2017/11/04/webpack-tutorial/</loc>
-        <lastmod>2019-04-06T06:53:43.163Z</lastmod>
+        <lastmod>2019-04-18T11:15:44.483Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/07/27/webpack/</loc>
+        <lastmod>2019-04-18T11:15:44.481Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -56,23 +32,55 @@
 
     <url>
         <loc>https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/</loc>
-        <lastmod>2019-04-06T06:53:43.160Z</lastmod>
+        <lastmod>2019-04-18T11:15:44.478Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/2017/06/23/start-hexo-blog/</loc>
-        <lastmod>2019-04-06T06:53:43.160Z</lastmod>
+        <loc>https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/</loc>
+        <lastmod>2019-04-18T11:11:52.428Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/2017/07/07/hexo-themes/</loc>
-        <lastmod>2019-04-06T06:53:43.158Z</lastmod>
+        <loc>https://kdydesign.github.io/2017/11/15/vuejs-tutorial/</loc>
+        <lastmod>2019-04-18T11:11:52.426Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/07/07/hexo-theme/</loc>
+        <lastmod>2019-04-18T11:11:52.417Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/10/vuejs-performance/</loc>
+        <lastmod>2019-04-18T11:11:52.403Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/</loc>
+        <lastmod>2019-04-18T11:11:52.399Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/15/electron-tutorial/</loc>
+        <lastmod>2019-04-18T10:56:31.238Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

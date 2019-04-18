@@ -15,6 +15,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg"},"articleBody":"\n\n\nBasic새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 Hello World. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 Hello World를 고집해 보겠다. JavaScript 단위 테스트 프레임워크 - Mocha에서 Mocha를 설치하였다.이제 프로젝트에 필요한 기본 폴더를 구성하자. 먼저 Mocha_test라는 폴더를 만들자.\n1$ C:\\Mocha_test\n해당 폴더에 test.js를 생성하여 아래와 같이 작성하자.\n123456789var assert = require('assert');describe('#Hello World!', function () &#123;    it('입력 값은 Hello World!', function () &#123;        var input = 'Hello World!'; // 입력 값이라고 가정        assert.equal('Hello World!', input);    &#125;);&#125;);\n위 코드는 Mocha의 가장 기본 코드이다. Mocha는 describe()와 it()으로 테스트 스위트와 유닛 테스트를 정의하고 실행한다. Mocha는 BDD 스타일을 기본으로 하고 있지만 TDD 스타일도 지원하고 있다. 해당 강좌에서는 위와 같이 BDD 스타일로 작성하도록 하겠다.\nAssertion위 코드에서는 Node.js에 내장된 Assetion library를 사용하였지만 Mocha의 장점 중인 하나가 Assertion library와 독립적으로 사용할 수 있다는 것이다. 즉, mocha는 외부 Assertion library와 같이 사용할 수 있다. 아래에는 mochajs.org에 리스팅 되어 있는 Assertion library이다.\nshould.js - BDD 스타일의 Assertionsexpect.js - expect() 스타일의 Assertionschai - expect(), assert(), should-style의 Assertionsbetter-assert - C-style 자체 문서화 된 assert()unexpected - 확장 가능한 BDD Assertion Toolkit\n\n이제 위에서 생성한 test.js를 실행해 보도록 하겠다. 해당 경로에서 Mocha를 실행한다.\n1$ mocha\n기본적으로 Mocha 실행 시 test.js 파일을 실행한다. 하지만 특정 파일도 실행할 수 있다.\n1$ mocha test.js\n1 passing으로 통과되었다는 뜻이다.\n\ndescribe()하나의 describe() 안에는 여러 개의 describe()를 가질 수가 있고, it() 역시 여러 개를 가질 수도 있다.예제를 보자.\n12345678910111213141516171819202122232425262728293031var assert = require('assert');describe('#Hello World!', function () &#123;    it('입력 값은 Hello World!', function () &#123;        var input = 'Hello World!'; // 입력 값이라고 가정        assert.equal('Hello World!', input);    &#125;);        describe('#String Test', function()&#123;        it('Hello의 문자 개수는 5', function()&#123;           var str = 'Hello';                      if (str.length == 5) &#123;               assert.ok(true);           &#125; else &#123;               assert.ok(false);           &#125;        &#125;);                it('World는 W 대문자', function()&#123;           var str = 'World';                      if (str.indexOf('w') &gt; -1) &#123;     //오류 발생               assert.ok(true);           &#125;else &#123;               assert.ok(false);           &#125;        &#125;);    &#125;)&#125;);\n#Hello World!의 테스트 스위트는 #String Test라는 테스트 스위트를 가지고 있다. 그리고 #String Test는 두 개의 it()을 가질 수 있는 것을 볼 수 있다.위 예제에서는 오류가 발생하도록 되어있다. 결과를 보도록 하자.\n\n2 passing에 1 failing\nNPM으로 실행하기.지금까지 우리는 test.js를 $ mocha test.js 또는 $ mocha를 통해 실행했다. 하지만 Mocha 역시 Node.js의 하나의 모듈이기 때문에 npm으로 실행을 할 수 있다. npm을 조금 다뤄보았다면 모두 아는 내용이지만 그래도 -내 맴대로- 포스트를 하겠다.\n처음 JavaScript 단위 테스트 프레임워크 - Mocha에서 우리는 Mocha를 설치하기 전에 $ npm init을 통해 package.json을 생성하였다. 생성된 package.json 파일을 보면 scripts라는 항목이 있는데 우리는 이것을 npm으로 실행하면 끝!.\n123456789&#123;  //...    \"scripts\": &#123;    \"test\": \"mocha test\"  &#125;    //...&#125;\n1$ npm test\n결과는 같으며 실행 방식의 차이이다.\n예제 코드\n\n이것으로 가장 간단한 Mocha의 사용법을 익혔다. 이제 Mocha를 사용하면서 필요한 Assertion library를 사용해 볼 차례이다.\nStep 02: Assertion-chai","dateCreated":"2017-06-15T13:25:38+09:00","dateModified":"2019-04-06T15:53:43+09:00","datePublished":"2017-06-15T13:25:38+09:00","description":"\n새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 Hello World. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 Hello World를 고집해 보겠다. JavaScript 단위 테스트 프레임워크 - Mocha에서 Mocha를 설치하였다.","headline":"Mocha Tutorial - Step 01. Hello World!","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/06/15/Mocha-step-01/"},"publisher":{"@type":"Organization","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg","logo":{"@type":"ImageObject","url":"auth.jpg"}},"url":"https://kdydesign.github.io/2017/06/15/Mocha-step-01/","keywords":"mocha, javascript, Assertion, 단위 테스트, assert"}</script>
     <meta name="description" content="새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 Hello World. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 Hello World를 고집해 보겠다. JavaScript 단위 테스트 프레임워크 - Mocha에서 Mocha를 설치하였다.">
 <meta name="keywords" content="javascript,mocha,hello world,assert,javascript mocha,mocha test,mocha tutorial">
 <meta property="og:type" content="blog">
@@ -43,23 +44,20 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-sxklfps8ywgfyyjcowvnb4gxdgt0zjts3hsguljmv9uqanxjbnitrovtbrek.min.css">
+    <link rel="stylesheet" href="/assets/css/style-hrfdpek2rhlsgexiyl93hnjv74wpliq1wehvzmrfwmtzcezbbj2cdp2c2gqr.min.css">
     <!--STYLES END-->
-    <link rel="canonical" href="https://kdydesign.github.io/2017/06/15/mocha-step-01/"/>
     
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-46198235-1']);
-        _gaq.push(['_trackPageview']);
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
     </script>
 
+
     
-    <link rel="stylesheet" href="/assets/css/search.css">
 </head>
 
     <body>
@@ -67,17 +65,23 @@
             <!-- Define author's picture -->
 
 
-<header id="header" data-behavior="4">
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">Dev. DY</a>
     </div>
     
         
-            <a class="header-right-icon " href="/search">
+            <a class="header-right-picture " href="#about">
         
         
-            <i class="fa fa-lg fa-search"></i>
+            <img class="header-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
         
         </a>
     
@@ -90,7 +94,7 @@
         
     
 
-<nav id="sidebar" data-behavior="4">
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -99,7 +103,7 @@
                 </a>
                 <h4 class="sidebar-profile-name">DY, Kim</h4>
                 
-                    <h5 class="sidebar-profile-bio"><p>Web front-end technology lab</p>
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
 </h5>
                 
             </div>
@@ -109,54 +113,54 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/ ">
+                        <a class="sidebar-button-link " href="/ " title="Home">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-categories">
+                        <a class="sidebar-button-link " href="/all-categories" title="Categories">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-tags">
+                        <a class="sidebar-button-link " href="/all-tags" title="Tags">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-archives">
+                        <a class="sidebar-button-link " href="/all-archives" title="Archives">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/search">
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="#about">
+                        <a class="sidebar-button-link " href="#about" title="About">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
@@ -167,9 +171,9 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener">
+                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener" title="GitHub">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
                     </a>
             </li>
@@ -180,9 +184,9 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/atom.xml">
+                        <a class="sidebar-button-link " href="/atom.xml" title="RSS">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -193,23 +197,23 @@
 </nav>
 
             
-            <div id="main" data-behavior="4"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaOut
                         ">
                 
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-center">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             Mocha Tutorial - Step 01. Hello World!
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-06-15T13:25:38+09:00">
+    <time datetime="2017-06-15T13:25:38+09:00">
 	
 		    Jun 15, 2017
     	
@@ -225,8 +229,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
 <!-- excerpt -->
@@ -260,6 +265,7 @@
 <p>이것으로 가장 간단한 Mocha의 사용법을 익혔다. 이제 Mocha를 사용하면서 필요한 <code>Assertion</code> library를 사용해 볼 차례이다.</p>
 <p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-02/">Step 02: Assertion-chai</a></p>
             
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
@@ -277,65 +283,69 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-02/" data-tooltip="Mocha Tutorial - Step 02. Chai">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-02/" data-tooltip="Mocha Tutorial - Step 02. Chai" aria-label="PREVIOUS: Mocha Tutorial - Step 02. Chai">
                 
-                    <i class="fa fa-angle-left"></i>
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                 </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/08/Mocha/" data-tooltip="JavaScript 단위 테스트 프레임워크 - Mocha">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/08/Mocha/" data-tooltip="JavaScript 단위 테스트 프레임워크 - Mocha" aria-label="NEXT: JavaScript 단위 테스트 프레임워크 - Mocha">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
-                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-facebook-official"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-twitter"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-google-plus"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
-                </a>
-            </li>
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#gitment">
+                         <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -363,71 +373,75 @@
 
             </div>
             
-                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
                     <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-02/" data-tooltip="Mocha Tutorial - Step 02. Chai">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/15/Mocha-step-02/" data-tooltip="Mocha Tutorial - Step 02. Chai" aria-label="PREVIOUS: Mocha Tutorial - Step 02. Chai">
                 
-                    <i class="fa fa-angle-left"></i>
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                 </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/08/Mocha/" data-tooltip="JavaScript 단위 테스트 프레임워크 - Mocha">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/06/08/Mocha/" data-tooltip="JavaScript 단위 테스트 프레임워크 - Mocha" aria-label="NEXT: JavaScript 단위 테스트 프레임워크 - Mocha">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
-                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-facebook-official"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-twitter"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-google-plus"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/" title="Share on Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
-                </a>
-            </li>
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#gitment">
+                         <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -435,36 +449,38 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
-    <i id="btn-close-shareoptions" class="fa fa-close"></i>
-    <ul class="share-options">
-        
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
             
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
             
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
-                </a>
-            </li>
-        
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
             
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
             
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-twitter"></i><span>Share on Twitter</span>
-                </a>
-            </li>
-        
-            
-            
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                    <i class="fa fa-google-plus"></i><span>Share on Google+</span>
-                </a>
-            </li>
-        
-    </ul>
-</div>
+        </ul>
+    </div>
+
 
             
         </div>
@@ -478,27 +494,27 @@
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
         
             <img id="about-card-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
         
             <h4 id="about-card-name">DY, Kim</h4>
         
-            <div id="about-card-bio"><p>Web front-end technology lab</p>
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
 </div>
         
         
             <div id="about-card-job">
                 <i class="fa fa-briefcase"></i>
                 <br>
-                <p>Front-end web developer</p>
+                <p>Front-End Web Developer</p>
 
             </div>
         
         
             <div id="about-card-location">
-                <i class="fa fa-map-marker"></i>
+                <i class="fa fa-map-marker-alt"></i>
                 <br>
                 Republic of Korea, Seoul
             </div>
@@ -506,246 +522,11 @@
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
-    <div class="modal">
-        <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
-                <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
-            </a>
-            <i class="search-icon fa fa-search"></i>
-            <form id="algolia-search-form">
-                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
-            </form>
-        </div>
-        <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
-            <div class="results">
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/08/Mocha/">
-                            <h3 class="media-heading">JavaScript 단위 테스트 프레임워크 - Mocha</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 8, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>기술이 나날히 발전함에 따라 Web Front-End에도 테스트 방법론들을 적용하여 보다 효율적이고 효과적으로 프로젝트를 진행할 수 있다. JavaScript기반의 테스트 프레임워크는 무수히 많다. 그 중 대표적으로 <code>Mocha</code>와 <code>jasmine</code>을 말 할수 있다. 이 두 프레임워크 중 어떤 프레임워크가 더욱 뛰어난지 비교할 수 없다. 그저 어떤 프레임워크를 사용하느냐는 진행하고자하는 프로젝트와 주변 환경의 요소에 따라 다르다. 이번 포스팅에서는 <code>Mocha</code>를 먼저 말하고 싶다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 01. Hello World!</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 15, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 <em>Hello World</em>. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 <em>Hello World</em>를 고집해 보겠다. <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>에서 Mocha를 설치하였다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 02. Chai</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 15, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서는 기본적인 Mocha 사용법에 대해 알아보았다.<br>이번 Step 02에서는 <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 언급한 <code>Assertion</code> library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-03/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 03. Hooks</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>이번 Tutorial에서는 Mocha의 <code>Hooks</code>를 알아보겠다. <strong>Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 <code>Hooks</code>를 지원</strong>한다. Mocha에서는 기본적으로 <code>BDD</code> 스타일을 지원하지만 <code>TDD</code> 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 <code>Hooks</code>도 정의할 수 있다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-04/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 04. 동기/비동기 처리</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>Mocha에서의 비동기 처리는 매우 간단 명료하다. 어떻게 보면 <code>동기 처리</code>보다 더욱 간단하다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-05/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 05. 외부 모듈 테스트</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>어느 프로그램 언어나 마찮가지겠지만 JavaScript 역시 하나의 <code>.js</code>파일에 코딩하진 않는다. Mocha 역시 하나의 <code>test.js</code> 파일에 모두 테스트 케이스를 적진 않는다.<br>이번 Tutorial에서는 외부 모듈을 불러와서 테스트하는 방법을 알아보겠다. 생각보다 분량이 적지만 매우 효율적인 방법이 될 것이다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-06/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 06. Mocha 브라우저 구동</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>부터 시작으로 지금까지 우리는 <code>$ mocha</code> 명령을 통해 터미널에서 실행하였다. Mocha는 터미널 뿐만 아니라 <code>gulp</code>의 <code>task</code>를 통해 실행도 가능하지만, 이 밖에도 <code>브라우저에서 구동</code>되도록 지원하고 있다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-07/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 07. Mocha Options</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 19, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>이제 Mocha의 기본적인 사용법을 모두 터득하였다. 지금까지 배운 것만으로도 어느 정도의 Test가 가능하다. 하지만 우리가 항상 개발할 떄에 Framework를 찾는 이유는 무엇인가 개발을 할 때 손쉽게 개발하기 위해서이다. Mocha 역시 옵션을 조정하여 좀 더 편리하게 사용할 수 있는데 이번 Tutorial에서는 이 옵션에 대해서 알아보겠다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-08/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 19, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 <code>IntelliJ</code>를 사용하고 있다. 이 <code>IntelliJ</code>에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. <code>IntelliJ</code>뿐만 아니라 <code>Webstorm</code> 등의 <code>JETBRAIN</code> 제품군에서 지원하고있다.<br>이번 Tutorial은 <code>IntelliJ</code>에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. <code>JETBRAINS</code> 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/21/Mocha-step-09/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 09. Mocha로 실제 TDD 해보기</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 21, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>지금까지의 Tutorial을 통해 Mocha에 대해서 어느 정도 인지하고 습득하였다. 아직도 Mocha에 대해 애매모호한 기분이 들거나 뭔가 아쉬움이 남는다면 다시 돌아가 <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>부터 살펴보도록 하자.<br>이제 지금까지 배운 내용을 토대로 실제로 Mocha를 가지고 TDD를 진행해 보자. 이 Tutorial을 추가한 이유는 두 가지로 분류하였다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-            </div>
-        </div>
-        <div class="modal-footer">
-            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
-                19 posts found
-            </p>
-        </div>
-    </div>
-</div>
-
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover-dy-v1.png');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-ivwiy10zeb8fifc4swnhkwneuk64y53w2scmdmtp8thi9cqfxh31aowtroaz.min.js"></script>
-<script src="/assets/js/search.js"></script>
-<script type="text/javascript">      
-     var search_path = "search.xml";
-     if (search_path.length == 0) {
-        search_path = "search.xml";
-     }
-     var path = "/" + search_path;
-     searchFunc(path, 'local-search-input', 'local-search-result');
-</script>
+<script src="/assets/js/script-brtzazikoafxh59bruzcdb4drfidrlecb5wq1qvrp6xammpdztiphrtwyjgc.min.js"></script>
 <!--SCRIPTS END-->
 
     
@@ -766,6 +547,7 @@
             })();
         </script>
     
+
 
 
     </body>

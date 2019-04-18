@@ -9,14 +9,15 @@
     <title>빠르게 배우는 Node.js와 NPM 설치부터 개념잡기 - Dev. DY</title>
     <meta name="author" content="DY, Kim">
     
-        <meta name="keywords" content="javascript,nodejs,npm,npm tutorial,nodejs tutorial">
+        <meta name="keywords" content="javascript,nodejs,npm,npm tutorial,nodejs tutorial,npm 설치,npm">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg"},"articleBody":"\n\n\nnode.js와 npm은 웹 개발에 종사하고 있는 개발자라면 웬만해서는 알만큼 중요한 기술 중의 하나이다. 많이 들어보기도 했을 것이다. 이와 관련된 포스팅도 많고 정보도 많으니까. 그럼 node.js와 npm이 무엇인지 알아보고 설치를 진행해 보자.\nNode.js와 NPM 개념잡기Node.js 공식 사이트에서는 이렇게 정의하고있다.\nNode.js®는 Chrome V8 JavaScript 엔진으로 빌드된 JavaScript 런타임입니다. Node.js는 이벤트 기반, Non 블로킹 I/O 모델을 사용해 가볍고 효율적입니다. Node.js의 패키지 생태계인 npm은 세계에서 가장 큰 오픈 소스 라이브러리 생태계이기도 합니다.\n\nnode.js와 npm이 무엇인지 대강 알겠다.node.js는 JavaScript 기반으로 구성된 서버 사이드 서비스를 JavaScript로 구현할 수 있게 만든 런타임이고, npm은 node.js 기반의 모듈을 모아둔 집합 저장소이다. npm은 Node Package Manager 또는 Node Package Modules라고도 한다.\nnode.js를 구글 트렌드에서 검색하게 되면 계속되는 상승곡선을 볼 수 있다.\n  trends.embed.renderExploreWidget(\"TIMESERIES\", {\"comparisonItem\":[{\"keyword\":\"/m/0bbxf89\",\"geo\":\"\",\"time\":\"2004-01-01 2017-07-14\"}],\"category\":0,\"property\":\"\"}, {\"exploreQuery\":\"date=2004-01-01 2017-07-14&q=%2Fm%2F0bbxf89\",\"guestPath\":\"https://trends.google.co.kr:443/trends/embed/\"}); \n\n그리고 전 세계에서 사용 중인 것을 확인할 수 있다. \n  trends.embed.renderExploreWidget(\"GEO_MAP\", {\"comparisonItem\":[{\"keyword\":\"/m/0bbxf89\",\"geo\":\"\",\"time\":\"2004-01-01 2017-07-14\"}],\"category\":0,\"property\":\"\"}, {\"exploreQuery\":\"date=2004-01-01 2017-07-14&q=%2Fm%2F0bbxf89\",\"guestPath\":\"https://trends.google.co.kr:443/trends/embed/\"}); \n\n그만큼 오늘날 node.js는 개발에 있어서 중요한 한 부분을 차지하고 있다는 것이다. 그럼 node.js를 사용해서 우린 무엇을 할 수 있을까?\n다음은 node.js로 할 수 있는 것들이다. 꼭 여기에 국한되지는 않지만 node.js가 가장 빛을 발하는 곳은 실시간 웹 애플리케이션이다. 이유는 About Node.js node.js 정보에 잘 나와 있다. 설명하자면 node.js는 lock이 없으므로 프로세스를 dead-locking 할 걱정이 없고 I/O를 직접 수행하지 않으므로 프로세스가 절대 차단되지 않기 때문이다. non Block이기에 확장 가능한 시스템은 노드에서 개발하는 것이 합리적이다.\n\n\n정적 파일 서버\n웹 응용프로그램\n메시징 미들웨어\nHTML5 멀티 플레이어 게임용 서버\n\n\nnpm은 훌륭한 개발자들이 Node.js 기반의 JavaScript로 개발된 오픈 소스를 모듈로 올려놓은 곳이다. 우리는 웹 개발에 필요한 jQuery, gulp, webpack 등의 모듈들을 npm명령어를 통해 쉽게 다운받고 쓸 수가 있다.\nNode.js와 NPM 설치하기node.js와 npm 설치는 간단하다. npm의 경우는 Node Package Manager이기 때문에 node.js를 설치하면 같이 설치된다. 먼저 Node.js에서 안정적인 V6.x.x를 다운받은 후 원클리으로 설치하면 된다.\n설치가 완료되었다면 확인해보자. 명령 프롬프트를 실행하여 아래 명령어를 쳐보자.\n1$ node -v\n정상적으로 다운로드 받고 설치한 버전 정보가 출력된다면 설치는 완료된 것이다. 물론 npm도 설치가 되었겠지만 그래도 확인은 해보자.\n1$ npm -v\n이것으로 설치는 완료되었다. 별도의 Path도 잡을 필요 없고 원클릭으로 node.js와 npm을 설치할 수 있다.\nNode.js 테스트해보기node.js를 설치하였으니 한번 실행해보자. 명령 프롬프트를 열어 node명령어를 실행하자.\n1$ node\n이제 우리는 명령 프롬프트에 JavaScript 코드를 입력하여 실행할 수 있다. 아래 코드를 Enter와 함께 입력해보자.\n12345var a = 1;  //entera           //enter  //print `1`var b = 2;  //enterb           //enter  //print `2`console.log('sum = ' + a + b);  //enter  //print 'sum = 3'\n명령 프롬프트에서 이렇게 JavaScript 코드를 입력할 수도 있지만 이렇게 개발할 수는 없다. JavaScript 파일을 만들고 해당 파일을 실행해보자. 먼저 정당한 곳에 NodeTest폴더 하나를 만들고 그 폴더 안에 main.js파일을 만들자.\n1234567//mian.jsfunction sum(a, b) &#123;    return a + b;&#125;console.log('sum = ' + sum(1, 2));\nmain.js파일을 만들었으면 NodeTest경로로 이동하자. 명령 프롬프트로 이동해도 되고 아니면 NodeTest폴더에서 Shift + 마우스 우클릭을 통해 여기서 명령 창 열기를 통해 명령 프롬프트를 실행할 수 있다.\n어쨌든 명령 창을 실행하였으면 main.js를 실행하자.\n1$ node main.js\n결과를 확인하였는가? 이처럼 미리 생성된 JavaScript 파일을 우리는 node명령어를 통해 실행할 수가 있다.\nNPM 테스트해보기.이제 npm을 테스트해보자. npm을 통해 특정 모듈을 다운받고 그 모듈을 통해 어떤 작업을 수행할 것이다. 먼저 NodeTest폴더로 이동하여 명령 프롬프트를 실행 후 명령어를 입력하자.\n1$ npm init -y\nnpm init명령어를 입력하면 package.json파일이 생성된 것을 볼 수 있다. 진행하기에 앞서 먼저 package.json을 보고 가자.\n\nPackage.json우리가 만든 package.json을 열어보자.\n123456789101112&#123;  \"name\": \"NodeTest\",  \"version\": \"1.0.0\",  \"description\": \"\",  \"main\": \"index.js\",  \"scripts\": &#123;    \"test\": \"echo \\\"Error: no test specified\\\" &amp;&amp; exit 1\"  &#125;,  \"keywords\": [],  \"author\": \"\",  \"license\": \"ISC\"&#125;\n뭔가 보니까 감이 오는가?package.json은 프로젝트에 대한 명세라고 할 수 있다. 해당 프로젝트의 이름, 버전, 사용되는 모듈 등의 스펙이 정해져 있으며, 이 package.json을 통해 모듈 의존성 모듈 관리도 진행할 수 있다. 만약 어떤 오픈 소스를 다운 받을 때 이 package.json만 있다면 해당 오픈 소스가 의존하고 있는 모듈이 어떤 것인지. 그리고 그 모듈들을 아래 명령어로 한 번에 설치할 수 있다.\n1$ npm install\n\n이어서 가자.\n여기까지 해서 package.json이 생성되었으니 npm을 통해 모듈을 설치해보자. 모듈은 mocha라는 Front-End 단위 테스트(TDD) 프레임워크를 설치해보겠다. mocha와 관련된 포스트는 JavaScript 단위 테스트 프레임워크 - Mocha를 참고하도록하자.\n1$ npm install mocha --save-dev\n해당 명령어를 통해 mocha를 설치해만 NodeTest폴더 안에는 node_modules폴더가 생성되고 그 안에는 mocha모듈이 설치된 것을 확인할 수 있다. 그리고 다시 package.json을 열어보면 devDependencies에 mocha가 추가된 것을 볼 수 있다. 이는 mocha를 설치할 때 --save-dev옵션을 추었기에 추가가 된 것이다.\n1234567...\"devDependencies\": &#123;    \"mocha\": \"^3.4.2\"&#125;...\n이렇게 설치한 npm모듈은 해당 프로젝트에서 사용할 수 있는 흔히 말하는 지역변수와 같은 개념이 되는 것이다. 그럼 지역변수가 있으니 전역으로 사용할 수 있는 모듈도 있지 않을까?\n1$ npm install mocha -g\n전역으로 설치하기 위해서는 -g옵션을 추가해주면 된다. 이렇게 전역으로 설치된 모듈은 C:\\Users\\사용자명\\AppData\\Roaming\\npm경로에 설치가 된다. (폴더가 없다면 숨김포더를 해제하라.) 이렇게 전역으로 설치한 모듈을 해당 프로젝트에서 심볼릭 링크로도 사용이 가능하다.\n1$ npm link mocha\nnpm을 통해 설치된 모듈의 목록 역시 확인할 수 있다. 아래 명령어를 하나씩 입력해보자.\n1234$ npm list $ npm list -g$ npm ls    $ npm ls -depth=0\n자세한 npm명령어 또는 옵션은 NPM DOCUMENT를 참고하자.\n\nnode.js와 npm으로 인해 개발은 더욱 편리해지고 있다. 또한 나로써는 node.js가 JavaScript 기반이라는 것이 너무나 좋다. JavaScript를 알고 있으니까.. 오래전에 JavaScript로 서버를 구축한다는 생각이나 했었을까.. 페이스북에서는 VR 개발용 JavasScript 프레임워크도 공개하기도 하였다. JavaScript의 범용성은 어디까지 일까.","dateCreated":"2017-07-15T01:00:59+09:00","dateModified":"2019-04-18T20:15:44+09:00","datePublished":"2017-07-15T01:00:59+09:00","description":"\nnode.js와 npm 기초 완벽 가이드!! node.js와 npm을 설치해보고 개념도 잡아보자. 그리고 더 나아가 IntelliJ에서 npm을 어떻게 사용하는지 알아보자. node.js와 npm은 웹 개발에 종사하고 있는 개발자라면 웬만해서는 알만큼 중요한 기술 중의 하나이다. 많이 들어보기도 했을 것이다. 이와 관련된 포스팅도 많고 정보도 많으니까. 그럼 node.js와 npm이 무엇인지 알아보고 설치를 진행해 보자.","headline":"빠르게 배우는 Node.js와 NPM 설치부터 개념잡기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/"},"publisher":{"@type":"Organization","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg","logo":{"@type":"ImageObject","url":"auth.jpg"}},"url":"https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/","keywords":"npm, nodejs, javscript"}</script>
     <meta name="description" content="node.js와 npm 기초 완벽 가이드!! node.js와 npm을 설치해보고 개념도 잡아보자. 그리고 더 나아가 IntelliJ에서 npm을 어떻게 사용하는지 알아보자. node.js와 npm은 웹 개발에 종사하고 있는 개발자라면 웬만해서는 알만큼 중요한 기술 중의 하나이다. 많이 들어보기도 했을 것이다. 이와 관련된 포스팅도 많고 정보도 많으니까.">
-<meta name="keywords" content="javascript,nodejs,npm,npm tutorial,nodejs tutorial">
+<meta name="keywords" content="javascript,nodejs,npm,npm tutorial,nodejs tutorial,npm 설치,npm">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="빠르게 배우는 Node.js와 NPM 설치부터 개념잡기">
 <meta property="og:url" content="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/index.html">
@@ -24,7 +25,7 @@
 <meta property="og:description" content="node.js와 npm 기초 완벽 가이드!! node.js와 npm을 설치해보고 개념도 잡아보자. 그리고 더 나아가 IntelliJ에서 npm을 어떻게 사용하는지 알아보자. node.js와 npm은 웹 개발에 종사하고 있는 개발자라면 웬만해서는 알만큼 중요한 기술 중의 하나이다. 많이 들어보기도 했을 것이다. 이와 관련된 포스팅도 많고 정보도 많으니까.">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/cover.png">
-<meta property="og:updated_time" content="2019-04-06T06:53:43.160Z">
+<meta property="og:updated_time" content="2019-04-18T11:15:44.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="빠르게 배우는 Node.js와 NPM 설치부터 개념잡기">
 <meta name="twitter:description" content="node.js와 npm 기초 완벽 가이드!! node.js와 npm을 설치해보고 개념도 잡아보자. 그리고 더 나아가 IntelliJ에서 npm을 어떻게 사용하는지 알아보자. node.js와 npm은 웹 개발에 종사하고 있는 개발자라면 웬만해서는 알만큼 중요한 기술 중의 하나이다. 많이 들어보기도 했을 것이다. 이와 관련된 포스팅도 많고 정보도 많으니까.">
@@ -41,23 +42,20 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-sxklfps8ywgfyyjcowvnb4gxdgt0zjts3hsguljmv9uqanxjbnitrovtbrek.min.css">
+    <link rel="stylesheet" href="/assets/css/style-hrfdpek2rhlsgexiyl93hnjv74wpliq1wehvzmrfwmtzcezbbj2cdp2c2gqr.min.css">
     <!--STYLES END-->
-    <link rel="canonical" href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/"/>
     
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-46198235-1']);
-        _gaq.push(['_trackPageview']);
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
     </script>
 
+
     
-    <link rel="stylesheet" href="/assets/css/search.css">
 </head>
 
     <body>
@@ -65,17 +63,23 @@
             <!-- Define author's picture -->
 
 
-<header id="header" data-behavior="4">
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">Dev. DY</a>
     </div>
     
         
-            <a class="header-right-icon " href="/search">
+            <a class="header-right-picture " href="#about">
         
         
-            <i class="fa fa-lg fa-search"></i>
+            <img class="header-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
         
         </a>
     
@@ -88,7 +92,7 @@
         
     
 
-<nav id="sidebar" data-behavior="4">
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -97,7 +101,7 @@
                 </a>
                 <h4 class="sidebar-profile-name">DY, Kim</h4>
                 
-                    <h5 class="sidebar-profile-bio"><p>Web front-end technology lab</p>
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
 </h5>
                 
             </div>
@@ -107,54 +111,54 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/ ">
+                        <a class="sidebar-button-link " href="/ " title="Home">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-categories">
+                        <a class="sidebar-button-link " href="/all-categories" title="Categories">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-tags">
+                        <a class="sidebar-button-link " href="/all-tags" title="Tags">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-archives">
+                        <a class="sidebar-button-link " href="/all-archives" title="Archives">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/search">
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="#about">
+                        <a class="sidebar-button-link " href="#about" title="About">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
@@ -165,9 +169,9 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener">
+                        <a class="sidebar-button-link " href="https://github.com/kdydesign" target="_blank" rel="noopener" title="GitHub">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
                     </a>
             </li>
@@ -178,9 +182,9 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/atom.xml">
+                        <a class="sidebar-button-link " href="/atom.xml" title="RSS">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -191,23 +195,23 @@
 </nav>
 
             
-            <div id="main" data-behavior="4"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaOut
                         ">
                 
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+<article class="post">
     
     
         <div class="post-header main-content-wrap text-center">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             빠르게 배우는 Node.js와 NPM 설치부터 개념잡기
         </h1>
     
     
         <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-07-15T01:00:59+09:00">
+    <time datetime="2017-07-15T01:00:59+09:00">
 	
 		    Jul 15, 2017
     	
@@ -223,8 +227,9 @@
 
     
 </div>
+
     
-    <div class="post-content markdown" itemprop="articleBody">
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
 <!-- excerpt -->
@@ -291,6 +296,7 @@
 <hr>
 <p><code>node.js</code>와 <code>npm</code>으로 인해 개발은 더욱 편리해지고 있다. 또한 나로써는 <code>node.js</code>가 JavaScript 기반이라는 것이 너무나 좋다. JavaScript를 알고 있으니까.. 오래전에 JavaScript로 서버를 구축한다는 생각이나 했었을까.. 페이스북에서는 VR 개발용 JavasScript 프레임워크도 공개하기도 하였다. JavaScript의 범용성은 어디까지 일까.</p>
             
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
@@ -308,65 +314,69 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/27/webpack/" data-tooltip="Webpack 개념잡기">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/27/webpack/" data-tooltip="Webpack 개념잡기" aria-label="PREVIOUS: Webpack 개념잡기">
                 
-                    <i class="fa fa-angle-left"></i>
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                 </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/07/hexo-themes/" data-tooltip="Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/07/hexo-theme/" data-tooltip="Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기" aria-label="NEXT: Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
-                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-facebook-official"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-twitter"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-google-plus"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
-                </a>
-            </li>
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#gitment">
+                         <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -394,71 +404,75 @@
 
             </div>
             
-                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
                     <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/27/webpack/" data-tooltip="Webpack 개념잡기">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/27/webpack/" data-tooltip="Webpack 개념잡기" aria-label="PREVIOUS: Webpack 개념잡기">
                 
-                    <i class="fa fa-angle-left"></i>
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                 </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/07/hexo-themes/" data-tooltip="Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/07/hexo-theme/" data-tooltip="Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기" aria-label="NEXT: Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
-                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-facebook-official"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-twitter"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
         
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-google-plus"></i>
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/" title="Share on Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
-                </a>
-            </li>
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#gitment">
+                         <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -466,36 +480,38 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
-    <i id="btn-close-shareoptions" class="fa fa-close"></i>
-    <ul class="share-options">
-        
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
             
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
             
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
-                </a>
-            </li>
-        
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
             
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
             
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-twitter"></i><span>Share on Twitter</span>
-                </a>
-            </li>
-        
-            
-            
-            <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">
-                    <i class="fa fa-google-plus"></i><span>Share on Google+</span>
-                </a>
-            </li>
-        
-    </ul>
-</div>
+        </ul>
+    </div>
+
 
             
         </div>
@@ -509,27 +525,27 @@
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
         
             <img id="about-card-picture" src="/assets/images/auth.jpg" alt="Author&#39;s picture">
         
             <h4 id="about-card-name">DY, Kim</h4>
         
-            <div id="about-card-bio"><p>Web front-end technology lab</p>
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
 </div>
         
         
             <div id="about-card-job">
                 <i class="fa fa-briefcase"></i>
                 <br>
-                <p>Front-end web developer</p>
+                <p>Front-End Web Developer</p>
 
             </div>
         
         
             <div id="about-card-location">
-                <i class="fa fa-map-marker"></i>
+                <i class="fa fa-map-marker-alt"></i>
                 <br>
                 Republic of Korea, Seoul
             </div>
@@ -537,246 +553,11 @@
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
-    <div class="modal">
-        <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
-                <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
-            </a>
-            <i class="search-icon fa fa-search"></i>
-            <form id="algolia-search-form">
-                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
-            </form>
-        </div>
-        <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
-            <div class="results">
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/08/Mocha/">
-                            <h3 class="media-heading">JavaScript 단위 테스트 프레임워크 - Mocha</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 8, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>기술이 나날히 발전함에 따라 Web Front-End에도 테스트 방법론들을 적용하여 보다 효율적이고 효과적으로 프로젝트를 진행할 수 있다. JavaScript기반의 테스트 프레임워크는 무수히 많다. 그 중 대표적으로 <code>Mocha</code>와 <code>jasmine</code>을 말 할수 있다. 이 두 프레임워크 중 어떤 프레임워크가 더욱 뛰어난지 비교할 수 없다. 그저 어떤 프레임워크를 사용하느냐는 진행하고자하는 프로젝트와 주변 환경의 요소에 따라 다르다. 이번 포스팅에서는 <code>Mocha</code>를 먼저 말하고 싶다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 01. Hello World!</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 15, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>새로운 기술. 프로그램 언어를 입력할 때에는 항상 나타나는 <em>Hello World</em>. Mocha의 가장 기초 코드와는 거리가 멀지만 그래도 <em>Hello World</em>를 고집해 보겠다. <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>에서 Mocha를 설치하였다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/15/Mocha-step-02/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 02. Chai</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 15, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서는 기본적인 Mocha 사용법에 대해 알아보았다.<br>이번 Step 02에서는 <a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>에서 언급한 <code>Assertion</code> library에 대해 어떻게 사용하는지와 어떤 것인지를 알아보도록 하자.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-03/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 03. Hooks</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>이번 Tutorial에서는 Mocha의 <code>Hooks</code>를 알아보겠다. <strong>Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 <code>Hooks</code>를 지원</strong>한다. Mocha에서는 기본적으로 <code>BDD</code> 스타일을 지원하지만 <code>TDD</code> 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 <code>Hooks</code>도 정의할 수 있다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-04/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 04. 동기/비동기 처리</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>Mocha에서의 비동기 처리는 매우 간단 명료하다. 어떻게 보면 <code>동기 처리</code>보다 더욱 간단하다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-05/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 05. 외부 모듈 테스트</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>어느 프로그램 언어나 마찮가지겠지만 JavaScript 역시 하나의 <code>.js</code>파일에 코딩하진 않는다. Mocha 역시 하나의 <code>test.js</code> 파일에 모두 테스트 케이스를 적진 않는다.<br>이번 Tutorial에서는 외부 모듈을 불러와서 테스트하는 방법을 알아보겠다. 생각보다 분량이 적지만 매우 효율적인 방법이 될 것이다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/16/Mocha-step-06/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 06. Mocha 브라우저 구동</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 16, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>부터 시작으로 지금까지 우리는 <code>$ mocha</code> 명령을 통해 터미널에서 실행하였다. Mocha는 터미널 뿐만 아니라 <code>gulp</code>의 <code>task</code>를 통해 실행도 가능하지만, 이 밖에도 <code>브라우저에서 구동</code>되도록 지원하고 있다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-07/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 07. Mocha Options</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 19, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>이제 Mocha의 기본적인 사용법을 모두 터득하였다. 지금까지 배운 것만으로도 어느 정도의 Test가 가능하다. 하지만 우리가 항상 개발할 떄에 Framework를 찾는 이유는 무엇인가 개발을 할 때 손쉽게 개발하기 위해서이다. Mocha 역시 옵션을 조정하여 좀 더 편리하게 사용할 수 있는데 이번 Tutorial에서는 이 옵션에 대해서 알아보겠다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/19/Mocha-step-08/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 19, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 <code>IntelliJ</code>를 사용하고 있다. 이 <code>IntelliJ</code>에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. <code>IntelliJ</code>뿐만 아니라 <code>Webstorm</code> 등의 <code>JETBRAIN</code> 제품군에서 지원하고있다.<br>이번 Tutorial은 <code>IntelliJ</code>에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. <code>JETBRAINS</code> 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://kdydesign.github.io/2017/06/21/Mocha-step-09/">
-                            <h3 class="media-heading">Mocha Tutorial - Step 09. Mocha로 실제 TDD 해보기</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Jun 21, 2017
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><a id="more"></a>
-<p>지금까지의 Tutorial을 통해 Mocha에 대해서 어느 정도 인지하고 습득하였다. 아직도 Mocha에 대해 애매모호한 기분이 들거나 뭔가 아쉬움이 남는다면 다시 돌아가 <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha</a>부터 살펴보도록 하자.<br>이제 지금까지 배운 내용을 토대로 실제로 Mocha를 가지고 TDD를 진행해 보자. 이 Tutorial을 추가한 이유는 두 가지로 분류하였다.<br><!-- more --></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-            </div>
-        </div>
-        <div class="modal-footer">
-            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
-                19 posts found
-            </p>
-        </div>
-    </div>
-</div>
-
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover-dy-v1.png');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-ivwiy10zeb8fifc4swnhkwneuk64y53w2scmdmtp8thi9cqfxh31aowtroaz.min.js"></script>
-<script src="/assets/js/search.js"></script>
-<script type="text/javascript">      
-     var search_path = "search.xml";
-     if (search_path.length == 0) {
-        search_path = "search.xml";
-     }
-     var path = "/" + search_path;
-     searchFunc(path, 'local-search-input', 'local-search-result');
-</script>
+<script src="/assets/js/script-brtzazikoafxh59bruzcdb4drfidrlecb5wq1qvrp6xammpdztiphrtwyjgc.min.js"></script>
 <!--SCRIPTS END-->
 
     
@@ -797,6 +578,7 @@
             })();
         </script>
     
+
 
 
     </body>
