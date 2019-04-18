@@ -1,0 +1,4 @@
+User-agent: *
+Allow:/
+
+Sitemap: https://kdydesign.github.io/sitemap.xml
