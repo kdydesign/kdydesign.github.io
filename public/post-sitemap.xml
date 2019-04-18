@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kdydesign.github.io/2017/11/15/vuejs-tutorial/</loc>
+        <lastmod>2019-04-18T11:22:20.127Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kdydesign.github.io/2017/06/23/hexo-blog/</loc>
         <lastmod>2019-04-18T11:17:09.340Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -41,14 +49,6 @@
     <url>
         <loc>https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/</loc>
         <lastmod>2019-04-18T11:11:52.428Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2017/11/15/vuejs-tutorial/</loc>
-        <lastmod>2019-04-18T11:11:52.426Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

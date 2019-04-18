@@ -191,13 +191,6 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/tags/vue-js/</loc>
-        <lastmod>2019-04-18T11:11:52.428Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kdydesign.github.io/tags/vuex/</loc>
         <lastmod>2019-04-18T11:11:52.428Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -291,6 +284,13 @@
     <url>
         <loc>https://kdydesign.github.io/tags/%EB%B8%94%EB%A1%9C%EA%B7%B8/</loc>
         <lastmod>2019-04-18T11:17:09.340Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/tags/vue-js/</loc>
+        <lastmod>2019-04-18T11:22:20.127Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
