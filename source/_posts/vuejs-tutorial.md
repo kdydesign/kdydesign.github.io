@@ -1,5 +1,5 @@
 ---
-title: "빠르게 배우는 Vue.js Tutorial"
+title: "빠르게 배우는 Vue.js"
 date: 2017-11-15 00:11:44
 tags: 
 - vue.js
