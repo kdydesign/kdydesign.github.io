@@ -15,7 +15,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg"},"articleBody":"\n\n\n개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제품군에서 지원하고있다.이번 Tutorial은 IntelliJ에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. JETBRAINS 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.\n\nNode.js 및 Plug-in 설치Mocha를 사용해보기에 앞서 먼저 Node.js 와 IntelliJ NodeJs Plug-in을 설치하자. 먼저 여기서 Node.js를 설치한다. 기본적으로 IntelliJ를 설치할 때 별도의 설치 여부가 나오지만 설치가 되어있지 않다면 설치하도록 하자.ctrl + shift + a 또는 IntelliJ설정 창에서 plugins를 검색하여 해당 창을 실행 후 nodejs를 검색하였을 때 설치가 되어있지 않으면 Browser Repositories에서 nodejs를 설치하도록 하자. \nMocha ConfigurationsNode.js가 설치되었다면 Mocha runner 또는 compiler를 추가하자. run/debug configurations 창에서 +버튼을 눌러 Mocha를 선택한다. 이후 출력되는 설정 창에서 수정해야 할 부분은 아래를 참고하자.\n\n\n\nOption\nDescription\n\n\n\n\nNode interpreter\nnode.exe 경로\n\n\nWorking directory\nmocha 프로젝트 경로\n\n\nMocha package\nmocha 패키지 경로(ex. npm\\node_modules\\mocha\n\n\nUser Interface\n사용자 인터페이스 설정\n\n\nTest directory\n테스트 파일 경로(ex. test.js)\n\n\n\n\n설정이 완료되면 실행해 보도록 하자. 실행을 해보면 테스트 스위트와 테스트 케이스별로 성공, 실패 여부를 확인할 수 있다. 여기서 IntelliJ에서 실행하면 좋은 점 두 가지가 있다.\n\nBreak Point를 통한 Debugging\nHTML 출력\n\n\n\n이전 Tutorial Step 06: 브라우저에서의 Mocha 지원에서 Mocha를 브라우저에서 구동하는 방법을 배웠었는데 IntelliJ를 사용하면 별도의 HTML파일을 출력할 수가 있다. 그리고 불편하기만하던 Mocha의 --debug 옵션을 IntelliJ에서는 Break Point를 통해서 쉽게 Debugging이 가능하다.\n\nIDE Tool을 사용하면 어떤 개발 프레임워크이든 쉽게 이용할 수가 있다. 그만큼 개발 속도 역시 빠르다 할 수 있다. 이번 Tutorial을 통해 우리는 이제 Mocha를 사용하여 단위 테스트를 할 수 있는 최적화된 환경을 만들 수 있다.이제 마지막으로 Mocha를 활용하여 실제 TDD를 어떻게 하는지 알아볼 차례이다.\nStep 09: Mocha로 실제 TDD 해보기","dateCreated":"2017-06-19T16:34:21+09:00","dateModified":"2019-04-06T15:53:43+09:00","datePublished":"2017-06-19T16:34:21+09:00","description":"\n개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제품군에서 지원하고있다.이번 Tutorial은 IntelliJ에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. JETBRAINS 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.","headline":"Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/06/19/Mocha-step-08/"},"publisher":{"@type":"Organization","name":"DY, Kim","sameAs":["https://github.com/kdydesign"],"image":"auth.jpg","logo":{"@type":"ImageObject","url":"auth.jpg"}},"url":"https://kdydesign.github.io/2017/06/19/Mocha-step-08/","keywords":"mocha, javascript, 단위 테스트, intelliJ, IDE"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DY, Kim","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth.jpg"},"articleBody":"\n\n\n개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제품군에서 지원하고있다.이번 Tutorial은 IntelliJ에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. JETBRAINS 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.\n\nNode.js 및 Plug-in 설치Mocha를 사용해보기에 앞서 먼저 Node.js 와 IntelliJ NodeJs Plug-in을 설치하자. 먼저 여기서 Node.js를 설치한다. 기본적으로 IntelliJ를 설치할 때 별도의 설치 여부가 나오지만 설치가 되어있지 않다면 설치하도록 하자.ctrl + shift + a 또는 IntelliJ설정 창에서 plugins를 검색하여 해당 창을 실행 후 nodejs를 검색하였을 때 설치가 되어있지 않으면 Browser Repositories에서 nodejs를 설치하도록 하자. \nMocha ConfigurationsNode.js가 설치되었다면 Mocha runner 또는 compiler를 추가하자. run/debug configurations 창에서 +버튼을 눌러 Mocha를 선택한다. 이후 출력되는 설정 창에서 수정해야 할 부분은 아래를 참고하자.\n\n\n\nOption\nDescription\n\n\n\n\nNode interpreter\nnode.exe 경로\n\n\nWorking directory\nmocha 프로젝트 경로\n\n\nMocha package\nmocha 패키지 경로(ex. npm\\node_modules\\mocha\n\n\nUser Interface\n사용자 인터페이스 설정\n\n\nTest directory\n테스트 파일 경로(ex. test.js)\n\n\n\n\n설정이 완료되면 실행해 보도록 하자. 실행을 해보면 테스트 스위트와 테스트 케이스별로 성공, 실패 여부를 확인할 수 있다. 여기서 IntelliJ에서 실행하면 좋은 점 두 가지가 있다.\n\nBreak Point를 통한 Debugging\nHTML 출력\n\n\n\n이전 Tutorial Step 06: 브라우저에서의 Mocha 지원에서 Mocha를 브라우저에서 구동하는 방법을 배웠었는데 IntelliJ를 사용하면 별도의 HTML파일을 출력할 수가 있다. 그리고 불편하기만하던 Mocha의 --debug 옵션을 IntelliJ에서는 Break Point를 통해서 쉽게 Debugging이 가능하다.\n\nIDE Tool을 사용하면 어떤 개발 프레임워크이든 쉽게 이용할 수가 있다. 그만큼 개발 속도 역시 빠르다 할 수 있다. 이번 Tutorial을 통해 우리는 이제 Mocha를 사용하여 단위 테스트를 할 수 있는 최적화된 환경을 만들 수 있다.이제 마지막으로 Mocha를 활용하여 실제 TDD를 어떻게 하는지 알아볼 차례이다.\nStep 09: Mocha로 실제 TDD 해보기","dateCreated":"2017-06-19T16:34:21+09:00","dateModified":"2019-04-18T22:09:12+09:00","datePublished":"2017-06-19T16:34:21+09:00","description":"\n개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제품군에서 지원하고있다.이번 Tutorial은 IntelliJ에서 Mocha를 손쉽게 사용하는 방법을 배워보도록 하겠다. JETBRAINS 제품군을 사용하지 않는다면 해당 Tutorial은 건너 뛰도록하자.","headline":"Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/06/19/Mocha-step-08/"},"publisher":{"@type":"Organization","name":"DY, Kim","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth.jpg","logo":{"@type":"ImageObject","url":"auth.jpg"}},"url":"https://kdydesign.github.io/2017/06/19/Mocha-step-08/","keywords":"mocha, javascript, 단위 테스트, intelliJ, IDE"}</script>
     <meta name="description" content="개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제">
 <meta name="keywords" content="javascript,mocha,chai,unit test,ide,intellij,jetbrain,webstorm,mocha intellij,mocha plugin">
 <meta property="og:type" content="blog">
@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://kdydesign.github.io/2017/06/19/Mocha-step-08/cover.png">
 <meta property="og:image" content="https://kdydesign.github.io/2017/06/19/Mocha-step-08/image01.png">
 <meta property="og:image" content="https://kdydesign.github.io/2017/06/19/Mocha-step-08/image02.png">
-<meta property="og:updated_time" content="2019-04-06T06:53:43.154Z">
+<meta property="og:updated_time" content="2019-04-18T13:09:12.881Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mocha Tutorial - Step 08. IDE Edit Plug-in (IntelliJ)">
 <meta name="twitter:description" content="개발자들은 자기가 사용하는 IDE가 있을 것이다. IDE를 사용하는 이유는 더 편리하기 때문이다. 당연하다. bash, nodepad 보다는 훨씬 편하니까. 나 역시 IntelliJ를 사용하고 있다. 이 IntelliJ에서는 Mocha를 좀 더 다루기 쉽게 Plug-in을 지원하고 있다. IntelliJ뿐만 아니라 Webstorm 등의 JETBRAIN 제">
@@ -44,7 +44,7 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-hrfdpek2rhlsgexiyl93hnjv74wpliq1wehvzmrfwmtzcezbbj2cdp2c2gqr.min.css">
+    <link rel="stylesheet" href="/assets/css/style-fb34gfc7dyrvwe8ipzhezbanhcdjyybz7rpxuh0l4yyjf7bd9vjg4zvnklo5.min.css">
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
@@ -175,6 +175,15 @@
                     
                         <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:kdydesign@gmail.com" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
                     </a>
             </li>
             
@@ -544,7 +553,7 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover-dy-v1.png');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-brtzazikoafxh59bruzcdb4drfidrlecb5wq1qvrp6xammpdztiphrtwyjgc.min.js"></script>
+<script src="/assets/js/script-73ut2vyhgxim0cprdmrsffrwdmumqmk9sidrwbm4whaqbshbd0vzh7ixdhwq.min.js"></script>
 <!--SCRIPTS END-->
 
     
@@ -567,6 +576,14 @@
     
 
 
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-3611154972292213",
+    enable_page_level_ads: true
+  });
+</script>
 
     </body>
 </html>

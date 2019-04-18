@@ -30,6 +30,8 @@ keywords:
 - store
 - getters
 - computed
+- vue 배우기
+- vuejs 배우기
 disqusIdentifier: vuex-helper-style
 clearReading: true
 thumbnailImagePosition: left

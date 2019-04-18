@@ -30,6 +30,8 @@ keywords:
 - nuxt.js tutorial
 - nuxt.js 설치
 - nuxt.js 기초
+- vuejs nuxt tutorial
+- nuxt js
 disqusIdentifier: nuxt.js-tutorial-1
 clearReading: true
 thumbnailImagePosition: left

@@ -28,6 +28,11 @@ keywords:
 - 블로그
 - 블로그 만들기
 - github page
+- github 블로그
+- github 블로그 hexo
+- hexo page
+- hexo new post
+- jekyll
 disqusIdentifier: hexothemes01
 clearReading: true
 thumbnailImagePosition: left

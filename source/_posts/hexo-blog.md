@@ -27,6 +27,12 @@ keywords:
 - github page
 - 블로그
 - 블로그 만들기
+- hexo 테마 추천
+- github 블로그
+- github 블로그 hexo
+- hexo page
+- hexo new post
+- jekyll
 disqusIdentifier: starthexoblog01
 clearReading: true
 thumbnailImagePosition: left

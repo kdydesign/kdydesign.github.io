@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "serve": "hexo serve --o"
+    "serve": "hexo serve --o",
+    "prod": "hexo g --d",
+    "generate": "hexo g",
+    "build:theme": "npm run build --prefix ./themes/tranquilpeak"
   },
   "hexo": {
     "version": "3.8.0"

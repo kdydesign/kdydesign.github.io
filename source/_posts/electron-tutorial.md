@@ -1,5 +1,5 @@
 ---
-title: "Electron 완전정복!! - 개념부터 데스트탑 앱 만들기"
+title: "Electron 완전정복!! - 개념부터 데스크탑 앱 만들기"
 date: 2019-04-15 22:04:46
 tags: 
 - npm
@@ -29,6 +29,10 @@ keywords:
 - electron 설치
 - electron 튜토리얼
 - electron tutorial
+- electron 앱
+- electron 배우기
+- electron 웹 앱 만들기
+- electron 앱 만들기
 disqusIdentifier: electron-base-tutorial
 clearReading: true
 thumbnailImage: false
@@ -43,7 +47,7 @@ actions: true
 ---
 
 <!-- more -->
-Electron 완전정복!! - 개념부터 데스트탑 앱 만들기!!
+Electron 완전정복!! - 개념부터 데스크탑 앱 만들기!!
 웹 기술인 JavaScript, HTML, CSS를 이용하여 크로스 플랫폼 데스크탑 앱을 만들 수 있는 Electron의 활용성과 사례가 어떤지 알아보고, 개념부터 설치 그리고 데스트탑 앱을 한 번에 배우고 만들어보자. 
 이제는 JavaScript와 HTML 그리고 CSS를 활용하여 데스크탑 앱을 만들 수 있다. Electron은 다른 JavaScript Framework와도 접목해 개발이 가능하기 때문에 기존의 웹 기술을 가지고 있는 웹 개발자라면 한 번쯤은 도전해 볼 만한 Framework이다.
 <!-- more -->

@@ -25,6 +25,8 @@ keywords:
 - vue 튜토리얼
 - vue.js tutorial
 - nuxt.js tutorial
+- vue 배우기
+- vuejs 배우기
 disqusIdentifier: vue.js01
 clearReading: true
 thumbnailImagePosition: left
