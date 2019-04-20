@@ -253,3 +253,11 @@ new Vue({
 - - -
 
 각 개발자마다 코드 스타일은 모두 다르고 해당 포스트에 언급한 내용 이외에 더 좋은 방법이 있을 수 있다. 다만 중요한 것은 개발하기 전 또는 하면서 어느 방법이 가장 좋은지 몸소 느끼며 차근차근 수정해 나아가는 것이 중요하다고 본다. 어느 스타일이든 결과는 같겠지만 업무/개발의 속도는 확연히 차이가 날 것이다.
+
+---
+
+더 알아보기
+> [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/)
+> [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
+> [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
+> [Nuxt.js 개념부터 설치까지 빠르게 배우기](https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/)

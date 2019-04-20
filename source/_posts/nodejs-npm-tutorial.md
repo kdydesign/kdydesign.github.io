@@ -76,13 +76,13 @@ actions: true
 
 설치가 완료되었다면 확인해보자. 명령 프롬프트를 실행하여 아래 명령어를 쳐보자.
 
-```bash
+```
 $ node -v
 ```
 
 정상적으로 다운로드 받고 설치한 버전 정보가 출력된다면 설치는 완료된 것이다. 물론 `npm`도 설치가 되었겠지만 그래도 확인은 해보자.
 
-```bash
+```
 $ npm -v
 ```
 
@@ -92,37 +92,37 @@ $ npm -v
 
 `node.js`를 설치하였으니 한번 실행해보자. 명령 프롬프트를 열어 `node`명령어를 실행하자.
 
-```bash
+```
 $ node
 ```
 
 이제 우리는 명령 프롬프트에 JavaScript 코드를 입력하여 실행할 수 있다. 아래 코드를 `Enter`와 함께 입력해보자.
 
-```javascript
+
+{% codeblock console.log lang:javascript%}
 var a = 1;  //enter
 a           //enter  //print `1`
 var b = 2;  //enter
 b           //enter  //print `2`
 console.log('sum = ' + a + b);  //enter  //print 'sum = 3'
-```
+{% endcodeblock %}
 
 명령 프롬프트에서 이렇게 JavaScript 코드를 입력할 수도 있지만 이렇게 개발할 수는 없다. JavaScript 파일을 만들고 해당 파일을 실행해보자. 먼저 정당한 곳에 `NodeTest`폴더 하나를 만들고 그 폴더 안에 `main.js`파일을 만들자.
 
-```javascript
-//mian.js
-
+{% codeblock main.js lang:javascript%}
 function sum(a, b) {
     return a + b;
 }
 
 console.log('sum = ' + sum(1, 2));
-```
+{% endcodeblock %}
+
 
 `main.js`파일을 만들었으면 `NodeTest`경로로 이동하자. 명령 프롬프트로 이동해도 되고 아니면 `NodeTest`폴더에서 `Shift + 마우스 우클릭`을 통해 `여기서 명령 창 열기`를 통해 명령 프롬프트를 실행할 수 있다.
 
 어쨌든 명령 창을 실행하였으면 `main.js`를 실행하자.
 
-```bash
+```
 $ node main.js
 ```
 
@@ -132,7 +132,7 @@ $ node main.js
 
 이제 `npm`을 테스트해보자. `npm`을 통해 특정 모듈을 다운받고 그 모듈을 통해 어떤 작업을 수행할 것이다. 먼저 `NodeTest`폴더로 이동하여 명령 프롬프트를 실행 후 명령어를 입력하자.
 
-```bash
+```
 $ npm init -y
 ```
 
@@ -144,7 +144,8 @@ $ npm init -y
 
 우리가 만든 `package.json`을 열어보자.
 
-```json
+
+{% codeblock package.json lang:json%}
 {
   "name": "NodeTest",
   "version": "1.0.0",
@@ -157,11 +158,12 @@ $ npm init -y
   "author": "",
   "license": "ISC"
 }
-```
+{% endcodeblock %}
+
 뭔가 보니까 감이 오는가?
 `package.json`은 프로젝트에 대한 명세라고 할 수 있다. 해당 프로젝트의 이름, 버전, 사용되는 모듈 등의 스펙이 정해져 있으며, 이 `package.json`을 통해 모듈 의존성 모듈 관리도 진행할 수 있다. 만약 어떤 오픈 소스를 다운 받을 때 이 `package.json`만 있다면 해당 오픈 소스가 의존하고 있는 모듈이 어떤 것인지. 그리고 그 모듈들을 아래 명령어로 한 번에 설치할 수 있다.
 
-```bash
+```
 $ npm install
 ```
 - - -
@@ -170,37 +172,37 @@ $ npm install
 
 여기까지 해서 `package.json`이 생성되었으니 `npm`을 통해 모듈을 설치해보자. 모듈은 `mocha`라는 Front-End 단위 테스트(TDD) 프레임워크를 설치해보겠다. `mocha`와 관련된 포스트는 [JavaScript 단위 테스트 프레임워크 - Mocha](https://kdydesign.github.io/2017/06/08/Mocha/)를 참고하도록하자.
 
-```bash
+```
 $ npm install mocha --save-dev
 ```
 
 해당 명령어를 통해 mocha를 설치해만 `NodeTest`폴더 안에는 `node_modules`폴더가 생성되고 그 안에는 `mocha`모듈이 설치된 것을 확인할 수 있다. 그리고 다시 `package.json`을 열어보면 `devDependencies`에 `mocha`가 추가된 것을 볼 수 있다. 이는 `mocha`를 설치할 때 `--save-dev`옵션을 추었기에 추가가 된 것이다.
 
-```json
-...
-
-"devDependencies": {
+{% codeblock package.json lang:json%}
+{
+  // ...
+  "devDependencies": {
     "mocha": "^3.4.2"
+  }
+  // ...
 }
-
-...
-```
+{% endcodeblock %}
 
 이렇게 설치한 `npm`모듈은 해당 프로젝트에서 사용할 수 있는 흔히 말하는 지역변수와 같은 개념이 되는 것이다. 그럼 지역변수가 있으니 전역으로 사용할 수 있는 모듈도 있지 않을까?
 
-```bash
+```
 $ npm install mocha -g
 ```
 
 전역으로 설치하기 위해서는 `-g`옵션을 추가해주면 된다. 이렇게 전역으로 설치된 모듈은 `C:\Users\사용자명\AppData\Roaming\npm`경로에 설치가 된다. (폴더가 없다면 숨김포더를 해제하라.) 이렇게 전역으로 설치한 모듈을 해당 프로젝트에서 `심볼릭 링크`로도 사용이 가능하다.
 
-```bash
+```
 $ npm link mocha
 ```
 
 `npm`을 통해 설치된 모듈의 목록 역시 확인할 수 있다. 아래 명령어를 하나씩 입력해보자.
 
-```bash
+```
 $ npm list 
 $ npm list -g
 $ npm ls    
@@ -212,3 +214,13 @@ $ npm ls -depth=0
 - - -
 
 `node.js`와 `npm`으로 인해 개발은 더욱 편리해지고 있다. 또한 나로써는 `node.js`가 JavaScript 기반이라는 것이 너무나 좋다. JavaScript를 알고 있으니까.. 오래전에 JavaScript로 서버를 구축한다는 생각이나 했었을까.. 페이스북에서는 VR 개발용 JavasScript 프레임워크도 공개하기도 하였다. JavaScript의 범용성은 어디까지 일까.
+
+---
+
+더 알아보기
+> [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
+> [Electron 완전정복!! - 개념부터 데스크탑 앱 만들기](https://kdydesign.github.io/2019/04/15/electron-tutorial/)
+> [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)
+> [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
+> [Nuxt.js 개념부터 설치까지 빠르게 배우기](https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/)
+

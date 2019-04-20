@@ -133,7 +133,7 @@ Electron은 웹 기반 기술을 사용하기 때문에 우리가 흔히 사용�
 
 우리는 이 Template를 받아서 실행해 보자.
 
-```bash
+```
 $ git clone https://github.com/electron/electron-quick-start 
 $ cd electron-quick-start
 $ npm i && npm start
@@ -180,7 +180,7 @@ $ npm i -D electron-builder
 
 설치가 되었으면 패키지에 필요한 정보를 `package.json` 가장 하단에 명시하자. 
 
-```json
+{% codeblock package.json lang:json%}
 {
   // ..
   "build": {
@@ -188,11 +188,11 @@ $ npm i -D electron-builder
     "appId": "myApp"
   }
 }
-```
+{% endcodeblock %}
 
 이제 `package.json`의 npm command를 수정하여 실행해 보자.
 
-```json
+{% codeblock package.json lang:json%}
 {
   // ..
   "scripts": {
@@ -200,9 +200,9 @@ $ npm i -D electron-builder
     "pack": "electron-builder"
   }
 }
-```
+{% endcodeblock %}
 
-```bash
+```
 $ npm run pack
 ```
 
@@ -223,3 +223,8 @@ $ npm run pack
 
 
 여기까지 해서 Electron이 무엇인지 그리고 Electron의 추이가 어떤지 확인도 해보고 간단하지만, Electron Application을 생성하고 실제로 배포까지 해 보았다. 간단하지만 우리는 지금 Electron의 한 과정을 경험 해 본 것이다. 이제 좀 더 퀄리티있는 Application을 만들기 위해 우리는 `Web Framework를 추가해서 실제 그럴싸한 Application`을 만들어 보자. 다음 포스팅엔 ** Vue.js와 Electron을 사용하는 방법 **에 대해서 알아보도록 하자. 그전에 Vue.js가 무엇인지 [자바스크립트 프레임워크 - Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-concept/)에서 확인해보도록 하자.
+
+---
+
+더 알아보기
+> [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/)

@@ -46,7 +46,7 @@ actions: true
 ---
 
 <!-- more -->
- Jekyll보다 쉬운 hexo와 github page를 이용하여 블로그를 쉽고 빠르게 만들어보자.  `github page`는 `Jekyll`과 많이 사용되지만 hexo가 `Jekyll`보다 더욱 쉽고 빠르게 블로그를 만들 수 있다.
+Jekyll보다 쉬운 hexo와 github page를 이용하여 블로그를 쉽고 빠르게 만들어보자.  `github page`는 `Jekyll`과 많이 사용되지만 hexo가 `Jekyll`보다 더욱 쉽고 빠르게 블로그를 만들 수 있다.
 <!-- more -->
 
 <!-- excerpt -->
@@ -84,7 +84,7 @@ actions: true
 **내 포스트를 웹에 올리기 위해** `git`을 설치하자. 
 [Git 공식 사이트](https://git-scm.com/)에 접속해서 우측에 Download를 진행한 후 그저 Next를 통해 빠르게 설치한다. `git`이 설치가 잘 되었다면 바탕화면에서 `마우스 우클릭`을 눌러보자. `Git GUI Here`과 `Git Bash Here`라는 Context가 생겼을 것이다. `Git Bash Here`을 눌러 Bash를 실행한 후에 아래처럼 입력하자.
  
-```bash
+```
 $ git --version
 ```
 
@@ -99,7 +99,6 @@ $ git --version
 ![thumb01](thumb01.png)
 
 `New Repository`를 누르면 저장소를 생성하는 화면이 나온다. 여기서 `Repository Name`와 `Description`을 적어주는데 `Repository Name`은 아래와 같은 형식으로 적어준다.
-
 {% alert danger no-icon %}
 Repository Name - **계정이름.github.io**
 {% endalert %}
@@ -109,7 +108,7 @@ Repository Name - **계정이름.github.io**
 ## Git 설정
 `git`을 설치 후 최초에 한번 기본 설정을 진행하면 된다. 설정은 `이름`과 `email`을 등록하는 것이다. `github`를 가입하고 `git` 설정을 넣은 이유는 설정 시에 복잡하게 생각할 것 없이 `github`로 생성한 아이디나 이메일로 등록하자라는 취지에서 순서를 좀 섞었다. `git`설치 시에 열었던 `git bash`창을 다시 열어 설정을 진행하자.
 
-```bash
+```
 $ git config --global user.name 사용자 명
 $ git config --global user.email 사용자 이메일
 ```
@@ -120,11 +119,11 @@ $ git config --global user.email 사용자 이메일
 
 설치가 완료되었으면 Command( *window 키 + R 후에 cmd 입력*)창에 명령어를 입력해 보자. `node.js`와 `npm`에 대해서는 [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/)를 참고하자.
 
-```bash
+```
 $ node -v
 ```
 
-```bash
+```
 $ npm -v
 ```
 
@@ -135,7 +134,7 @@ $ npm -v
 ## Hexo 설치
 이제 hexo를 설치하자. 위에서 `npm`을 통해 hexo를 설치한다고 하였다. 그대로 실행해 보자.
 
-```bash
+```
 $ npm install -g hexo-cli
 ```
 
@@ -159,7 +158,7 @@ $ npm install -g hexo-cli
 
 이제 블로그를 생성해 보겠다. 먼저 적당하게 폴더를 하나 만든 후에 그 폴더에 접근 후 `Shift + 마우스 우클릭`을 통해 `여기서 명령 창 열기`를 실행하자. 그리고 명령어를 입력하자.
 
-```bash
+```
 $ hexo init myBlog
 $ cd myBlog
 $ npm install
@@ -186,27 +185,29 @@ hexo로 생성한 블로그는 `github`에 업로드해야지만 블로그에 �
 
 아래처럼 수정하자.
 
-```yaml
+{% codeblock _config.yml lang:yaml%}
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
   repo: https://github.com/계정이름/계정이름.github.io.git
-```
+{% endcodeblock %}
 
 그리고 hexo에서 `github`에 업로드하기 위해 필요한 `npm`모듈을 설치하자. 생성한 블로그 폴더 경로로 이동하여 명령 창을 실행하여 `npm`명령어를 입력하자.
 
-```bash
+```
 $ npm install hexo-deployer-git --save
 ```
 
 위와 같이 설정하고 `hexo deploy` 명령어를 실행하게 되면 `_config.yml`에 작성해둔 주소로 소스를 업로드하게 된다.
 
 `_config.yml`에서는 블로그의 공통적인 속성을 설정할 수 있다. 예를들면 `title`은 블로그의 타이틀을 나타낸다. 자세한 내용은 [HEXO DOCUMENT](https://hexo.io/ko/docs/)에서 확인하고 수정하도록 하자.
+
+
 ### 포스트 생성하기
 이제 포스트를 작성해보도록 하자. 모든 것은 hexo를 통해 이루어진다. 생성한 블로그 폴더 경로로 이동하여 명령 창을 실행하여 아래처럼 입력하자.
 
-```bash
+```
 $ hexo new post first-post
 ```
 
@@ -216,13 +217,13 @@ hexo의 `new post [포스트 파일명]`명령어를 입력하게 되면 포스�
 
 생성한 파일을 열어보자. 참고로 `markdown`을 지원하는 에디터는 다양하다. 웹으로도 지원하는 에디터를 참고하여 작성하자. 나는 [StackEdit](https://stackedit.io/)를 사용한다.
 
-```yaml
+{% codeblock first-post.md lang:markdown%}
 ---
 title: first-post
 date: 2017-06-30 13:53:51
 tags:
 ---
-```
+{% endcodeblock %}
 
 기본 옵션에 대한 설명은 아래와 같다.
 
@@ -234,7 +235,7 @@ tags:
 
 글을 작성해 보자.
 
-```markdown
+{% codeblock first-post.md lang:markdown%}
 ---
 title: first-post
 date: 2017-06-30 13:53:51
@@ -245,12 +246,13 @@ tags:
 나의 첫번째 포스트입니다.
 ...
 ...
-```
+{% endcodeblock %}
+
 
 ### Hexo 빌드
 우리는 포스트 작성을 `markdown`으로 작성하였다. hexo로 이 `markdown`으로 구성된 파일을 빌드하게 되면 `github page`에 적합한 구조로 재 생성하고 `md`파일들은 `html`파일로 변경해준다.
 
-```bash
+```
 $ hexo generate 또는 hexo g
 ```
 
@@ -260,7 +262,7 @@ $ hexo generate 또는 hexo g
 
 포스트를 작성하고 `generate`까지 하였다면 로컬에서 먼저 확인해보자.
 
-```bash
+```
 $ hexo server
 ```
 
@@ -270,14 +272,14 @@ hexo의 내장 서버 구동하고 브라우저를 실행하여 **http://localho
 
 로컬에서 확인하고 수정할 곳이 없다고 판단되면 블로그 소스들을 `github`에 업로드하여 실제 블로그 페이지 띄워 서비스해보자.
 
-```bash
+```
 $ hexo deploy 또는 hexo d
 ```
 위의 명령어를 통해  `github`에 업로드를 하며, `generate 명령어`와 동시에 작성할 수도 있다.
 
-```bash
+```
 $ hexo g --d
-```  
+```
 
 `deploy`가 되었다면 `github`에 접속하여 `계정명.github.io`의 `Repository`를 보자. 파일이 업로드가 되었는가? 그렇다면 브라우저 주소창에 **https://계정명.github.io**를 입력해보자. 우리가 지금까지 해온 결과물이 출력 될 것이다.
 
@@ -299,3 +301,10 @@ $ hexo g --d
 9.  로컬에서 확인
 10. github에 업로드
 {% endalert %}
+
+---
+
+더 알아보기
+> [Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기](https://kdydesign.github.io/2017/07/07/hexo-theme/)
+
+
