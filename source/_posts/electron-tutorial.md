@@ -9,7 +9,7 @@ tags:
 - electron.js
 - electron 배우기
 - electron 튜토리얼
-- elertron tutorial
+- electron tutorial
 - electron framework
 - electron 설치
 categories :
