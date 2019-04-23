@@ -4,6 +4,51 @@
   
     
     <entry>
+      <title>Vue-CLI 3 배우기</title>
+      <link href="/2019/04/22/vue-cli3-tutorial/"/>
+      <url>/2019/04/22/vue-cli3-tutorial/</url>
+      
+        <content type="html"><![CDATA[<!-- excerpt --><!-- excerpt --><p><img src="cover.png" alt="cover"></p><p>Vue CLI 3는 Vue.js 개발을 위한 시스템으로 Vue.js Core에서 공식으로 제공하는 CLI이다. Vue CLI는 애플리케이션 개발에 집중할 수 있도록 프로젝트의 구성을 도와주는 역할을 하며, Vue 생태계에서 표준 툴 기준을 목표로 하고 있다.</p><p>Vue CLI의 사용은 선택사항이다. Vue 애플리케이션을 개발하기 전에 Vue CLI를 통해 프로젝트를 구성하고 구축하지 않는다 하더라도 애플리케이션에 영향을 주지는 않는다. 그저 Vue CLI는 앞에서 말했듯이 툴의 역할을 하고 스캐폴딩에 도움을 주는 역할만 한다.<br>Vue CLI를 사용하지 않아도 무방하지만 Vue.js와 관련된 오픈 소스들은 대부분 Vue CLI를 통해 구성이 가능하도록 구현되어 있고 굳이 Git으로 clone하지 않아도 Vue CLI를 통해 더욱더 손쉽게 설치가 가능하기 때문에 Vue CLI의 사용을 추천하는 바이다.</p><p>그럼 이제 Vue CLI에 대해서 알아보자. 해당 포스트에서는 Vue CLI 3.x에 관해서 설명을 하며 Vue CLI 2.x에 대한 내용은 <a href="https://github.com/vuejs/vue-cli/tree/v2#vue-cli--" target="_blank" rel="noopener">Vue CLI 2</a>를 참고하자.</p><h1 id="Vue-CLI-3"><a href="#Vue-CLI-3" class="headerlink" title="Vue-CLI 3"></a>Vue-CLI 3</h1><p>Vue CLI는 애플리케이션에 필요한 요소들을 대화형 커맨드로 쉽게 설치하도록 도와준다. 현재 Vue CLI는 3.x까지 릴리즈된 상태이며, Vue CLI의 시스템은 3가지 요소로 구분할 수 있다.</p><h2 id="CLI"><a href="#CLI" class="headerlink" title="CLI"></a>CLI</h2><p>CLI(@vue/cli)는 전역적으로 설치된 npm 패키지이며, Vue.js 프로젝트를 생성하는 <code>vue create</code>, UI를 통해 프로젝트를 관리할 수 있는 <code>vue ui</code> 등 터미널에서 <code>vue</code>를 사용한 명령을 제공한다.</p><h2 id="CLI-Service"><a href="#CLI-Service" class="headerlink" title="CLI Service"></a>CLI Service</h2><p>CLI Service는 <code>webpack</code>, <code>webpack-dev-server</code> 위에 구축이 되며 CLI PlugIn을 실행하는 핵심 서비스와 webpack에 대한 설정을 포함하고 있다. 즉, webpack을 통해 애플리케이션의 개발 서버 실행, 빌드 등을 처리한다.</p><h2 id="CLI-PlugIn"><a href="#CLI-PlugIn" class="headerlink" title="CLI PlugIn"></a>CLI PlugIn</h2><p>CLI PlugIn은 Babel/TypeScript, ESLint, e2e Test, 단위 테스트와 같은 선택적으로 설치가 필요한 PlugIn을 말하며, 프로젝트 생성 과정에서 포함하거나 이후에 포함 시킬 수 있다.</p><h1 id="Vue-CLI-3-설치"><a href="#Vue-CLI-3-설치" class="headerlink" title="Vue-CLI 3 설치"></a>Vue-CLI 3 설치</h1><p>이제 Vue CLI를 설치해 보자. 기본적으로 Vue CLI를 설치하기 위해서는 8.9 버전 이상의 Node.js가 필요하다. Node.js 설치와 설명은 <a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념 잡기</a>를 참고하자.</p><p>Node.js를 설치하였다면 Vue-CLI를 설치하자.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm i -g @vue/cli</span><br><span class="line">$ vue --version</span><br></pre></td></tr></table></figure><p>Vue CLI를 설치 후 버전을 확인해 보면 3.x이 설치된 것을 확인할 수 있다. 그리고 하나 더 설치하자.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm i -g @vue/cli-init</span><br></pre></td></tr></table></figure><p><code>@vue/cli-init</code>은 2.x Template을 가져오기 위한 <code>vue init</code>기능을 제공한다.<br>예를 들면.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vue init webpack my-project</span><br></pre></td></tr></table></figure><p>위와 같이 <a href="https://github.com/vuejs-templates/webpack" target="_blank" rel="noopener">vue-webpack-boilerplate</a>를 구성할 수 있다.</p><h1 id="Vue-CLI-3를-통한-프로젝트-생성"><a href="#Vue-CLI-3를-통한-프로젝트-생성" class="headerlink" title="Vue-CLI 3를 통한 프로젝트 생성"></a>Vue-CLI 3를 통한 프로젝트 생성</h1><p>대부분 프로젝트를 시작할 때 또는 프로토타입 프로젝트를 만들 때 잘되어있는 Bolierplate를 가져다가 쓸 것이다. 그럴 때는 위에 설명했듯이 <code>vue init</code>만 사용하면 되지만 직접 프로젝트를 생성할 때에는 <code>vue create</code>를 사용한다.</p><p>vue 프로젝트를 생성해 보자.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vue create &lt;project-name&gt;</span><br></pre></td></tr></table></figure><p>위와 같이 실행하면 대화형 커맨드로 프로젝트 구성에 필요한 요소들을 선택하여 설치할 수 있다. <code>default</code>를 선택하여 생성하게 되면 표시된 대로 <code>babel</code>과 <code>eslint</code>가 설치된다.<br><code>Manually select features</code>를 선택하게 되면 <code>vuex</code>, <code>vue-router</code> 등과 같은 몇 가지 더 선택적으로 설치할 수 있다. 우리는 <code>Manually select features</code>를 선택하도록 하자.</p><p><img src="img1.png" alt="vue-cli-sample1"></p><p>무엇을 설치할지는 본인의 몫이지만 해당 포스트에서는 <strong> <code>Babel</code>, <code>Router</code>, <code>Vuex</code>, <code>CSS pre-processors</code>, <code>Linter / Formatter</code> </strong>를 선택하여 설치해 보자. <code>Unit Testing</code>에 대해서는 <a href="https://kdydesign.github.io/2017/06/08/Mocha/">JavaScript 단위 테스트 프레임워크 - Mocha Tutorial</a>을 참고하자.</p><p>필요한 모듈들을 선택하고 다음 단계로 넘어가면 vue-router의 <code>history</code> 기능을 사용할지 여부를 확인한다. 기본 설치이므로 엔터를 치고 넘어가자.</p><p><img src="img2.png" alt="vue-cli-sample2"></p><p>다음 단계에서는 <code>CSS 전처리기(CSS pre-processors)</code>에 대해서 어떤 모듈을 사용하지 선택하는 항목이 나온다. 본 포스트에서는 <code>Stylus</code>를 선택하였다.</p><p><img src="img3.png" alt="vue-cli-sample3"></p><p>그다음으로는 <code>ESLint</code>에 관련된 항목이 나온다. 어떤 항목을 선택하더라도 ESLint는 기본적으로 설치가 되며 여기서는 ESLint에 대해 어떤 룰을 적용할지를 선택한다. 본 포스트에서는 <code>Standard config</code>를 선택하도록 하겠다.</p><p><img src="img4.png" alt="vue-cli-sample4"></p><p>다음으로는 <code>Lint on save</code>를 선택하고 그다음 단계에서는 <code>In package.json</code> 선택하고 넘어가게 되면 선택된 모듈들이 설치됨으로써 프로젝트 구성은 끝이 난다.</p><p>생성된 디렉토리를 보게 되면 우리가 애플리케이션을 구성하는데 필요한 요소들이 이미 준비가 되어있다.</p><h1 id="Vue-CLI-3-UI"><a href="#Vue-CLI-3-UI" class="headerlink" title="Vue-CLI 3 UI"></a>Vue-CLI 3 UI</h1><p>이제 이렇게 구성된 프로젝트를 <code>Vue-CLI 3 UI</code>를 통해 프로젝트 관리를 알아보자.<br>위에서 생성된 프로젝트에서 <code>vue ui</code>를 실행하자.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vue ui</span><br></pre></td></tr></table></figure><p>위와 같이 실행하면 <code>Vue 프로젝트 매니저</code>가 <code>locahost:8000</code>으로 자동으로 브라우저가 실행된다. 이 Vue 프로젝트 매니저에서 위에서 생성한 프로젝트를 생성 할 수도 있으며 이미 생성된 프로젝트를 불러와서 관리 포인트로 둘 수도 있다. 우리는 프로젝트를 이미 생성하였으므로 <code>가져오기</code> 버튼을 클릭하여 해당 프로젝트를 가져오자.</p><p><img src="vue-ui.png" alt="vue-ui"></p><p>Vue 프로젝트 매니저를 훑어보면 대번 어떤 형태인지 알 수 있다. 우리가 커맨드로 처리하던 행동들을 UI를 통해서 처리할 수 있다고 볼 수 있다.</p><h1 id="프로젝트-실행"><a href="#프로젝트-실행" class="headerlink" title="프로젝트 실행"></a>프로젝트 실행</h1><p><code>Vue 프로젝트 매니저</code>의 <code>작업 목록</code>에서 <code>serve</code>를 통해 구동할 수도 있으며, npm 커맨드를 통해서도 구동할 수 있다.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm run serve</span><br></pre></td></tr></table></figure><p><img src="run-serve.png" alt="run-serve"></p><h1 id="Vue-CLI-3-PlugIn-설치"><a href="#Vue-CLI-3-PlugIn-설치" class="headerlink" title="Vue CLI 3 PlugIn 설치"></a>Vue CLI 3 PlugIn 설치</h1><p>Vue CLI를 통해 PlugIn을 설치하기 위해서는 <code>vue add</code> 커맨드를 사용하면 된다. 또는 <code>Vue 프로젝트 매니저</code>에서 PlugIn의 목록을 검색할 수도 있고 설치까지 할 수 있으니 한번 확인해보기 바란다.</p><p>여기서는 <code>vue-cli-plugin-axios</code>를 설치해보자.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vue add axios // or vue add vue-cli-plugin-axios</span><br></pre></td></tr></table></figure><p>PlugIn이 설치되었으면 확인해보자.<br>먼저 <code>src &gt; plugins</code> 폴더를 보게 되면 <code>axios.js</code>를 확인해 볼 수 있다. 해당 파일의 내용을 보면 이런 내용이 있다.</p><figure class="highlight javascript"><figcaption><span>axios.js</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Plugin.install = <span class="function"><span class="keyword">function</span>(<span class="params">Vue, options</span>) </span>&#123;</span><br><span class="line">  Vue.axios = _axios;</span><br><span class="line">  <span class="built_in">window</span>.axios = _axios;</span><br><span class="line">  <span class="built_in">Object</span>.defineProperties(Vue.prototype, &#123;</span><br><span class="line">    axios: &#123;</span><br><span class="line">      <span class="keyword">get</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> _axios;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    $axios: &#123;</span><br><span class="line">      <span class="keyword">get</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> _axios;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Vue.use(Plugin)</span><br></pre></td></tr></table></figure><p>우리가 Vue CLI를 사용하지 않고 Vue.js 애플리케이션을 만들었다면 <code>axios</code>를 npm으로 설치하고 main.js 또는 app.js에 수동적으로 추가해주었을 <code>Vue.use()</code>가 자동으로<br>생성되어있다.</p><p>그럼 <code>axios.js</code>는 어디에 삽입된 것일까? <code>src &gt; main.js</code>를 열어보자.</p><figure class="highlight javascript"><figcaption><span>main.js</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'./plugins/axios'</span></span><br></pre></td></tr></table></figure><p>상단에 보면 이미 <code>axios.js</code>가 <code>main.js</code>에 import 된 것을 볼 수 있다.</p><hr><p>여기까지 해서 우리는 <code>Vue CLI 3</code>를 통해 프로젝트를 구성하고 실행했으며, <code>Vue 프로젝트 매니저</code>를 통해 프로젝트를 관리할 수 있다는 것을 알게 되었다. 물론 <code>package.json</code>에도 종속성이 관리되어 설치된 것도 확인이 가능하다.</p><p>Vue CLI 3 PlugIn에 대해서는 <a href="https://cli.vuejs.org/guide/plugins-and-presets.html#plugins" target="_blank" rel="noopener">Vue CLI 3 플러그인 및 프리셋</a>을 참고하자.</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> javascript </category>
+          
+          <category> nodejs </category>
+          
+          <category> npm </category>
+          
+          <category> vue.js </category>
+          
+          <category> vue cli </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vue.js </tag>
+            
+            <tag> nuxt.js </tag>
+            
+            <tag> npm </tag>
+            
+            <tag> nodejs </tag>
+            
+            <tag> javscript </tag>
+            
+            <tag> electron </tag>
+            
+            <tag> vue cli </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Electron 완전정복!! - 개념부터 데스크탑 앱 만들기</title>
       <link href="/2019/04/15/electron-tutorial/"/>
       <url>/2019/04/15/electron-tutorial/</url>
@@ -46,11 +91,11 @@
             
             <tag> electron 튜토리얼 </tag>
             
-            <tag> elertron tutorial </tag>
-            
             <tag> electron framework </tag>
             
             <tag> electron 설치 </tag>
+            
+            <tag> electron tutorial </tag>
             
         </tags>
       
