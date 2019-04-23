@@ -130,5 +130,8 @@ Web front-end build tool에는 여러 가지가 있다. 이러한 build tool은 
 
 다음 포스팅에서는 실제로 `Webpack`을 어떻게 사용하지. `Webpack` 설치부터 응용까지 해 보기로 하자.
 
+---
 
+더 알아보기
+> [Webpack 완전정복하기!!](https://kdydesign.github.io/2017/11/04/webpack-tutorial/)
 

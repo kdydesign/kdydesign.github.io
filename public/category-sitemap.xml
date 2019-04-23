@@ -14,20 +14,6 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/</loc>
-        <lastmod>2019-04-18T13:09:12.918Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/webpack/</loc>
-        <lastmod>2019-04-18T13:09:12.918Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/electron/</loc>
         <lastmod>2019-04-23T15:06:17.787Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -77,113 +63,127 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-%EC%84%A4%EC%B9%98/</loc>
-        <lastmod>2019-04-23T15:06:17.826Z</lastmod>
+        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/</loc>
+        <lastmod>2019-04-23T15:15:55.907Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-%EC%84%A4%EC%B9%98/nuxt-js-%EA%B8%B0%EC%B4%88/</loc>
-        <lastmod>2019-04-23T15:06:17.826Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/</loc>
-        <lastmod>2019-04-23T15:06:17.853Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/vue-js-big-data/</loc>
-        <lastmod>2019-04-23T15:06:17.853Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/</loc>
-        <lastmod>2019-04-23T15:06:17.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/</loc>
-        <lastmod>2019-04-23T15:06:17.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/</loc>
-        <lastmod>2019-04-23T15:06:17.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/vue-js/</loc>
-        <lastmod>2019-04-23T15:06:17.864Z</lastmod>
+        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/webpack/</loc>
+        <lastmod>2019-04-23T15:15:55.907Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/vue-js/vue-js-tutorial/</loc>
-        <lastmod>2019-04-23T15:06:17.864Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.660Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/</loc>
-        <lastmod>2019-04-23T15:06:17.864Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.660Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/vuex-helper/</loc>
-        <lastmod>2019-04-23T15:06:17.864Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.660Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/</loc>
-        <lastmod>2019-04-23T15:08:32.858Z</lastmod>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/</loc>
+        <lastmod>2019-04-23T15:20:06.663Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/vue-js-performance/vue-js-big-data/</loc>
+        <lastmod>2019-04-23T15:20:06.663Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/</loc>
-        <lastmod>2019-04-23T15:08:32.858Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.665Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/</loc>
-        <lastmod>2019-04-23T15:08:32.858Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.665Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/vue-js/</loc>
-        <lastmod>2019-04-23T15:08:32.858Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.665Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/vue-js/vue-cli/</loc>
-        <lastmod>2019-04-23T15:08:32.858Z</lastmod>
+        <lastmod>2019-04-23T15:20:06.665Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-%EC%84%A4%EC%B9%98/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-%EC%84%A4%EC%B9%98/nuxt-js-%EA%B8%B0%EC%B4%88/</loc>
+        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

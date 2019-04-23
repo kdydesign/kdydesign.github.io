@@ -1,5 +1,5 @@
 ---
-title: "Vue-CLI 3 배우기"
+title: "Vue-CLI 3 시작하기"
 date: 2019-04-22 12:22:06
 tags: 
 - npm
@@ -208,10 +208,18 @@ import './plugins/axios'
 
 상단에 보면 이미 `axios.js`가 `main.js`에 import 된 것을 볼 수 있다.
 
-
-
-
 - - -
+
 여기까지 해서 우리는 `Vue CLI 3`를 통해 프로젝트를 구성하고 실행했으며, `Vue 프로젝트 매니저`를 통해 프로젝트를 관리할 수 있다는 것을 알게 되었다. 물론 `package.json`에도 종속성이 관리되어 설치된 것도 확인이 가능하다.
 
 Vue CLI 3 PlugIn에 대해서는 [Vue CLI 3 플러그인 및 프리셋](https://cli.vuejs.org/guide/plugins-and-presets.html#plugins)을 참고하자.
+
+
+---
+
+더 알아보기
+> [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/)
+> [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
+> [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)
+> [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
+> [Nuxt.js 개념부터 설치까지 빠르게 배우기](https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/)
