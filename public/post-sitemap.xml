@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kdydesign.github.io/2017/11/04/webpack-tutorial/</loc>
+        <lastmod>2019-04-23T15:41:58.685Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/</loc>
         <lastmod>2019-04-23T15:20:06.671Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -49,14 +57,6 @@
     <url>
         <loc>https://kdydesign.github.io/2017/07/27/webpack/</loc>
         <lastmod>2019-04-23T15:15:55.907Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/2017/11/04/webpack-tutorial/</loc>
-        <lastmod>2019-04-23T15:15:46.823Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

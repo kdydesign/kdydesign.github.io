@@ -55,14 +55,14 @@ actions: true
 
 webpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보는 당신은 npm이 무엇인지 모른다면 [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/) 포스트를 참고하자. 자! 이제 설치를 해보자. 먼저 적당한 경로에 `Webpack_Project`라는 이름의 프로젝트 폴더를 생성하고 해당 폴더에서 명령 프롬프트를 실행하여 `webpack`을 설치하자.
 
-```sh
+```
 $ npm init -y
 $ npm install webpack --save-dev
 ```
 
 먼저 `npm init -y`를 통해 package.json을 생성하고 `npm install webpack --save-dev`명령을 통해 webpack을 설치하면서 동시에 package.json에 적용하였다. 실제로 webpack의 설치는 이것으로 끝이다. 우리는 항상 설치가 정상적으로 됐는지 확인은 버전으로 확인을 한다. 확인해보자.
 
-```sh
+```
 $ .\node_modules\.bin\webpack -v
 ```
 
@@ -73,32 +73,29 @@ $ .\node_modules\.bin\webpack -v
 
 가장 기초적인 방법으로 `webpack cli`명령어를 통해 javascript를 build 해 보자. 테스트에 필요한 파일은 `index.js`와 `index.html`이다.
 
-```javascript
-//index.js
-
+{% codeblock index.js lang:javascript%}
 function component() {
-	var element = document.createElement('div');
-	element.innerHTML = 'Hello Webpack!!';
+  var element = document.createElement('div');
+  element.innerHTML = 'Hello Webpack!!';
 
-	return element;
+  return element;
 }
 
 document.body.appendChild(component());
-```
+{% endcodeblock %}
 
-```html
-<!-- index.html -->
 
+{% codeblock index.html lang:html%}
 <!-- ... -->
 <body>
-	<script type="text/javascript" src="bundle.js"></script>
+  <script type="text/javascript" src="bundle.js"></script>
 </body>
 <!-- ... -->
-```
+{% endcodeblock %}
 
 코드는 간단하다. `Hello Webpack!!`이라는 문구를 출력할 뿐이다. 그런데 html에서는 조금 다르다. 먼저 .js파일을 불러오는 것은 이해가 되지만 우리가 만든 파일은 `index.js`인데 왠 `bundle.js`라는 파일을 호출하였을까. 일단 궁금증은 접어두고 webpack을 통해 build를 해보자.
 
-```sh
+```
 $ .\node_modules\.bin\webpack index.js bundle.js
 ```
 
@@ -111,23 +108,21 @@ cli를 통한 build는 단순한 구조의 파일을 build 하기에는 편하�
 
 먼저 `Webpack_Project` 경로에 `webpack.config.js`라는 javascript 설정 파일을 만들고 간단한 설정부터 진행하자.
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    }
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
 };
-```
+{% endcodeblock %}
 
 이렇게 작성된 설정 파일은 webpack 명령어를 통해 실행할 수 있다. (물론 실행 시에는 해당 디렉토리 경로에서 실행하자.)
 
-```sh
+```
 $ .\node_modules\.bin\webpack
 ```
 
@@ -141,7 +136,7 @@ $ .\node_modules\.bin\webpack
 
 처음 우리가 webpack cli를 통해 build 할 때는 build 될 대상과 build 된 파일을 명시해줬지만 여기서는 그저 webpack 이라는 단순한 명령어를 사용하였다. 그 이유는 우리가 webpack의 설정을 정의한 `webpack.config.js`를 생성하였고 이 파일은 webpack 명령어의 기본 파일이기 때문이다. 만약 우리가 설정파일이 `webpack.config.js`가 아닌 `webpack.build.js`와 같은 다른 파일로 정의를 하였다면 아래와 같은 명령어를 통해 실행 할 수 있다.
 
-```sh
+```
 $ .\node_modules\.bin\webpack --config webpack.build.js
 ```
 
@@ -154,63 +149,56 @@ $ .\node_modules\.bin\webpack --config webpack.build.js
 
 `style-loader`와 `css-loader`는 같이 사용되며 `style-loader`는 `<style>`태그를 삽입하여 CSS를 추가해주는 역할을 한다. 모든 설치는 npm을 통해 설치를 진행한다.
 
-```sh
+```
 $ npm install style-loader css-loader --save-dev
 ```
 
 설치가 완료되었으면 `webpack.config.js`에 `style-loader`와 `css-loader`를 정의하자.
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    module: {
-	    rules: [
-	     	{
-	        	test: /\.css$/,
-	        	use: [
-	         		'style-loader',
-	          		'css-loader'
-	        	]
-	      	}
-	    ]
-  	}
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }
+    ]
+  }
 };
-
-```
+{% endcodeblock %}
 
 loader는 `module`에 추가해주며, 정규식(test)을 통해 loader가 인식될 파일을 잡아준다. 그리고 어떤(use) loader를 사용하는지 정의해 주면 된다. 이제 `style.css`파일을 추가하고 `index.js`파일을 수정하자.
 
-```css
-/* style.css */
-
+{% codeblock style.css lang:css%}
 .hello {
-	color: red;
+  color: red;
 }
-```
+{% endcodeblock %}
 
-```javascript
-//index.js
-
+{% codeblock index.js lang:javascript%}
 import './style.css';
 
 function component() {
-	var element = document.createElement('div');
-	element.innerHTML = 'Hello Webpack!!';
-	element.classList.add('hello');
+  var element = document.createElement('div');
+  element.innerHTML = 'Hello Webpack!!';
+  element.classList.add('hello');
 
-	return element;
+  return element;
 }
 
 document.body.appendChild(component());
-```
+{% endcodeblock %}
 
 우선 추가된 코드는 `hello`클래스와 이 클래스를 element에 추가하는 코드이다. 코드는 어렵지 않다. 그런데 왜 `style.css`를 `index.html`에 `<link>` 태그나 `<style>`태그를 통해 삽입하지 않고 `index.js`에 삽입을 하였을까? 이유는 처음에 설명한 style-loader의 역할 때문이다. 이렇게 `index.js`에 `style.css`를 명시하고 이 `index.js`를 build하게 되면 `loader`를 통해 `style.css`의 클래스는 `<script>`태그로 CSS가 추가되도록 되어 있다.
 
@@ -221,92 +209,84 @@ document.body.appendChild(component());
 
 `file-loader`를 사용하면 시스템에 존재하는 파일. 즉 이미지나 폰트와 같은 자산들을 하나로 통합할 수 있다. 사용 방식은 위에서 설명한 css-loader와 style-loader와 동일하다. `file-loader`를 먼저 설치하고 `webpkac.config.js`를 열어 loader를 추가하자.
 
-```sh
+```
 npm install file-loader --save-dev
 ```
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    module: {
-	    rules: [
-	     	{
-	        	test: /\.(png|svg|jpe?g|gif)$/,
-	        	loader:'file-loader'
-	      	}
-	    ]
-  	}
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpe?g|gif)$/,
+        loader:'file-loader'
+      }
+    ]
+  }
 };
-```
+{% endcodeblock %}
 
 여기서 loader를 보면 `css-loader`와 `style-loader`에서 사용한 `user:[]`가 사용되지 않고 `loader`로 사용되었다. 둘 다 적용이 가능한 옵션이며, `use:[]`경우 여러 `loader`를 지정할 때 사용되며 `loader`는 단일로 사용이 된다. 또한 각 `loader`는 각각의 특성에 따라 옵션을 지정할 있으며 아래와 같이 정의 할 수 있다.
 
-```javascript
-//example...
-
- module: {
-	    rules: [
-	     	{
-	        	test: /\.(png|svg|jpe?g|gif)$/,
-	        	loader:'file-loader',
-	        	option: {
-	        		name: '[hash].[ext]'
-	        	}
-	      	}
-	    ]
-  	}
-//...
-```
+{% codeblock example lang:javascript%}
+module: {
+  rules: [
+    {
+      test: /\.(png|svg|jpe?g|gif)$/,
+      loader:'file-loader',
+      option: {
+        name: '[hash].[ext]'
+      }
+    }
+  ]
+}
+{% endcodeblock %}
 
 이어서 가자. file-loader를 정의 하였으니 `Webpack_Project`안에 `asset`폴더를 하나 만들고 `image.png`파일과 같은 이미지 파일을 넣어놓자. 이렇게 넣어 놓은 이미지 파일을 `index.js`에서 불러 올 것이다.
 
-```javascript
-//index.js
 
+{% codeblock index.js lang:javascript%}
 import './style.css';
 import './asset/image.png';
 
 function component() {
-	var element = document.createElement('div');
-	element.innerHTML = 'Hello Webpack!!';
-	element.classList.add('hello');
+  var element = document.createElement('div');
+  
+  element.innerHTML = 'Hello Webpack!!';
+  element.classList.add('hello');
 
-	var myIcon = new Image();
-    myIcon.src = Icon;
+  var myIcon = new Image();
+  
+  myIcon.src = Icon;
+  element.appendChild(myIcon);
 
-    element.appendChild(myIcon);
-
-	return element;
+  return element;
 }
 
 document.body.appendChild(component());
-```
+{% endcodeblock %}
 
 이제 다시 build 하고 확인해 보자.
 
 해당 예제는 이미지로 진행하였지만 폰트 역시 동일하다. 다른게 있다면 폰트의 확장자를 통해 걸러내는 정규식이 다를 뿐이다.
 
-```javascript
-//example...
-
- module: {
-	    rules: [
-	     	{
-	        	test: /\.(woff|woff2|eot|ttf|otf)$/,
-	        	loader:'file-loader'
-	      	}
-	    ]
-  	}
-//...
-```
+{% codeblock example lang:javascript%}
+module: {
+  rules: [
+    {
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      loader:'file-loader'
+    }
+  ]
+}
+{% endcodeblock %}
 
 ## url-loader
 
@@ -314,34 +294,32 @@ document.body.appendChild(component());
 
 `url-loader`를 설치하고 `webpack.config.js`를 열어 `url-loader`를 추가해 주자.
 
-```sh
+```
 npm install url-loader --save-dev
 ```
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    module: {
-	    rules: [
-	     	{
-	        	test: /\.(png|svg|jpe?g|gif)$/,
-	        	loader:'url-loader',
-	        	options: {
-	              limit: 10000
-	            }
-	      	}
-	    ]
-  	}
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpe?g|gif)$/,
+        loader:'url-loader',
+        options: {
+          limit: 10000
+        }
+      }
+    ]
+  }
 };
-```
+{% endcodeblock %}
 
 `url-loader`는 `file-loader`와 같이 작동한다. 그렇기에 정규식 역시 동일하지만 다른 점은 `limit`이라는 옵션을 준 것이다. `options`에 `limit`는 파일의 크기를 말하는데 현재 예제에서 10KB 미만은 `url-loader`로 처리가 되고 그 이상의 파일은 `file-loder`와 같이 처리가 된다.
 
@@ -362,183 +340,175 @@ webpack은 풍부한 Plug-In이 있으며 webpack 자체의 대부분의 기능�
 
 `html-webpack-plugin`을 설치하고 `webpack.config.js`에 추가해 주자.
 
-```sh
+```
 npm install html-webpack-plugin
 ```
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        })
-    ]
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+        chunks: ['css', 'index', 'app', 'system', 'monitor']
+      })
+  ]
 };
-```
+{% endcodeblock %}
 
 ## commonChunk
 `commonChunk` Plug-In은 여러 개의 엔트리 포인트 사이에서 공유되는 공통 모듈로 구성된 파일(Chunk)을 별도의 엔트리로 분리함으로써 종속성을 관리 할 수 있다. 예를 들면 어떤 프로젝트에서 jquery를 사용하고 jquery를 필요로 하는 모든 모듈에 jquery를 참조한다고 했을 때 이후 build를 하게 되면 jquery 모듈이 중복되는데 이렇게 common하게 사용되는 모듈을 여러 모듈이 참조를 한다고 하더라도 `commonChunk`를 사용하여 build 시에 하나의 별도의 vendor 모듈로 분리 할 수 있다.
 
 `commonChunk`는 webpack의 내장 모듈이기 때문에 별도의 설치는 필요하지 않다. 대신에 webpack을 참조해야 한다.
 
-```javascript
-//webpack.config.js
 
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-           name: 'common' 
-        })
-    ]
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+      path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+      chunks: ['css', 'index', 'app', 'system', 'monitor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common' 
+    })
+  ]
 };
-```
+{% endcodeblock %}
+
 
 ## clean-webpack-plugin
 우리는 `webpack.config.js`에 build 시 output을 통해 어디로 가는지 지정을 해줬다. `clean-webpack-plugin`은 이 output 디렉토리를 build를 할때마다 삭제를 해주는 Plug-In이다.
 
-```sh
+```
 npm install clean-webpack-plugin
 ```
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new CleanWebpackPlugin(['dist']),
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-           name: 'common' 
-        })
-    ]
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+      chunks: ['css', 'index', 'app', 'system', 'monitor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common' 
+    })
+  ]
 };
-```
-
+{% endcodeblock %}
 
 ## uglify
 
 javascript 소스를 보게 되면 `xxx.min.js` 라는 파일과 그 안의 코드는 알아볼 수 없는 형태로 되어있는 것을 봤을 것이다. 이는 난독화와 압축을 진행했기 때문인데 javascript를 build 할 때 다른 중요한 부분은 난독화와 압축이다. 이 프로세스를 걸침으로 인해 내부 코드의 내용을 쉽게 파악하지 못하게 함과 파일의 용량을 줄일 수 있다. 압축하는 방법이야 여러 가지가 있지만 `uglify`는 간단하게 난독화와 압축을 진행할 수 있는 Plug-In이다.
 
 
-```sh
+```
 npm install uglifyjs-webpack-plugin
 ```
 
-```javascript
-//webpack.config.js
 
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyWebpackPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-           name: 'common' 
-        }),
-        new UglifyWebpackPlugin()
-    ]
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+      chunks: ['css', 'index', 'app', 'system', 'monitor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common' 
+    }),
+    new UglifyWebpackPlugin()
+  ]
 };
-```
+{% endcodeblock %}
+
 
 ## provider
 
 `webpack.ProvidePlugin`을 통해 등록된 모듈을 자유 변수로 사용이 가능하다.
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyWebpackPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-           name: 'common' 
-        }),
-        new UglifyWebpackPlugin(),
-        new webpack.ProvidePlugin({
-		  $: 'jquery',
-		  jQuery: 'jquery',
-		  _:'underscore'
-		})
-    ]
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+      chunks: ['css', 'index', 'app', 'system', 'monitor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common' 
+    }),
+    new UglifyWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      _:'underscore'
+    })
+  ]
 };
-```
+{% endcodeblock %}
 
-```javascript
-//modual A
 
+{% codeblock module A lang:javascript%}
 $('<div>');
 jQuery('<div>');
-var array = _.map([1, 2, 3], function(num){
-	 return num * 3; 
-	});
 
-```
+var array = _.map([1, 2, 3], function(num){
+  return num * 3; 
+});
+{% endcodeblock %}
 
 - - - 
 
@@ -569,51 +539,50 @@ var array = _.map([1, 2, 3], function(num){
 
 이제 `webpack-dev-server`를 설치하고 설정을 적용해보자.
 
-```sh
+```
 npm install webpack-dev-server --save-dev
 ```
 
-```javascript
-//webpack.config.js
-
+{% codeblock webpack.config.js lang:javascript%}
 var path = require('path');
 var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyWebpackPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-	entry: './index.js',
-	output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            favicon: './static/asset/favicon.ico',
-            template: './static/index.html',
-            chunks: ['css', 'index', 'app', 'system', 'monitor']
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-           name: 'common' 
-        }),
-        new UglifyWebpackPlugin(),
-        new webpack.ProvidePlugin({
-		  $: 'jquery',
-		  jQuery: 'jquery',
-		  _:'underscore'
-		})
-    ],
-    devServer: {
-      host : '127.0.0.1',
-	  contentBase: path.join(__dirname, "dist"),
-	  compress: true,
-	  hot : true,
-	  inline: true,
-	  port: 9000,
-	  open : true
-	}
+  entry: './index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './static/asset/favicon.ico',
+      template: './static/index.html',
+      chunks: ['css', 'index', 'app', 'system', 'monitor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common' 
+    }),
+    new UglifyWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      _:'underscore'
+    })
+  ],
+  devServer: {
+    host : '127.0.0.1',
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    hot : true,
+    inline: true,
+    port: 9000,
+    open : true
+  }
 };
-```
+{% endcodeblock %}
+
 
 devServer의 설정을 보면 감이 올 것으로 생각된다. 간단한 설명으로 넘어가겠다.
 
@@ -630,7 +599,7 @@ devServer의 설정을 보면 감이 올 것으로 생각된다. 간단한 설�
 
 `webpack-dev-server`의 구동은 CLI로 실행을 하고 이 CLI를 npm script에 등록하여 할 수 있다.
 
-```sh
+```
 $ ./node_modules/.bin/webpack-dev-server --config webpack.config.js
 ```
 

@@ -63,20 +63,6 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/</loc>
-        <lastmod>2019-04-23T15:15:55.907Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/webpack/</loc>
-        <lastmod>2019-04-23T15:15:55.907Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kdydesign.github.io/categories/javascript/vue-js/vue-js-tutorial/</loc>
         <lastmod>2019-04-23T15:20:06.660Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -112,13 +98,6 @@
     </url>
 
     <url>
-        <loc>https://kdydesign.github.io/categories/javascript/nodejs/</loc>
-        <lastmod>2019-04-23T15:20:06.665Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/</loc>
         <lastmod>2019-04-23T15:20:06.665Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -135,13 +114,6 @@
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/nodejs/npm/vue-js/vue-cli/</loc>
         <lastmod>2019-04-23T15:20:06.665Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kdydesign.github.io/categories/javascript/</loc>
-        <lastmod>2019-04-23T15:20:06.671Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -184,6 +156,34 @@
     <url>
         <loc>https://kdydesign.github.io/categories/javascript/vue-js/nuxt-js/vue-js-tutorial/nuxt-js-tutorial/nuxt-js-%EC%84%A4%EC%B9%98/nuxt-js-%EA%B8%B0%EC%B4%88/</loc>
         <lastmod>2019-04-23T15:20:06.671Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/</loc>
+        <lastmod>2019-04-23T15:41:58.685Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/nodejs/</loc>
+        <lastmod>2019-04-23T15:41:58.685Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/</loc>
+        <lastmod>2019-04-23T15:41:58.685Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/categories/javascript/nodejs/build-tool/webpack/</loc>
+        <lastmod>2019-04-23T15:41:58.685Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
