@@ -110,27 +110,27 @@ $ vue init webpack my-project
 vue 프로젝트를 생성해 보자.
 
 ```
-$ vue create 
+$ vue create <project-name>
 ```
 
 위와 같이 실행하면 대화형 커맨드로 프로젝트 구성에 필요한 요소들을 선택하여 설치할 수 있다. `default`를 선택하여 생성하게 되면 표시된 대로 `babel`과 `eslint`가 설치된다.
-`Manually select features`를 선택하게 되면 `vuex`, `vue-router` 등과 같은 몇 가지 더 선택적으로 설치할 수 있다. 
+`Manually select features`를 선택하게 되면 `vuex`, `vue-router` 등과 같은 몇 가지 더 선택적으로 설치할 수 있다. 우리는 `Manually select features`를 선택하도록 하자.
 
-----이미지---
+![vue-cli-sample1](img1.png)
 
 무엇을 설치할지는 본인의 몫이지만 해당 포스트에서는 ** `Babel`, `Router`, `Vuex`, `CSS pre-processors`, `Linter / Formatter` **를 선택하여 설치해 보자. `Unit Testing`에 대해서는 [JavaScript 단위 테스트 프레임워크 - Mocha Tutorial](https://kdydesign.github.io/2017/06/08/Mocha/)을 참고하자.
 
 필요한 모듈들을 선택하고 다음 단계로 넘어가면 vue-router의 `history` 기능을 사용할지 여부를 확인한다. 기본 설치이므로 엔터를 치고 넘어가자.
 
-----이미지---
+![vue-cli-sample2](img2.png)
 
 다음 단계에서는 `CSS 전처리기(CSS pre-processors)`에 대해서 어떤 모듈을 사용하지 선택하는 항목이 나온다. 본 포스트에서는 `Stylus`를 선택하였다.
 
-----이미지---
+![vue-cli-sample3](img3.png)
 
 그다음으로는 `ESLint`에 관련된 항목이 나온다. 어떤 항목을 선택하더라도 ESLint는 기본적으로 설치가 되며 여기서는 ESLint에 대해 어떤 룰을 적용할지를 선택한다. 본 포스트에서는 `Standard config`를 선택하도록 하겠다.
 
-----이미지---
+![vue-cli-sample4](img4.png)
 
 다음으로는 `Lint on save`를 선택하고 그다음 단계에서는 `In package.json` 선택하고 넘어가게 되면 선택된 모듈들이 설치됨으로써 프로젝트 구성은 끝이 난다.
 
@@ -147,7 +147,7 @@ $ vue ui
 
 위와 같이 실행하면 `Vue 프로젝트 매니저`가 `locahost:8000`으로 자동으로 브라우저가 실행된다. 이 Vue 프로젝트 매니저에서 위에서 생성한 프로젝트를 생성 할 수도 있으며 이미 생성된 프로젝트를 불러와서 관리 포인트로 둘 수도 있다. 우리는 프로젝트를 이미 생성하였으므로 `가져오기` 버튼을 클릭하여 해당 프로젝트를 가져오자.
 
-----이미지---
+![vue-ui](vue-ui.png)
 
 Vue 프로젝트 매니저를 훑어보면 대번 어떤 형태인지 알 수 있다. 우리가 커맨드로 처리하던 행동들을 UI를 통해서 처리할 수 있다고 볼 수 있다.
 
@@ -159,8 +159,7 @@ Vue 프로젝트 매니저를 훑어보면 대번 어떤 형태인지 알 수 �
 $ npm run serve
 ```
 
-
---- 이미지 ---
+![run-serve](run-serve.png)
 
 
 # Vue CLI 3 PlugIn 설치
