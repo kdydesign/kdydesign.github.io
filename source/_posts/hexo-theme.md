@@ -78,7 +78,7 @@ hexo와 github page를 이용하여 만든 블로그에 아름다움을 입혀�
 
 [Clean Blog Github](https://github.com/klugjo/hexo-theme-clean-blog)에 가보면 `Clean Blog`를 적용하는데 필요한 프로젝와 적용 방법과 기타 기능들에 대한 설명이 나와있다. 여기만 잘 읽고 따라하면 문제없이 적용된다. 물론 영어지만.
 
-이전에 [Hexo와 Github Page로 시작하는 블로그 만들기](https://kdydesign.github.io/2017/06/23/start-hexo-blog/) 포스팅에서 만들어 놓은 폴더 경로로 이동하자. 해당 폴더에 가면 `themes`라는 폴더가 존재할 것이다. 이 `themes` 경로로 가보면 처음에 `hexo` 블로그를 만들 때 기본으로 적용되는 `landscape`테마가 있다. `themes`경로에는 여러 개의 테마 폴더가 존재해도 상관없다 `hexo`에서 설정된 단 하나의 테마만 적용된다. 그리고 `themes` 경로에서 `마우스 우클릭`을 눌러 `Git Bash Here`메뉴를 클릭하자. 이후에 실행되는 `git bash`창에 명령어를 입력하여 `github`에 있는 소스를 다운받자.
+이전에 [Hexo와 Github Page로 시작하는 블로그 만들기](https://kdydesign.github.io/2017/06/23/hexo-blog/) 포스팅에서 만들어 놓은 폴더 경로로 이동하자. 해당 폴더에 가면 `themes`라는 폴더가 존재할 것이다. 이 `themes` 경로로 가보면 처음에 `hexo` 블로그를 만들 때 기본으로 적용되는 `landscape`테마가 있다. `themes`경로에는 여러 개의 테마 폴더가 존재해도 상관없다 `hexo`에서 설정된 단 하나의 테마만 적용된다. 그리고 `themes` 경로에서 `마우스 우클릭`을 눌러 `Git Bash Here`메뉴를 클릭하자. 이후에 실행되는 `git bash`창에 명령어를 입력하여 `github`에 있는 소스를 다운받자.
 
 ```
 $ git clone https://github.com/klugjo/hexo-theme-clean-blog.git
