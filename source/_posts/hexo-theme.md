@@ -74,7 +74,7 @@ hexo와 github page를 이용하여 만든 블로그에 아름다움을 입혀�
 
 ## Hexo 테마 설치하기
 
-처음에 말했듯이 테마들은 모두 오픈소스로 되어있다. 그리고 그 오픈소스들은 `github`에 올려져 있다. 우리는 [Hexo와 Github Page로 시작하는 블로그 만들기](https://kdydesign.github.io/2017/06/23/start-hexo-blog/)에서 블로그를 구축하며 대충 배워 본 `git`과 `github`사용 방법을 통해 테마 역시 `github`에서 `git`을 통해 다운 받을 것이다.
+처음에 말했듯이 테마들은 모두 오픈소스로 되어있다. 그리고 그 오픈소스들은 `github`에 올려져 있다. 우리는 [Hexo와 Github Page로 시작하는 블로그 만들기](https://kdydesign.github.io/2017/07/07/hexo-theme/)에서 블로그를 구축하며 대충 배워 본 `git`과 `github`사용 방법을 통해 테마 역시 `github`에서 `git`을 통해 다운 받을 것이다.
 
 [Clean Blog Github](https://github.com/klugjo/hexo-theme-clean-blog)에 가보면 `Clean Blog`를 적용하는데 필요한 프로젝와 적용 방법과 기타 기능들에 대한 설명이 나와있다. 여기만 잘 읽고 따라하면 문제없이 적용된다. 물론 영어지만.
 

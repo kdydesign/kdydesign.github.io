@@ -222,7 +222,7 @@ $ npm run pack
 - - -
 
 
-여기까지 해서 Electron이 무엇인지 그리고 Electron의 추이가 어떤지 확인도 해보고 간단하지만, Electron Application을 생성하고 실제로 배포까지 해 보았다. 간단하지만 우리는 지금 Electron의 한 과정을 경험 해 본 것이다. 이제 좀 더 퀄리티있는 Application을 만들기 위해 우리는 `Web Framework를 추가해서 실제 그럴싸한 Application`을 만들어 보자. 다음 포스팅엔 ** Vue.js와 Electron을 사용하는 방법 **에 대해서 알아보도록 하자. 그전에 Vue.js가 무엇인지 [자바스크립트 프레임워크 - Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-concept/)에서 확인해보도록 하자.
+여기까지 해서 Electron이 무엇인지 그리고 Electron의 추이가 어떤지 확인도 해보고 간단하지만, Electron Application을 생성하고 실제로 배포까지 해 보았다. 간단하지만 우리는 지금 Electron의 한 과정을 경험 해 본 것이다. 이제 좀 더 퀄리티있는 Application을 만들기 위해 우리는 `Web Framework를 추가해서 실제 그럴싸한 Application`을 만들어 보자. 다음 포스팅엔 ** Vue.js와 Electron을 사용하는 방법 **에 대해서 알아보도록 하자. 그전에 Vue.js가 무엇인지 [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)에서 확인해보도록 하자.
 
 ---
 
