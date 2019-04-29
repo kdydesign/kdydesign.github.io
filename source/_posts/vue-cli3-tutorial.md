@@ -4,7 +4,7 @@ date: 2019-04-22 12:22:06
 tags: 
 - npm
 - nodejs
-- javscript
+- javascript
 - electron
 - nuxt.js
 - vue.js
