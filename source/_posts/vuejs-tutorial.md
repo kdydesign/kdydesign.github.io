@@ -1,5 +1,5 @@
 ---
-title: "빠르게 배우는 Vue.js"
+title: "[Vue.JS] 빠르게 배우는 Vue.js"
 date: 2017-11-15 00:11:44
 tags: 
 - vue.js
@@ -129,4 +129,5 @@ Vue.js를 대강 아는 사람들이고 들어본 사람들은 이렇게도 들�
 > [Vue-CLI 3 시작하기](https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/)
 > [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
 > [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)
+> [Vuex Store의 state를 효율적으로 초기화하기](https://kdydesign.github.io/2019/05/09/vue-store-state/)
 > [Nuxt.js 개념부터 설치까지 빠르게 배우기](https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/)

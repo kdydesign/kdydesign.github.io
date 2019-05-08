@@ -1,5 +1,5 @@
 ---
-title: "Vue.js Component 개념을 익히고 만들어보자!!"
+title: "[Vue.JS] Component 개념을 익히고 만들어보자!!"
 date: 2019-04-27 16:05:38
 tags: 
 - javascript
@@ -391,3 +391,4 @@ Vue.js 컴포넌트를 생성할 때에 정해진 틀은 없다. 하지만 통�
 > [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
 > [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)
 > [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
+> [Vuex Store의 state를 효율적으로 초기화하기](https://kdydesign.github.io/2019/05/09/vue-store-state/)

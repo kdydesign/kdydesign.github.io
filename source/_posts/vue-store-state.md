@@ -189,4 +189,14 @@ export {
 위 코드를 보면 `userData`와 `companyData`는 객체 상수 형태의 함수로 미리 선언을 하고 state에 해당 함수를 대입하여 초기화하고 있다. 물론 `initData`에서 다시 초기화 시에 이미 선언된 함수를 통해 초기화를 한다. 앞으로 `userData`와 `companyData`를 초기화할 땐 이미 정의된 함수를 쓰면 그만인 것이다. 이런 구조는 특히나 객체 안에 객체를 가진 복잡한 형태의 state를 정의하거나 초기화할 때 효율적이고 가독성도 좋아진다. 우리는 초기화 코드에 신경을 쓸 필요가 없다. 또한 특정 조건에 따른 초기화라면 이미 정의해 놓은 초기화 코드는 함수로 선언되어있기 때문에 인자를 받아 처리할 수 도 있다. 
 
 - - - 
+
 state를 초기화하는 것은 사실 중요한 부분은 아니다. 초기화하는 것에 문제가 될게 무엇인가. 하지만 대부분 vuex의 store는 모듈별로 선언하게 되고 그 안에는 무수히 많은 state, mutations, actions가 포함된다.(물론 state, mutation, action을 분리할 수도 있다.) 이런 상황에서 작은 단위 하나하나를 지나치지 않고 효율적으로 처리한다면 더 나은 Application을 개발할 수 있을 것이다.
+
+---
+
+더 알아보기
+> [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
+> [Vue-CLI 3 시작하기](https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/)
+> [Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)](https://kdydesign.github.io/2019/04/10/vuejs-performance/)
+> [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)
+> [Nuxt.js 개념부터 설치까지 빠르게 배우기](https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/)
