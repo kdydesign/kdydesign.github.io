@@ -27,6 +27,7 @@ keywords:
 - nuxt.js tutorial
 - vue 배우기
 - vuejs 배우기
+- vuejs memory leak
 disqusIdentifier: vue.js01
 clearReading: true
 thumbnailImagePosition: left
