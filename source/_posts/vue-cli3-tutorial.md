@@ -32,12 +32,18 @@ keywords:
 - vue.js tutorial
 - vue 배우기
 - vuejs 배우기
-- vue-cli 3
-- vue-cli 3 배우기
-- vue-cli 3 tutorial
-- vue-cli
-- vue-cli 3 개념
-- vue-cli 3 설치
+- vue cli 3
+- vue cli 3
+- nuxt.js 시작하기
+- vue ui framework 2019
+- vue cli 3 배우기
+- vue cli 3 tutorial
+- vue cli
+- eslint vue standard
+- vue cli eslint airbnb
+- eslint plugin vue
+- vue cli 3 개념
+- vue cli 3 설치
 disqusIdentifier: vueCli3Tutorial
 clearReading: true
 thumbnailImagePosition: left

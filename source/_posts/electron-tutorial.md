@@ -33,6 +33,7 @@ keywords:
 - electron 배우기
 - electron 웹 앱 만들기
 - electron 앱 만들기
+- 데스크톱 앱 만들기
 disqusIdentifier: electron-base-tutorial
 clearReading: true
 thumbnailImage: false

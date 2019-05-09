@@ -29,9 +29,12 @@ keywords:
 - vue.js tutorial
 - nuxt.js tutorial
 - nuxt.js 설치
+- nuxt 설치
 - nuxt.js 기초
 - vuejs nuxt tutorial
 - nuxt js
+- nuxt.js 시작하기
+- nuxt js performance
 disqusIdentifier: nuxt.js-tutorial-1
 clearReading: true
 thumbnailImagePosition: left
