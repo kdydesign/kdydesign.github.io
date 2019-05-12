@@ -1,5 +1,5 @@
 ---
-title: "CSS 전처리기(Pre-Processor) 튜토리얼"
+title: "CSS 전처리기(Pre-Processor) 배우기!"
 date: 2019-05-12 15:21:40
 tags: 
 - css
