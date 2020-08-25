@@ -9,7 +9,7 @@
     "build:theme": "npm run build --prefix ./themes/tranquilpeak"
   },
   "hexo": {
-    "version": "3.8.0"
+    "version": "3.9.0"
   },
   "dependencies": {
     "hexo": "^3.2.0",
@@ -27,7 +27,7 @@
     "hexo-renderer-marked": "^0.2.10",
     "hexo-renderer-sass": "^0.4.0",
     "hexo-renderer-stylus": "^0.3.1",
-    "hexo-server": "^0.2.0",
+    "hexo-server": "^0.2.2",
     "hexo-tag-codepen": "^0.2.2",
     "node-sass": "^4.11.0"
   }

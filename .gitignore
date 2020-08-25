@@ -5,3 +5,9 @@ node_modules/
 .deploy*/
 kdydesign.hexo.iml
 public/
+*-lock.json
+.idea
+themes/**/*.scss
+themes/**/*.min.css
+themes/**/*.min.js
+
