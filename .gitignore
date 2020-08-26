@@ -10,4 +10,5 @@ public/
 themes/**/*.scss
 themes/**/*.min.css
 themes/**/*.min.js
+db.json
 
