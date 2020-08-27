@@ -1,5 +1,5 @@
 ---
-title: "Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념정리"
+title: "Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
 date: 2020-08-25 13:47:03
 tags:
 - lerna
@@ -233,7 +233,7 @@ Desktop, Mobile을 지원하며 `Vue 기반의 Framework`인 `Quasar의` 구조�
 
 현재 3.22.x 버전까지 릴리즈가 된 상태이고 다운로드 수와 start가 점차 증가하는 것을 볼 수 있다. 하지만 개인적으로 버전이 3.x에 비해 안정적이진 않다고 생각된다. 아래에서 설명을 할 테지만 현재로서는 npm보다 yarn에 적합함을 보이고 이슈 생성과 PR의 요청이 많을 것으로 보아 앞으로 개발이 필요한 사항이 많아 보인다.
 
-![openbase-lerna](./lerna-mono-repo/openbase-lerna.png)
+![openbase-lerna](openbase-lerna.png)
 
 ## lerna의 구조
 
@@ -241,7 +241,7 @@ Desktop, Mobile을 지원하며 `Vue 기반의 Framework`인 `Quasar의` 구조�
 
 Root 경로에 있는 `pacakge.json`에는 모든 package가 공통으로 사용되는 `dependencies`가 명시되는 등 공통 항목이 나열된다. 
 
-![lerna-file-structure](./lerna-mono-repo/lerna-file-structure.png)
+![lerna-file-structure](lerna-file-structure.png)
 
 ## lerna의 주요 기능
 
@@ -261,7 +261,7 @@ Root 경로에 있는 `pacakge.json`에는 모든 package가 공통으로 사용
 * 다중 패키지에서 사용되는 node module을 최적화하여 중복되는 node module을 최상위 경로로 재구축
 * 공통 종속성을 최상위 수준에서만 설치되며 개별 패키지는 생략 
 
-![lerna-hoisting](./lerna-mono-repo/lerna-hoisting.png)
+![lerna-hoisting](lerna-hoisting.png)
 
 {% alert info no-icon%}
 그림에서 보듯이 `hoist`를 통해서 node_module을 최적화하여 중복되는 모듈을(B (1.0)))을 최상위로 재구축한다.
