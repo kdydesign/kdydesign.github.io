@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0f5be92d-9550-4408-90bb-632ec590d1ae" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/themes/tranquilpeak/source/_images/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/themes/tranquilpeak/source/assets/images/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.json" beforeDir="false" afterPath="$PROJECT_DIR$/db.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/head.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/head.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/script.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/themes/tranquilpeak/layout/_partial/script.ejs" afterDir="false" />
+    </list>
+    <list id="b132788b-6f5c-4d93-8558-cb637f00717a" name="ignore" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/kdydesign.io.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1WnFSbFheRtj90isjZY4XifbZN6" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="jdk.selected.JAVA_MODULE" value="1.8" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/themes/tranquilpeak/source/assets/images" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\themes\tranquilpeak\source\assets\images" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\vuex-tutorial" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\vue-store-state" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\vue-component" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\vue-cli3-tutorial" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\themes\tranquilpeak\source\_images" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts" />
+      <recent name="$PROJECT_DIR$/source/_posts" />
+      <recent name="$PROJECT_DIR$/themes/tranquilpeak/source/assets/images" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.build:theme">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build:theme" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build:theme" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="generate" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="generate" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="prod" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="prod" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="serve" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="serve" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.build:theme" />
+        <item itemvalue="npm.generate" />
+        <item itemvalue="npm.serve" />
+        <item itemvalue="npm.prod" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0f5be92d-9550-4408-90bb-632ec590d1ae" name="Default Changelist" comment="" />
+      <changelist id="b132788b-6f5c-4d93-8558-cb637f00717a" name="ignore" comment="" />
+      <created>1554533934383</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1554533934383</updated>
+      <workItem from="1554533935727" duration="4643000" />
+      <workItem from="1554646246801" duration="3017000" />
+      <workItem from="1554809328472" duration="7987000" />
+      <workItem from="1554897469996" duration="1423000" />
+      <workItem from="1554912408630" duration="576000" />
+      <workItem from="1555230021350" duration="489000" />
+      <workItem from="1555332303006" duration="333000" />
+      <workItem from="1555546238277" duration="663000" />
+      <workItem from="1555565930113" duration="9794000" />
+      <workItem from="1556031885602" duration="131000" />
+      <workItem from="1556032033582" duration="2482000" />
+      <workItem from="1556205521769" duration="42000" />
+      <workItem from="1557150303255" duration="5947000" />
+      <workItem from="1557328266705" duration="1576000" />
+      <workItem from="1557329965603" duration="771000" />
+      <workItem from="1557331478148" duration="50000" />
+      <workItem from="1557409382462" duration="2901000" />
+      <workItem from="1557413818411" duration="376000" />
+      <workItem from="1563888125266" duration="471000" />
+      <workItem from="1563888615743" duration="599000" />
+      <workItem from="1563889290971" duration="597000" />
+      <workItem from="1566200825693" duration="719000" />
+      <workItem from="1566403357524" duration="245000" />
+      <workItem from="1567087961938" duration="599000" />
+      <workItem from="1569739966039" duration="4000" />
+      <workItem from="1571556454587" duration="6000" />
+      <workItem from="1577850441334" duration="70000" />
+      <workItem from="1579777463883" duration="188000" />
+      <workItem from="1598531178509" duration="52000" />
+      <workItem from="1598531358612" duration="987000" />
+      <workItem from="1598532631925" duration="1350000" />
+    </task>
+    <task id="LOCAL-00001" summary="create vue tutorial post">
+      <created>1554825748955</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1554825748956</updated>
+    </task>
+    <task id="LOCAL-00002" summary="create vue tutorial post">
+      <created>1554825932817</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1554825932817</updated>
+    </task>
+    <task id="LOCAL-00003" summary="create vue tutorial post">
+      <created>1554826106843</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1554826106843</updated>
+    </task>
+    <task id="LOCAL-00004" summary="create vue performance post">
+      <created>1554829960654</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1554829960654</updated>
+    </task>
+    <task id="LOCAL-00005" summary="nuxt.js tutorial">
+      <created>1554912929970</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1554912929970</updated>
+    </task>
+    <task id="LOCAL-00006" summary="nuxt.js tutorial">
+      <created>1555230270254</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1555230270255</updated>
+    </task>
+    <task id="LOCAL-00007" summary="nuxt.js tutorial">
+      <created>1555230619084</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1555230619084</updated>
+    </task>
+    <task id="LOCAL-00008" summary="nuxt.js tutorial">
+      <created>1555230651679</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1555230651679</updated>
+    </task>
+    <task id="LOCAL-00009" summary="update blog">
+      <created>1555586369025</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1555586369025</updated>
+    </task>
+    <task id="LOCAL-00010" summary="update vue-cli tutorial">
+      <created>1556032336184</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1556032336184</updated>
+    </task>
+    <task id="LOCAL-00011" summary="update vue-cli tutorial">
+      <created>1556032915433</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1556032915433</updated>
+    </task>
+    <task id="LOCAL-00012" summary="webpack tutorial example 코드 정리">
+      <created>1556034192950</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1556034192950</updated>
+    </task>
+    <task id="LOCAL-00013" summary="update vue-component">
+      <created>1557156757334</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1557156757334</updated>
+    </task>
+    <task id="LOCAL-00014" summary="- add vue-store-state post&#10;- max-width update">
+      <created>1557329531417</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1557329531417</updated>
+    </task>
+    <task id="LOCAL-00015" summary="update post vue title">
+      <created>1557329807402</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1557329807402</updated>
+    </task>
+    <task id="LOCAL-00016" summary="max-width rollback">
+      <created>1557330627929</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1557330627929</updated>
+    </task>
+    <task id="LOCAL-00017" summary="create vuex-tutorial post">
+      <created>1557413607711</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1557413607711</updated>
+    </task>
+    <task id="LOCAL-00018" summary="vue-performance add keywords">
+      <created>1557413896299</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1557413896299</updated>
+    </task>
+    <task id="LOCAL-00019" summary="add keywords">
+      <created>1557414157282</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1557414157282</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="create vue tutorial post" />
+    <MESSAGE value="create vue performance post" />
+    <MESSAGE value="nuxt.js tutorial" />
+    <MESSAGE value="update blog" />
+    <MESSAGE value="update vue-cli tutorial" />
+    <MESSAGE value="webpack tutorial example 코드 정리" />
+    <MESSAGE value="update vue-component" />
+    <MESSAGE value="- add vue-store-state post&#10;- max-width update" />
+    <MESSAGE value="update post vue title" />
+    <MESSAGE value="max-width rollback" />
+    <MESSAGE value="create vuex-tutorial post" />
+    <MESSAGE value="vue-performance add keywords" />
+    <MESSAGE value="add keywords" />
+    <option name="LAST_COMMIT_MESSAGE" value="add keywords" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1772" y="74" width="1736" height="856" key="DiffContextDialog" timestamp="1598531903216">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state x="1772" y="74" width="1736" height="856" key="DiffContextDialog/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598531903216" />
+    <state width="1877" height="269" key="GridCell.Tab.0.bottom" timestamp="1598533857142">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="269" key="GridCell.Tab.0.bottom/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533857142" />
+    <state width="1877" height="269" key="GridCell.Tab.0.center" timestamp="1598533857142">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="269" key="GridCell.Tab.0.center/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533857142" />
+    <state width="1877" height="269" key="GridCell.Tab.0.left" timestamp="1598533857142">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="269" key="GridCell.Tab.0.left/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533857142" />
+    <state width="1877" height="269" key="GridCell.Tab.0.right" timestamp="1598533857142">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="269" key="GridCell.Tab.0.right/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533857142" />
+    <state x="2391" y="203" key="RollbackChangesDialog" timestamp="1598533775180">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state x="2391" y="203" key="RollbackChangesDialog/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533775180" />
+    <state x="2348" y="205" width="584" height="594" key="find.popup" timestamp="1598533698700">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state x="2348" y="205" width="584" height="594" key="find.popup/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533698700" />
+    <state x="2303" y="207" width="672" height="678" key="search.everywhere.popup" timestamp="1598533885658">
+      <screen x="1680" y="-18" width="1920" height="1040" />
+    </state>
+    <state x="2303" y="207" width="672" height="678" key="search.everywhere.popup/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533885658" />
+  </component>
+</project>
