@@ -20,12 +20,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f5be92d-9550-4408-90bb-632ec590d1ae" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example/cover.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example/error-capture.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna/cover.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.json" beforeDir="false" afterPath="$PROJECT_DIR$/db.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/_posts/mono-repo-lerna.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna.md" afterDir="false" />
     </list>
     <list id="b132788b-6f5c-4d93-8558-cb637f00717a" name="ignore" comment="" />
@@ -184,7 +178,7 @@
       <workItem from="1579777463883" duration="188000" />
       <workItem from="1598531178509" duration="52000" />
       <workItem from="1598531358612" duration="987000" />
-      <workItem from="1598532631925" duration="2829000" />
+      <workItem from="1598532631925" duration="2909000" />
     </task>
     <task id="LOCAL-00001" summary="create vue tutorial post">
       <created>1554825748955</created>
