@@ -1,4 +1,3 @@
-
 ---
 title: "Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악"
 date: 2020-08-27 08:37:12
@@ -48,6 +47,8 @@ actions: true
 
 <!-- excerpt -->
 <!-- excerpt -->
+
+![cover](cover.png)
 
 [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리](https://kdydesign.github.io/2020/08/25/mono-repo-lerna/) 에서 `Lerna`와 `Mono-Repo`에 대한 개념을 잡았다면 이번 포스팅에서는 `Lerna`를 설치하고 주요 명령어 및 실제로 패키지를 만들고 배포까지 따라 하면서 완벽하게 `Lerna`와 `Mono-Repo`를 파악하자
 
@@ -302,6 +303,8 @@ $ log-cli
 
 ## 9. 패키지 내 참조 및 설치
 위처럼 로컬에서 실행하면 정상적으로 동작된다. 로컬에서는 `log-cli`와 `log-core` 연관 관계를 인지하고 있기 때문이다. 그렇기 때문에 실제로 패키지를 배포 후 배포된 패키지를 설치하여 실행한다면 아래와 같은 오류가 출력될 것이다.
+
+![run-error](error-capture.png)
 
 이 오류는 `log-cli`에서 `log-core`를 삽입하였는데 실제로 `log-cli`에는 `log-core`가 종속되지 않았기 때문에 발생한다. 이를 해결하기 위해서는 `lerna add`를 통해서 `log-cli`에 `log-core`를 설치해 해줘야 한다.
 

@@ -52,6 +52,8 @@ lerna의 명령어와 설정은 단순하지만, 생각보다 잘 안 되었다.
 <!-- excerpt -->
 <!-- excerpt -->
 
+![cover](cover.png)
+
 아직 `Mono-Repo`나 이를 도와주는 `lerna`가 널리 알려지지 않을 것 같다.
 근래에 `Mono-Repo` 구축과 `lerna`를 사용할 기회가 있어서 실제로 반영하고 정보를 수집해 보았다. 모든 lerna 관련된 포스팅을 보았지만 lerna에 관련된 주요 명령어라든가 Mono-Repo에 대한 간략한 설명뿐 예제를 통한 하나의 workflow를 설명하는 곳이 없어서 아쉬움이 있었다.
 
