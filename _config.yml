@@ -88,3 +88,13 @@ node_sass:
   outputStyle: nested
   precision: 5
   sourceComments: false
+
+robotstxt:
+  useragent: "*"
+  allow:
+    - /
+  sitemap: https://username.github.io/sitemap.xml
+
+nofollow:
+  enable: true
+  exclude:
