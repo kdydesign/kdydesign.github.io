@@ -93,7 +93,7 @@ robotstxt:
   useragent: "*"
   allow:
     - /
-  sitemap: https://username.github.io/sitemap.xml
+  sitemap: https://kdydesign.github.io/sitemap.xml
 
 nofollow:
   enable: true
