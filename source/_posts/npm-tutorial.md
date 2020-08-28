@@ -300,5 +300,6 @@ $ log-run
 또한 이 포스팅에서 더 나아가 `하나의 Git Repository에 N개의 패키지가 존재`하는 `Mono-Repo`와 이 `Mono-Repo` 구조에서 `npm publish`를 어떻게 동시에 진행 할 수 있는지는 아래 **더 알아보기**에서 확인할 수 있다.
 
 더 알아보기
+> [빠르게 배우는 Node.js와 NPM 설치부터 개념잡기](https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/)
 > [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리](https://kdydesign.github.io/2020/08/25/mono-repo-lerna/)
 > [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악](https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/)

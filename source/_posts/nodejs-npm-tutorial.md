@@ -218,6 +218,7 @@ $ npm ls -depth=0
 ---
 
 더 알아보기
+> [빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드](https://kdydesign.github.io/2020/08/28/npm-tutorial/)
 > [빠르게 배우는 Vue.js](https://kdydesign.github.io/2017/11/15/vuejs-tutorial/)
 > [Electron 완전정복!! - 개념부터 데스크탑 앱 만들기](https://kdydesign.github.io/2019/04/15/electron-tutorial/)
 > [Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!](https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/)

@@ -410,3 +410,4 @@ lerna의 `publish` 명령어를 실행하면 `conventiaonalCommit`이 실행되�
 
 더 알아보기
 > [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리](https://kdydesign.github.io/2020/08/25/mono-repo-lerna/)
+> [빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드](https://kdydesign.github.io/2020/08/28/npm-tutorial/)

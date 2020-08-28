@@ -325,3 +325,4 @@ $ lerna exec
 
 더 알아보기
 > [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악](https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/)
+> [빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드](https://kdydesign.github.io/2020/08/28/npm-tutorial/)
