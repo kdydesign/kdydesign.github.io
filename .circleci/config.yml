@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      # Checkout repository
+      - checkout
+
+      # Restore cache
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      # Install dependencies
+      - run:
+          name: Install Dependencies
+          command: NODE_ENV=dev yarn
+
+      # Keep cache
+      - save_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
+
+      - add_ssh_keys:
+          fingerprints:
+            - "f7:be:34:67:35:a1:5c:ae:11:d6:6f:db:1b:16:25:cd"
+
+      # Build
+      #- run:
+      #    name: Build
+      #    command: yarn build
+      - run: sh deploy.sh
