@@ -20,6 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f5be92d-9550-4408-90bb-632ec590d1ae" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna-example.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/_posts/mono-repo-lerna.md" beforeDir="false" afterPath="$PROJECT_DIR$/source/_posts/mono-repo-lerna.md" afterDir="false" />
     </list>
     <list id="b132788b-6f5c-4d93-8558-cb637f00717a" name="ignore" comment="" />
@@ -61,6 +64,13 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\DY\DY_PROJECT\kdydesign.io.repo\source\test" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\themes\tranquilpeak\source\_images" />
+      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts" />
+      <recent name="$PROJECT_DIR$/source/_posts" />
+      <recent name="$PROJECT_DIR$/themes/tranquilpeak/source/assets/images" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\mono-repo-lerna" />
       <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\mono-repo-lerna-example" />
@@ -68,25 +78,8 @@
       <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\themes\tranquilpeak\source\assets\images" />
       <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts\vuex-tutorial" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\themes\tranquilpeak\source\_images" />
-      <recent name="D:\DY_Project\blog_kdydesign\kdydesign.io\source\_posts" />
-      <recent name="$PROJECT_DIR$/source/_posts" />
-      <recent name="$PROJECT_DIR$/themes/tranquilpeak/source/assets/images" />
-    </key>
   </component>
   <component name="RunManager" selected="npm.build:theme">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="build:theme" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -401,9 +394,10 @@
       <screen x="1680" y="-18" width="1920" height="1040" />
     </state>
     <state x="2348" y="205" width="584" height="594" key="find.popup/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598533698700" />
-    <state x="2303" y="207" width="672" height="678" key="search.everywhere.popup" timestamp="1598534816990">
-      <screen x="1680" y="-18" width="1920" height="1040" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1598592366240">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598592366240" />
     <state x="2303" y="207" width="672" height="678" key="search.everywhere.popup/1680.-18.1920.1040/0.0.1680.1010@1680.-18.1920.1040" timestamp="1598534816990" />
   </component>
 </project>

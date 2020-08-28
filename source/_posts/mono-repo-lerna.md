@@ -320,3 +320,8 @@ $ lerna exec
 여기까지 해서 `Mono-Repo`와 `lerna`에 대해 개념부터 파악을 하였다. 사실상 `lerna`의 명령어는 몇 개 안되지만 이대로 진행하더라도 정확하게 개념을 파악하기는 어렵다. 생각지도 못한 오류와 예상 밖으로 명령어가 실행되기 때문이다.
 
 그렇기 때문에 다음 섹션에서는 `lerna를 활용한 Log 출력 패키지 예제`로 `lerna`와 `Mono-Repo`의 전체적인 흐름을 파악해 보자.
+
+---
+
+더 알아보기
+> [Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악](https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/)
