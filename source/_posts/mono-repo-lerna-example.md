@@ -334,7 +334,7 @@ $ git push -u origin master
 ```
 
 ## 11. 패키지 배포
-이제 패키지 배포 이전의 모든 작업이 끝이 났다. 실제로 지금까지 만든 `log-cli`와 `log-core`를 `NPM Repository`에 배포해 보자. NPM Repository에 대해서는 [NPM 패키지 - 가입부터 생성 및 배포까지 배워보기!]() 을 참고하자.
+이제 패키지 배포 이전의 모든 작업이 끝이 났다. 실제로 지금까지 만든 `log-cli`와 `log-core`를 `NPM Repository`에 배포해 보자. NPM Repository에 대해서는 [빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드](https://kdydesign.github.io/2020/08/28/npm-tutorial/)을 참고하자.
 
 NPM 설정이 준비되었다면 `lerna publish`를 통해서 모든 패키지를 배포하자.
 
