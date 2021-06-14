@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Mocha Tutorial - Step 03. Hooks - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2017/06/16/mocha-step-03/"/>
+    
+        <meta name="keywords" content="javascript,mocha,chai,TDD,BDD,mocha hooks,unit test,mocha test,javascript mocha,mocha tutorial">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n이번 Tutorial에서는 Mocha의 Hooks를 알아보겠다. Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 Hooks를 지원한다. Mocha에서는 기본적으로 BDD 스타일을 지원하지만 TDD 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 Hooks도 정의할 수 있다.\n\n먼저 Hooks를 살펴보겠다.\n기본 HooksMocha의 기본 BDD 스타일의 Hooks는 다음과 같이 정의할 수 있다.\ndescribe(&#x27;#Hooks&#x27;, function()&#123;   before(function()&#123;        // runs before all tests in this block               &#125;);      after(function()&#123;        // runs after all tests in this block   &#125;);      beforeEach(function() &#123;        // runs before each test in this block   &#125;);      afterEach(function() &#123;        // runs after each test in this block   &#125;);      it(&#x27;test&#x27;, function()&#123;        // test case    &#125;);&#125;);\n간단하다!!.주석을 보면 알겠지만 Mocha에서는 before(), after(), beforeEach(), afterEach() 4가지의 Hooks를 지원한다. 여기서 before(), after()는 테스트 스위트 단위(describe)로 실행된다. before()는 각 테스트 스위트가 실행되기 전에 실행하고 after()는 각 테스트 스위트가 종료되고 실행된다.beforeEach(), afterEach()는 어떨까? 이 두개의 Hooks는 테스트 스위트가 아닌 테스트 케이스 단위(it)로 실행된다. beforeEach()는 각 테스트 케이스가 실행하기 전에 실행되고  afterEach() 반대로 테스트 케이스가 종료 후에 실행된다.\nHooks 실행 순서이 Hooks들은 적절하게 정의 된 순서대로 실행된다.모든 before() Hooks가 한 번 실행한 후 모든 beforeEach() Hooks와 테스트 케이스(it)가 실행된다. 이후 모든 afterEach() Hooks를 실행하고 마지막으로 after() Hooks를 한 번 실행하게 된다.\n아래 코드를 보자.\ndescribe(&#x27;#Hooks&#x27;, function () &#123;    before(function () &#123;        console.log(&#x27;before&#x27;);    &#125;);    after(function () &#123;        console.log(&#x27;after&#x27;);    &#125;);    beforeEach(function () &#123;        console.log(&#x27;beforeEach&#x27;);    &#125;);    afterEach(function () &#123;        console.log(&#x27;afterEach&#x27;);    &#125;);    it(&#x27;test case #1&#x27;, function () &#123;        console.log(&#x27;test case #1&#x27;);    &#125;);    it(&#x27;test case #2&#x27;, function () &#123;        console.log(&#x27;test case #2&#x27;);    &#125;)&#125;);\n해당 코드를 실행하게 되면 초기에 before()이 실행이 되고 이후 beforeEach() 그리고 테스트 케이스(it)이 실행된다. 그리고 테스트 케이스(it)이 종료되면 afterEach()가 실행되고 또 다시 테스트 케이스(it)을 위해 반복적으로 beforeEach()와 afterEach()가 실행되며, 마지막으로 after()가 실행되는 것을 볼 수 있다.\n\nHooks 설명어떤 Hooks는 특정 설명과 함께 호출 할 수 있으므로 테스트에서 오류를 쉽게 찾아 낼 수 있다. 또한 Hooks에 특정 명칭을 가진 함수가 주어지면 그 명칭을 사용하게 된다.\ndescribe(&#x27;#Describing Hooks&#x27;, function () &#123;    beforeEach(function() &#123;        // beforeEach hook    &#125;);    beforeEach(function namedFun() &#123;        // beforeEach:namedFun    &#125;);    beforeEach(&#x27;some description&#x27;, function() &#123;        // beforeEach:some description    &#125;);&#125;);\nHooks로 보는 BDD와 TDDStep 01: Hello World!부터 강조했던 점은 Mocha는 TDD와 BDD 스타일을 각각 지원한다고 하였다. 그 차이가 무엇인지 Hooks를 통해 알아보겠다.\n단순히 TDD와 BDD는 코딩의 스타일이 아닌 하나의 애자일 소프트웨어 개발 방법론에서 가장 널리 쓰이는 테스트 방법론이다. TDD는 테스트 주도 개발(Test-Driven-Devenlopment)이며, BDD는 TDD를 근간으로 파생된 행위 주도 개발(Befavior-Driven-Development)이다. 이런 복잡하고 학습 곡선이 긴 내용은 이 Tutorial에서는 넘어가도록 하겠다.\n오직 이 Tutorial에서는 다루는 내용은 Mocha에서의 TDD와 BDD스타일 입니다.\n\n우리가 이 Tutorial에서 배운 것은 Mocha는 기본적으로 BDD 스타일을 우선순위로 지원한다고 하였다. 그리고 4가지의 Hooks인 before(), after(), beforeEach(), afterEach() 이다. TDD는 4가지의 Hooks의 명칭이 다릅니다. suiteSetup(), suiteTeardown(), setup(), teardown() 이렇게 된다. 또한 BDD에서의 describe()는 suite()로, it()은 test()로 표현한다.\nTDD 스타일을 직접 코드로 살펴보자.\nsuite(&#x27;#Hooks&#x27;, function()&#123;   suiteSetup(function()&#123;        // runs before all tests in this block               &#125;);      suiteTeardown(function()&#123;        // runs after all tests in this block   &#125;);      setup(function() &#123;        // runs before each test in this block   &#125;);      teardown(function() &#123;        // runs after each test in this block   &#125;);      test(&#x27;test&#x27;, function()&#123;        // test case    &#125;);&#125;);\n우리가 처음 Hooks를 시작할 때 작성했던 코드와 비교하면 어떤 부분이 다른지 알 수 있다. 그저 관점의 차이라고 볼 수 있겠다. 여기서 중요한 건 코딩의 스타일도 있겠지만 TDD 스타일을 사용하기 위해서는 Mocha의 옵션을 지정을 해줘야 한다.\nmocha test --ui tdd 또는 -u tdd\n--ui 또는 -u의 옵션을 통해 우리가 Mocha의 어떤 스타일을 사용할 것인지 명시를 해줘야 한다.\n예제 코드\n\nHooks는 용이하게 사용할 수 있다. 예를 들어 테스트 케이스 필요한 Book이라는 객체를 생성한다고 하였을 때 우리는 var book = new Book()을 테스트 케이스마다 만들 것이다. 하지만 우리는 지금까지 배운 Hooks를 통해 한 번에 객체를 만들고 destroy까지 완벽하게 끝낼 수 있다.이제 Hooks를 배웠으니 다음 Tutorial에서는 비동기 처리에 대한 방법을 배워보고 Hooks에도 비동기 처리를 적용하는 방법을 배워보겠다.\n\n더 알아보기Step 04: 비동기 처리\n","dateCreated":"2017-06-16T00:03:49+00:00","dateModified":"2021-06-14T01:49:15+00:00","datePublished":"2017-06-16T00:03:49+00:00","description":"\n이번 Tutorial에서는 Mocha의 Hooks를 알아보겠다. Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 Hooks를 지원한다. Mocha에서는 기본적으로 BDD 스타일을 지원하지만 TDD 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 Hooks도 정의할 수 있다.","headline":"Mocha Tutorial - Step 03. Hooks","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/06/16/Mocha-step-03/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2017/06/16/Mocha-step-03/","keywords":"mocha, javascript, 단위 테스트, hooks, BDD, TDD","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="이번 Tutorial에서는 Mocha의 Hooks를 알아보겠다. Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 Hooks를 지원한다. Mocha에서는 기본적으로 BDD 스타일을 지원하지만 TDD 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 Hooks도 정의할 수 있다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Mocha Tutorial - Step 03. Hooks">
+<meta property="og:url" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이번 Tutorial에서는 Mocha의 Hooks를 알아보겠다. Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 Hooks를 지원한다. Mocha에서는 기본적으로 BDD 스타일을 지원하지만 TDD 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 Hooks도 정의할 수 있다.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/result_thumbnail_01.png">
+<meta property="article:published_time" content="2017-06-16T00:03:49.000Z">
+<meta property="article:modified_time" content="2021-06-14T01:49:15.206Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="mocha">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="단위 테스트">
+<meta property="article:tag" content="hooks">
+<meta property="article:tag" content="BDD">
+<meta property="article:tag" content="TDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2017/06/16/Mocha-step-03/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-zt15skukdlbfonteussqtufzx01tzm9anflgco5w5gicykacliuswiqyv2kd.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Mocha Tutorial - Step 03. Hooks
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-06-16T00:03:49+00:00">
+	
+		    2017-06-16
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/Mocha/">Mocha</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2021-06-14</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+<p><img src="cover.png" alt="cover"></p>
+<p>이번 Tutorial에서는 Mocha의 <code>Hooks</code>를 알아보겠다. <strong>Mocha에서는 테스트들의 전제 조건과 후 조건을 미리 설정할 수 있는 <code>Hooks</code>를 지원</strong>한다. Mocha에서는 기본적으로 <code>BDD</code> 스타일을 지원하지만 <code>TDD</code> 스타일도 역시 지원하기 때문에 이 두 스타일에 대한 <code>Hooks</code>도 정의할 수 있다.</p>
+<hr>
+<p>먼저 <code>Hooks</code>를 살펴보겠다.</p>
+<h2 id="기본-Hooks"><a href="#기본-Hooks" class="headerlink" title="기본 Hooks"></a>기본 Hooks</h2><p>Mocha의 기본 <code>BDD</code> 스타일의 <code>Hooks</code>는 다음과 같이 정의할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">describe(<span class="hljs-string">&#x27;#Hooks&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>   before(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// runs before all tests in this block            </span><br>   &#125;);<br>   <br>   after(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// runs after all tests in this block</span><br>   &#125;);<br>   <br>   beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// runs before each test in this block</span><br>   &#125;);<br>   <br>   afterEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// runs after each test in this block</span><br>   &#125;);<br>   <br>   it(<span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// test case </span><br>   &#125;);<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>간단하다!!.<br>주석을 보면 알겠지만 Mocha에서는 <code>before()</code>, <code>after()</code>, <code>beforeEach()</code>, <code>afterEach()</code> 4가지의 <code>Hooks</code>를 지원한다. 여기서 <code>before()</code>, <code>after()</code>는 테스트 스위트 단위(<code>describe</code>)로 실행된다. <code>before()</code>는 각 테스트 스위트가 실행되기 전에 실행하고 <code>after()</code>는 각 테스트 스위트가 종료되고 실행된다.<br><code>beforeEach()</code>, <code>afterEach()</code>는 어떨까? 이 두개의 <code>Hooks</code>는 테스트 스위트가 아닌 테스트 케이스 단위(<code>it</code>)로 실행된다. <code>beforeEach()</code>는 각 테스트 케이스가 실행하기 전에 실행되고  <code>afterEach()</code> 반대로 테스트 케이스가 종료 후에 실행된다.</p>
+<h2 id="Hooks-실행-순서"><a href="#Hooks-실행-순서" class="headerlink" title="Hooks 실행 순서"></a>Hooks 실행 순서</h2><p>이 <code>Hooks</code>들은 적절하게 정의 된 순서대로 실행된다.<br>모든 <code>before()</code> Hooks가 한 번 실행한 후 모든 <code>beforeEach()</code> Hooks와 테스트 케이스(<code>it</code>)가 실행된다. 이후 모든 <code>afterEach()</code> Hooks를 실행하고 마지막으로 <code>after()</code> Hooks를 한 번 실행하게 된다.</p>
+<p>아래 코드를 보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">describe(<span class="hljs-string">&#x27;#Hooks&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>    before(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;before&#x27;</span>);<br>    &#125;);<br><br>    after(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;after&#x27;</span>);<br>    &#125;);<br><br>    beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;beforeEach&#x27;</span>);<br>    &#125;);<br><br>    afterEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;afterEach&#x27;</span>);<br>    &#125;);<br><br>    it(<span class="hljs-string">&#x27;test case #1&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;test case #1&#x27;</span>);<br>    &#125;);<br><br>    it(<span class="hljs-string">&#x27;test case #2&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;test case #2&#x27;</span>);<br>    &#125;)<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>해당 코드를 실행하게 되면 초기에 <code>before()</code>이 실행이 되고 이후 <code>beforeEach()</code> 그리고 테스트 케이스(<code>it</code>)이 실행된다. 그리고 테스트 케이스(<code>it</code>)이 종료되면 <code>afterEach()</code>가 실행되고 또 다시 테스트 케이스(<code>it</code>)을 위해 반복적으로 <code>beforeEach()</code>와 <code>afterEach()</code>가 실행되며, 마지막으로 <code>after()</code>가 실행되는 것을 볼 수 있다.</p>
+<p><img src="./result_thumbnail_01.png" alt="result01"></p>
+<h2 id="Hooks-설명"><a href="#Hooks-설명" class="headerlink" title="Hooks 설명"></a>Hooks 설명</h2><p>어떤 <code>Hooks</code>는 특정 설명과 함께 호출 할 수 있으므로 테스트에서 오류를 쉽게 찾아 낼 수 있다. 또한 <code>Hooks</code>에 특정 명칭을 가진 함수가 주어지면 그 명칭을 사용하게 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">describe(<span class="hljs-string">&#x27;#Describing Hooks&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>    beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// beforeEach hook</span><br>    &#125;);<br><br>    beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">namedFun</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// beforeEach:namedFun</span><br>    &#125;);<br><br>    beforeEach(<span class="hljs-string">&#x27;some description&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// beforeEach:some description</span><br>    &#125;);<br>&#125;);<br></code></pre></td></tr></table></figure>
+<h2 id="Hooks로-보는-BDD와-TDD"><a href="#Hooks로-보는-BDD와-TDD" class="headerlink" title="Hooks로 보는 BDD와 TDD"></a>Hooks로 보는 BDD와 TDD</h2><p><a href="https://kdydesign.github.io/2017/06/15/Mocha-step-01/">Step 01: Hello World!</a>부터 강조했던 점은 Mocha는 <code>TDD</code>와 <code>BDD</code> 스타일을 각각 지원한다고 하였다. 그 차이가 무엇인지 <code>Hooks</code>를 통해 알아보겠다.</p>
+<p>단순히 <code>TDD</code>와 <code>BDD</code>는 코딩의 스타일이 아닌 하나의 애자일 소프트웨어 개발 방법론에서 가장 널리 쓰이는 테스트 방법론이다. <code>TDD</code>는 테스트 주도 개발(<code>Test-Driven-Devenlopment</code>)이며, <code>BDD</code>는 <code>TDD</code>를 근간으로 파생된 행위 주도 개발(<code>Befavior-Driven-Development</code>)이다. 이런 복잡하고 학습 곡선이 긴 내용은 이 Tutorial에서는 넘어가도록 하겠다.</p>
+<div class="alert warning no-icon"><p>오직 이 Tutorial에서는 다루는 내용은 Mocha에서의 TDD와 BDD스타일 입니다.</p>
+</div>
+<p>우리가 이 Tutorial에서 배운 것은 Mocha는 기본적으로 <code>BDD</code> 스타일을 우선순위로 지원한다고 하였다. 그리고 4가지의 <code>Hooks</code>인 <code>before()</code>, <code>after()</code>, <code>beforeEach()</code>, <code>afterEach()</code> 이다. <code>TDD</code>는 4가지의 <code>Hooks</code>의 명칭이 다릅니다. <code>suiteSetup()</code>, <code>suiteTeardown()</code>, <code>setup()</code>, <code>teardown()</code> 이렇게 된다. 또한 <code>BDD</code>에서의 <code>describe()</code>는 <code>suite()</code>로, <code>it()</code>은 <code>test()</code>로 표현한다.</p>
+<p><code>TDD</code> 스타일을 직접 코드로 살펴보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">suite(<span class="hljs-string">&#x27;#Hooks&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>   suiteSetup(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// runs before all tests in this block            </span><br>   &#125;);<br>   <br>   suiteTeardown(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// runs after all tests in this block</span><br>   &#125;);<br>   <br>   setup(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// runs before each test in this block</span><br>   &#125;);<br>   <br>   teardown(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;<br>        <span class="hljs-comment">// runs after each test in this block</span><br>   &#125;);<br>   <br>   test(<span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-comment">// test case </span><br>   &#125;);<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>우리가 처음 <code>Hooks</code>를 시작할 때 작성했던 코드와 비교하면 어떤 부분이 다른지 알 수 있다. 그저 관점의 차이라고 볼 수 있겠다. 여기서 중요한 건 코딩의 스타일도 있겠지만 <code>TDD</code> 스타일을 사용하기 위해서는 Mocha의 옵션을 지정을 해줘야 한다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">mocha <span class="hljs-built_in">test</span> --ui tdd 또는 -u tdd<br></code></pre></td></tr></table></figure>
+<p><code>--ui</code> 또는 <code>-u</code>의 옵션을 통해 우리가 Mocha의 어떤 스타일을 사용할 것인지 명시를 해줘야 한다.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/kdydesign/Mocha-Tutorial/tree/master/step03-Hooks">예제 코드</a></p>
+<hr>
+<p><code>Hooks</code>는 용이하게 사용할 수 있다. 예를 들어 테스트 케이스 필요한 <code>Book</code>이라는 객체를 생성한다고 하였을 때 우리는 <code>var book = new Book()</code>을 테스트 케이스마다 만들 것이다. 하지만 우리는 지금까지 배운 <code>Hooks</code>를 통해 한 번에 객체를 만들고 <code>destroy</code>까지 완벽하게 끝낼 수 있다.<br>이제 <code>Hooks</code>를 배웠으니 다음 Tutorial에서는 <code>비동기 처리</code>에 대한 방법을 배워보고 <code>Hooks</code>에도 <code>비동기 처리</code>를 적용하는 방법을 배워보겠다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2017/06/16/Mocha-step-04/">Step 04: 비동기 처리</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/BDD/" rel="tag">BDD</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/TDD/" rel="tag">TDD</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/hooks/" rel="tag">hooks</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mocha/" rel="tag">mocha</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/%EB%8B%A8%EC%9C%84-%ED%85%8C%EC%8A%A4%ED%8A%B8/" rel="tag">단위 테스트</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/16/Mocha-step-04/"
+                    data-tooltip="Mocha Tutorial - Step 04. 동기/비동기 처리"
+                    aria-label="PREVIOUS: Mocha Tutorial - Step 04. 동기/비동기 처리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/15/Mocha-step-02/"
+                    data-tooltip="Mocha Tutorial - Step 02. Chai"
+                    aria-label="NEXT: Mocha Tutorial - Step 02. Chai"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/16/Mocha-step-04/"
+                    data-tooltip="Mocha Tutorial - Step 04. 동기/비동기 처리"
+                    aria-label="PREVIOUS: Mocha Tutorial - Step 04. 동기/비동기 처리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/15/Mocha-step-02/"
+                    data-tooltip="Mocha Tutorial - Step 02. Chai"
+                    aria-label="NEXT: Mocha Tutorial - Step 02. Chai"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/06/16/Mocha-step-03/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-3wjqwcti7rlts5osjpx7we3epuibryxsljwlltxhzmhnbvgxi9209ypyq6cr.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2017/06/16/Mocha-step-03/';
+              
+            this.page.identifier = 'step03mochhook';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>
