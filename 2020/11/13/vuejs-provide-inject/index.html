@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Vue.JS] Component provide/inject 이해하기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"/>
+    
+        <meta name="keywords" content="javascript,vue.js,vue 튜토리얼,vuejs 튜토리얼,vuejs 강좌,vuejs 설치,vue 기초,store,vuex,vue.js tutorial,vue 배우기,vuejs 배우기,vue-cli 3,vue-cli 3 배우기,vue-cli 3 tutorial,vue-cli,vue-cli 3 개념,vue-cli 3 설치,vue.js component 만들기,vuejs 컴포넌트,vue 컴포넌트 만들기,vuejs 컴포넌트 만들기,vuejs component 만들기,vue component provide/inject,vue provide/inject">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nvue.js에서 provide/inject api는 보통 많이 사용하지는 않는다. 핵심적인 요소 간주하기에는 무언가 부족하기 때문이기도 하며, Vue.js 공식 문서에서 provide/inject는 일반 애플리케이션 코드에 사용하지 않는 것이 좋다고 명시되어있기 때문이다. 하지만 모르는 것보다 아는 것이 이득이며 때로는 이 provide/inject가 도움이 되기 때문에 이번 포스팅에서 언급하였으며, 몇 가지 얘기해 보려 한다.\n여기서 provide/inject 개념을 이해하고 예제를 통하여 완벽하게 파악해보도록 하자.\nprovide&#x2F;injectprovide/inject 개념은 vue 2.2.0부터 추가된 기능이다. 기능치고는 가이드에 사용법 또는 왜 사용하는지와 왜 일반 애플리케이션 코드에서 사용하지 않는 것이 좋은지에 대한 정확한 정보를 찾기 힘들다.\nprovide/inject는 말 그대로 해석하는 편이 이해가 빠르다. provide는 제공이며, inject는 주입이다. 이를 먼저 기억하고 글을 읽어 나가도록 하자.\nprovide/inject의 개념은 컴포넌트의 계층구조에서 빛을 발한다.보통 프로젝트나 vue를 사용하게 되면 컴포넌트의 깊이 있는 계층 구조가 되는 경우가 허다하다. 특정 기능을 컴포넌트 단위로 쪼개고 이를 각 vue page 개념의 컴포넌트에서 사용할 때 컴포넌트 안에 컴포넌트가.. 그리고 또 그 안의 컴포넌트가 존재하는 때도 있는데 이런 경우 우리는 보통 가장 기본적인 형태인 props를 하위 컴포넌트로 전달하여 사용하는 경우가 많다.\n이런 경우 컴포넌트의 깊이에 따라 가상 최상위 컴포넌트부터 가장 최하위 컴포넌트까지 props를 전달하기엔 비효율적으로 느낄 것이다. 이런 경우에 바로 provide/inject 개념을 사용한다.\n컴포넌트 계층 구조의 이해위에서 설명한 컴포넌트 계층 구조를 좀 더 명확하게 잡고 가자.\n계층 구조에서 props를 전달하는 것은 매우 현명한 방법이다. 비록 코드상 비효율적이거나 코드 추적이 불편한 점이 있을 테지만 가장 vue component 개념에 적합한 방법이다. 때로는 이런 내용이 코드 추적 간 중간 단계의 컴포넌트까지 파헤쳐야 하기 때문에 코드 추적이 명확하다고 볼 수 있다.\n\nprovide&#x2F;inject의 사용 시기그럼 컴포넌트 계층 구조에서 props를 통한 방법이 가장 최적이라면 언제 provide/inject를 사용해야 하는 걸까? 이 질문은 처음에 말한 Vue 공식 문서에 나와 있다.\nprovide/inject는 주로 고급 플러그인 또는 컴포넌트 라이브러리에서 사용됩니다. 일반 애플리케이션에서 사용하지 않는 것이 좋습니다.\n\n\n결론부터 말하면, 사실 플러그인 또는 컴포넌트와 일반 애플리케이션에서 사용해도 된다. 하지만 일반 애플리케이션에서 사용하지 않는 것이 좋다는 것은 provide/inject를 사용하면 할수록 코드의 추적이 어렵기 때문이다.\n\n컴포넌트의 계층적인 구조에서 props가 최적의 방법이라는 건 그만큼 컴포넌트의 추적이 가능하기 때문인데 이 provide/inject를 사용한다면 계층적인 구조에서 중간 단계 컴포넌트를 건너뛰기 때문이다. 이에 반면 보통 플러그인이나 컴포넌트는 단일 모듈 형태로 되어있으며 깊은 계층구조를 가지지 않고 일반 애플리케이션보다 복잡한 구조를 가지지 않기 때문에 제공된다.\n물론, 플러그인이나 컴포넌트의 구조가 복잡하다면 provide/inject의 사용은 지양해야 할 것이다.\nprovide&#x2F;inject 사용 방법위에서 provide는 제공이라고 하였고, inject는 주입이라고 하였다. provide는 부모 컴포넌트에서 props를 제공하는 것이고 ,inject는 하위 컴포넌트에서 제공된 props를 주입하여 사용한다.\n\n위 그림을 보면 부모 컴포넌트에서 provide를 정의한다. 그리고 그 하위의 모든 컴포넌트는 inject를 통해 정의된 provide를 사용 할 수 있다.\n이제 예를 통해서 알아보도록 하자.\n프로젝트 생성은 Vue-CLI를 통하여 생성하도록 하겠다. Vue-CLI에 대한 자세한 내용은 [Vue.JS] Vue-CLI 3 시작하기를 참고하도록 하자.\nvue create vue-provide-inject\n\n이제 App.vue를 수정하고 components 경로에 세개의 컴포넌트를 만들고 아래와 같이 작성하자.\nApp.vue\n&lt;template&gt;  &lt;div id=&quot;app&quot; class=&quot;comp&quot;&gt;    &lt;p class=&quot;comp-name&quot;&gt;App&lt;/p&gt;    &lt;span class=&quot;inject-text&quot;&gt;provide :      &lt;span class=&quot;inject-value&quot;&gt;&#x27;inject props&#x27;&lt;/span&gt;    &lt;/span&gt;    &lt;first name=&quot;first&quot;/&gt;  &lt;/div&gt;&lt;/template&gt;&lt;script&gt;import First from &#x27;@/components/First&#x27;export default &#123;  name: &#x27;App&#x27;,  components: &#123;    First  &#125;,  provide () &#123;    return &#123;      injectProps: &#x27;inject value&#x27;    &#125;  &#125;&#125;&lt;/script&gt;&lt;style&gt;#app &#123;  font-family: Avenir, Helvetica, Arial, sans-serif;  -webkit-font-smoothing: antialiased;  -moz-osx-font-smoothing: grayscale;  text-align: center;  color: #2c3e50;  margin-top: 60px;&#125;.comp &#123;  text-align: left;  border: 1px solid #444444;  padding: 30px;&#125;.comp.comp-fcolor &#123;  background: #f5acac96;&#125;.comp.comp-scolor &#123;  background: #0000ff30;&#125;.comp.comp-tcolor &#123;  background: #ffff0052;&#125;.comp-name &#123;  color: #0020f8&#125;&lt;/style&gt;\n\nFirst.vue\n&lt;template&gt;  &lt;div class=&quot;comp comp-fcolor&quot;&gt;    &lt;p class=&quot;comp-name&quot;&gt;First Component&lt;/p&gt;    &lt;p&gt;props : &#123;&#123; name &#125;&#125;&lt;/p&gt;    &lt;second :name=&quot;name&quot;/&gt;  &lt;/div&gt;&lt;/template&gt;&lt;script&gt;import Second from &#x27;@/components/Second&#x27;export default &#123;  name: &#x27;first&#x27;,  components: &#123; Second &#125;,  props: &#123;    name: String  &#125;&#125;&lt;/script&gt;\n\nSecond.vue\n&lt;template&gt;  &lt;div class=&quot;comp comp-scolor&quot;&gt;    &lt;p class=&quot;comp-name&quot;&gt;Second Component&lt;/p&gt;    &lt;p&gt;props : &#123;&#123; name &#125;&#125;&lt;/p&gt;    &lt;third :name=&quot;name&quot;/&gt;  &lt;/div&gt;&lt;/template&gt;&lt;script&gt;import Third from &#x27;@/components/Third&#x27;export default &#123;  name: &#x27;second&#x27;,  components: &#123; Third &#125;,  props: &#123;    name: String  &#125;&#125;&lt;/script&gt;\n\nThird.vue\n&lt;template&gt;  &lt;div class=&quot;comp comp-tcolor&quot;&gt;    &lt;p class=&quot;comp-name&quot;&gt;Third Component&lt;/p&gt;    &lt;p&gt;props : &#123;&#123; name &#125;&#125;&lt;/p&gt;    &lt;span class=&quot;inject-text&quot;&gt;inject props :      &lt;span class=&quot;inject-value&quot;&gt;&#123;&#123; injectProps &#125;&#125;&lt;/span&gt;    &lt;/span&gt;  &lt;/div&gt;&lt;/template&gt;&lt;script&gt;export default &#123;  name: &#x27;third&#x27;,  props: &#123;    name: String  &#125;,  inject: [&#x27;injectProps&#x27;]&#125;&lt;/script&gt;&lt;style&gt;.inject-text &#123;  font-weight: bold;&#125;.inject-value &#123;  color: red&#125;&lt;/style&gt;\n\n먼저 결과를 확인해보자.\n\n위 내용을 보면 First Component에서 Second Component를 자식으로 가지고 Second Component에서는 Third Component를 자식으로 가지는 계층 구조이다.\n기존처럼 props를 통해 App.vue부터 시작하여 가장 하위 컴포넌트인 Third Component까지 전달하면서 화면에 출력하고 있다. 이는 props를 하위까지 전달하기 때문에 결과적으로 세 컴포넌트의 props는 같을 것이다. 그리고 같은 상황에서 App.vue부터 Third Component까지 provide/inject를 사용하여 결과를 전달하고 있다. \n최초 App.vue에서 provide를 통하여 injectProps를 제공하였다. 그리고 마지막 컴포넌트인 Third Component에서 inject를 통하여 injectProps를 주입하고 출력하였다. 이러한 상황에서 동일하게 props와 같은 결과를 전달하는 경우와 비교를 해보자면 Root 컴포넌트에서 가장 하위의 컴포넌트까지 단번에 props를 전달한 결과가 된다.\n\n이처럼 어느 상황 속에서는 한번에 props를 전달하는 결과이니 마냥 편할 수도 있지만 복잡한 애플리케이션에서는 이런 이유로 인하여 소스 코드 추적이 어려워 지기 때문에 조심해서 사용할 필요가 있다.이 외에 provide/inject에 대한 자세한 설명은 Vue.js 공식 문서에서 확인해 보도록 하자.\n\n더 알아보기Firebase를 활용한 PWA(Progressive Web App) 앱 만들기빠르게 배우는 Vue.jsVue-CLI 3 시작하기Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)Vuex Store의 state를 효율적으로 초기화하기Nuxt.js 개념부터 설치까지 빠르게 배우기Vuex VS Event BusVue Component provide&#x2F;inject 이해하기Vue.JS Component 개념을 익히고 만들어보자!!\n","dateCreated":"2020-11-13T12:51:27+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-11-13T12:51:27+00:00","description":"\nvue.js에서 provide/inject api는 보통 많이 사용하지는 않는다. 핵심적인 요소 간주하기에는 무언가 부족하기 때문이기도 하며, Vue.js 공식 문서에는 provide/inject는 일반 애플리케이션 코드에 사용하지 않는 것이 좋다고 명시되어있기 때문이다. 하지만 모르는 것보다 아는 것이 이득이며 때로는 이 provide/inject가 도움이 되기 때문에 이번 포스팅에서 언급하였으며, 몇 가지 얘기해 보려 한다.\n","headline":"[Vue.JS] Component provide/inject 이해하기","image":["vuejs-provide-inject-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/","keywords":"vue.js, vue.js tutorial, vue component, provide/inject","thumbnailUrl":"vuejs-provide-inject-cover.png"}</script>
+    <meta name="description" content="vue.js에서 provide&#x2F;inject api는 보통 많이 사용하지는 않는다. 핵심적인 요소 간주하기에는 무언가 부족하기 때문이기도 하며, Vue.js 공식 문서에는 provide&#x2F;inject는 일반 애플리케이션 코드에 사용하지 않는 것이 좋다고 명시되어있기 때문이다. 하지만 모르는 것보다 아는 것이 이득이며 때로는 이 provide&#x2F;inject가 도">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Vue.JS] Component provide&#x2F;inject 이해하기">
+<meta property="og:url" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="vue.js에서 provide&#x2F;inject api는 보통 많이 사용하지는 않는다. 핵심적인 요소 간주하기에는 무언가 부족하기 때문이기도 하며, Vue.js 공식 문서에는 provide&#x2F;inject는 일반 애플리케이션 코드에 사용하지 않는 것이 좋다고 명시되어있기 때문이다. 하지만 모르는 것보다 아는 것이 이득이며 때로는 이 provide&#x2F;inject가 도">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/vuejs-provide-inject-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/component-props-flow.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/component-provide-inject.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/provide-inject-use.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/provide-inject-result.png">
+<meta property="article:published_time" content="2020-11-13T12:51:27.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.833Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="vue.js">
+<meta property="article:tag" content="vue.js tutorial">
+<meta property="article:tag" content="vue component">
+<meta property="article:tag" content="provide&#x2F;inject">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/vuejs-provide-inject-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/vuejs-provide-inject-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/vuejs-provide-inject-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Vue.JS] Component provide/inject 이해하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-11-13T12:51:27+00:00">
+	
+		    2020-11-13
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/vue-js/">vue.js</a>, <a class="category-link" href="/categories/javascript/vue-js/vue-js-tutorial/">vue.js tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/11/13/vuejs-provide-inject/vuejs-provide-inject-cover.png" alt="vuejs-provide-inject-cover"></p>
+<p>vue.js에서 <code>provide/inject</code> api는 보통 많이 사용하지는 않는다. 핵심적인 요소 간주하기에는 무언가 부족하기 때문이기도 하며, <a target="_blank" rel="noopener" href="https://vuejs.org/v2/api/#provide-inject">Vue.js 공식 문서</a>에서 <em><code>provide/inject</code>는 일반 애플리케이션 코드에 사용하지 않는 것이 좋다고 명시</em>되어있기 때문이다. 하지만 모르는 것보다 아는 것이 이득이며 때로는 이 <code>provide/inject</code>가 도움이 되기 때문에 이번 포스팅에서 언급하였으며, 몇 가지 얘기해 보려 한다.</p>
+<p>여기서 <code>provide/inject</code> 개념을 이해하고 예제를 통하여 완벽하게 파악해보도록 하자.</p>
+<h1 id="provide-inject"><a href="#provide-inject" class="headerlink" title="provide&#x2F;inject"></a>provide&#x2F;inject</h1><p><code>provide/inject</code> 개념은 vue 2.2.0부터 추가된 기능이다. 기능치고는 가이드에 사용법 또는 왜 사용하는지와 왜 일반 애플리케이션 코드에서 사용하지 않는 것이 좋은지에 대한 정확한 정보를 찾기 힘들다.</p>
+<p><code>provide/inject</code>는 말 그대로 해석하는 편이 이해가 빠르다. <code>provide</code>는 <code>제공</code>이며, <code>inject</code>는 <code>주입</code>이다. 이를 먼저 기억하고 글을 읽어 나가도록 하자.</p>
+<p><code>provide/inject</code>의 개념은 컴포넌트의 계층구조에서 빛을 발한다.<br>보통 프로젝트나 vue를 사용하게 되면 컴포넌트의 깊이 있는 계층 구조가 되는 경우가 허다하다. 특정 기능을 컴포넌트 단위로 쪼개고 이를 각 vue page 개념의 컴포넌트에서 사용할 때 컴포넌트 안에 컴포넌트가.. 그리고 또 그 안의 컴포넌트가 존재하는 때도 있는데 이런 경우 우리는 보통 가장 기본적인 형태인 <code>props</code>를 하위 컴포넌트로 전달하여 사용하는 경우가 많다.</p>
+<p>이런 경우 컴포넌트의 깊이에 따라 <strong>가상 최상위 컴포넌트부터 가장 최하위 컴포넌트까지</strong> <code>props</code>를 전달하기엔 비효율적으로 느낄 것이다. 이런 경우에 바로 <code>provide/inject</code> 개념을 사용한다.</p>
+<h1 id="컴포넌트-계층-구조의-이해"><a href="#컴포넌트-계층-구조의-이해" class="headerlink" title="컴포넌트 계층 구조의 이해"></a>컴포넌트 계층 구조의 이해</h1><p>위에서 설명한 컴포넌트 계층 구조를 좀 더 명확하게 잡고 가자.</p>
+<p>계층 구조에서 <code>props</code>를 전달하는 것은 매우 현명한 방법이다. 비록 코드상 비효율적이거나 코드 추적이 불편한 점이 있을 테지만 가장 vue component 개념에 적합한 방법이다. 때로는 이런 내용이 코드 추적 간 중간 단계의 컴포넌트까지 파헤쳐야 하기 때문에 코드 추적이 명확하다고 볼 수 있다.</p>
+<p><img src="/2020/11/13/vuejs-provide-inject/component-props-flow.png" alt="vue-component-props-flow"></p>
+<h1 id="provide-inject의-사용-시기"><a href="#provide-inject의-사용-시기" class="headerlink" title="provide&#x2F;inject의 사용 시기"></a>provide&#x2F;inject의 사용 시기</h1><p>그럼 컴포넌트 계층 구조에서 <code>props</code>를 통한 방법이 가장 최적이라면 언제 <code>provide/inject</code>를 사용해야 하는 걸까? 이 질문은 처음에 말한 Vue 공식 문서에 나와 있다.</p>
+<div class="alert danger no-icon"><p><code>provide/inject</code>는 주로 고급 플러그인 또는 컴포넌트 라이브러리에서 사용됩니다. 일반 애플리케이션에서 사용하지 않는 것이 좋습니다.</p>
+</div>
+
+<p>결론부터 말하면, <strong>사실 플러그인 또는 컴포넌트와 일반 애플리케이션에서 사용해도 된다.</strong> 하지만 일반 애플리케이션에서 사용하지 않는 것이 좋다는 것은 <code>provide/inject</code>를 사용하면 할수록 코드의 추적이 어렵기 때문이다.</p>
+<p><img src="/2020/11/13/vuejs-provide-inject/component-provide-inject.png" alt="vue-component-provide-inject"></p>
+<p>컴포넌트의 계층적인 구조에서 <code>props</code>가 최적의 방법이라는 건 그만큼 컴포넌트의 추적이 가능하기 때문인데 이 <code>provide/inject</code>를 사용한다면 계층적인 구조에서 중간 단계 컴포넌트를 건너뛰기 때문이다. 이에 반면 보통 플러그인이나 컴포넌트는 단일 모듈 형태로 되어있으며 깊은 계층구조를 가지지 않고 일반 애플리케이션보다 복잡한 구조를 가지지 않기 때문에 제공된다.</p>
+<p>물론, <strong>플러그인이나 컴포넌트의 구조가 복잡하다면 <code>provide/inject</code>의 사용은 지양해야 할 것이다.</strong></p>
+<h1 id="provide-inject-사용-방법"><a href="#provide-inject-사용-방법" class="headerlink" title="provide&#x2F;inject 사용 방법"></a>provide&#x2F;inject 사용 방법</h1><p>위에서 <code>provide</code>는 <code>제공</code>이라고 하였고, <code>inject</code>는 <code>주입</code>이라고 하였다. <code>provide</code>는 부모 컴포넌트에서 <code>props</code>를 <code>제공</code>하는 것이고 ,<code>inject</code>는 하위 컴포넌트에서 제공된 <code>props</code>를 <code>주입</code>하여 사용한다.</p>
+<p><img src="/2020/11/13/vuejs-provide-inject/provide-inject-use.png" alt="provide-inject-use"></p>
+<p>위 그림을 보면 부모 컴포넌트에서 <code>provide</code>를 정의한다. 그리고 그 하위의 모든 컴포넌트는 <code>inject</code>를 통해 정의된 <code>provide</code>를 사용 할 수 있다.</p>
+<p>이제 예를 통해서 알아보도록 하자.</p>
+<p>프로젝트 생성은 <code>Vue-CLI</code>를 통하여 생성하도록 하겠다. Vue-CLI에 대한 자세한 내용은 <a href="https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/">[Vue.JS] Vue-CLI 3 시작하기</a>를 참고하도록 하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">vue create vue-provide-inject<br></code></pre></td></tr></table></figure>
+
+<p>이제 <code>App.vue</code>를 수정하고 <code>components</code> 경로에 세개의 컴포넌트를 만들고 아래와 같이 작성하자.</p>
+<p><strong>App.vue</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp-name&quot;</span>&gt;</span>App<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;inject-text&quot;</span>&gt;</span>provide :<br>      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;inject-value&quot;</span>&gt;</span>&#x27;inject props&#x27;<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">first</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;first&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">First</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/First&#x27;</span></span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span><br><span class="language-javascript">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;App&#x27;</span>,</span><br><span class="language-javascript">  <span class="hljs-attr">components</span>: &#123;</span><br><span class="language-javascript">    <span class="hljs-title class_">First</span></span><br><span class="language-javascript">  &#125;,</span><br><span class="language-javascript">  provide () &#123;</span><br><span class="language-javascript">    <span class="hljs-keyword">return</span> &#123;</span><br><span class="language-javascript">      <span class="hljs-attr">injectProps</span>: <span class="hljs-string">&#x27;inject value&#x27;</span></span><br><span class="language-javascript">    &#125;</span><br><span class="language-javascript">  &#125;</span><br><span class="language-javascript">&#125;</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-id">#app</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">font-family</span>: Avenir, Helvetica, Arial, sans-serif;</span><br><span class="language-css">  -webkit-<span class="hljs-attribute">font-smoothing</span>: antialiased;</span><br><span class="language-css">  -moz-osx-<span class="hljs-attribute">font-smoothing</span>: grayscale;</span><br><span class="language-css">  <span class="hljs-attribute">text-align</span>: center;</span><br><span class="language-css">  <span class="hljs-attribute">color</span>: <span class="hljs-number">#2c3e50</span>;</span><br><span class="language-css">  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">60px</span>;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.comp</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">text-align</span>: left;</span><br><span class="language-css">  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-number">#444444</span>;</span><br><span class="language-css">  <span class="hljs-attribute">padding</span>: <span class="hljs-number">30px</span>;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.comp</span><span class="hljs-selector-class">.comp-fcolor</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">background</span>: <span class="hljs-number">#f5acac96</span>;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.comp</span><span class="hljs-selector-class">.comp-scolor</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">background</span>: <span class="hljs-number">#0000ff30</span>;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.comp</span><span class="hljs-selector-class">.comp-tcolor</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">background</span>: <span class="hljs-number">#ffff0052</span>;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.comp-name</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">color</span>: <span class="hljs-number">#0020f8</span></span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>First.vue</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp comp-fcolor&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp-name&quot;</span>&gt;</span>First Component<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>props : &#123;&#123; name &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">second</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;name&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Second</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/Second&#x27;</span></span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span><br><span class="language-javascript">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;first&#x27;</span>,</span><br><span class="language-javascript">  <span class="hljs-attr">components</span>: &#123; <span class="hljs-title class_">Second</span> &#125;,</span><br><span class="language-javascript">  <span class="hljs-attr">props</span>: &#123;</span><br><span class="language-javascript">    <span class="hljs-attr">name</span>: <span class="hljs-title class_">String</span></span><br><span class="language-javascript">  &#125;</span><br><span class="language-javascript">&#125;</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>Second.vue</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp comp-scolor&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp-name&quot;</span>&gt;</span>Second Component<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>props : &#123;&#123; name &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">third</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;name&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Third</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/Third&#x27;</span></span><br><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span><br><span class="language-javascript">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;second&#x27;</span>,</span><br><span class="language-javascript">  <span class="hljs-attr">components</span>: &#123; <span class="hljs-title class_">Third</span> &#125;,</span><br><span class="language-javascript">  <span class="hljs-attr">props</span>: &#123;</span><br><span class="language-javascript">    <span class="hljs-attr">name</span>: <span class="hljs-title class_">String</span></span><br><span class="language-javascript">  &#125;</span><br><span class="language-javascript">&#125;</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>Third.vue</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp comp-tcolor&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;comp-name&quot;</span>&gt;</span>Third Component<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>props : &#123;&#123; name &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;inject-text&quot;</span>&gt;</span>inject props :<br>      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;inject-value&quot;</span>&gt;</span>&#123;&#123; injectProps &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span><br><span class="language-javascript">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;third&#x27;</span>,</span><br><span class="language-javascript">  <span class="hljs-attr">props</span>: &#123;</span><br><span class="language-javascript">    <span class="hljs-attr">name</span>: <span class="hljs-title class_">String</span></span><br><span class="language-javascript">  &#125;,</span><br><span class="language-javascript">  <span class="hljs-attr">inject</span>: [<span class="hljs-string">&#x27;injectProps&#x27;</span>]</span><br><span class="language-javascript">&#125;</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.inject-text</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">font-weight</span>: bold;</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><br><span class="language-css"><span class="hljs-selector-class">.inject-value</span> &#123;</span><br><span class="language-css">  <span class="hljs-attribute">color</span>: red</span><br><span class="language-css">&#125;</span><br><span class="language-css"></span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>먼저 결과를 확인해보자.</p>
+<p><img src="/2020/11/13/vuejs-provide-inject/provide-inject-result.png" alt="provide-inject-result"></p>
+<p>위 내용을 보면 <code>First Component</code>에서 <code>Second Component</code>를 자식으로 가지고 <code>Second Component</code>에서는 <code>Third Component</code>를 자식으로 가지는 계층 구조이다.</p>
+<p>기존처럼 <code>props</code>를 통해 <code>App.vue</code>부터 시작하여 가장 하위 컴포넌트인 <code>Third Component</code>까지 전달하면서 화면에 출력하고 있다. 이는 <code>props</code>를 하위까지 전달하기 때문에 결과적으로 세 컴포넌트의 <code>props</code>는 같을 것이다. 그리고 같은 상황에서 <code>App.vue</code>부터 <code>Third Component</code>까지 <code>provide/inject</code>를 사용하여 결과를 전달하고 있다. </p>
+<p>최초 <code>App.vue</code>에서 <code>provide</code>를 통하여 <code>injectProps</code>를 제공하였다. 그리고 마지막 컴포넌트인 <code>Third Component</code>에서 <code>inject</code>를 통하여 <code>injectProps</code>를 주입하고 출력하였다. 이러한 상황에서 동일하게 <code>props</code>와 같은 결과를 전달하는 경우와 비교를 해보자면 <strong>Root 컴포넌트에서 가장 하위의 컴포넌트까지 단번에 props를 전달한 결과</strong>가 된다.</p>
+<hr>
+<p>이처럼 어느 상황 속에서는 한번에 <code>props</code>를 전달하는 결과이니 마냥 편할 수도 있지만 복잡한 애플리케이션에서는 이런 이유로 인하여 소스 코드 추적이 어려워 지기 때문에 조심해서 사용할 필요가 있다.<br>이 외에 <code>provide/inject</code>에 대한 자세한 설명은 <a target="_blank" rel="noopener" href="https://vuejs.org/v2/api/#provide-inject">Vue.js 공식 문서</a>에서 확인해 보도록 하자.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/2017/11/15/vuejs-tutorial/">빠르게 배우는 Vue.js</a><br><a href="https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/">Vue-CLI 3 시작하기</a><br><a href="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/">Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!</a><br><a href="https://kdydesign.github.io/2019/04/10/vuejs-performance/">Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)</a><br><a href="https://kdydesign.github.io/2019/04/10/vue-store-state/">Vuex Store의 state를 효율적으로 초기화하기</a><br><a href="https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/">Nuxt.js 개념부터 설치까지 빠르게 배우기</a><br><a href="https://kdydesign.github.io/2021/01/14/vue-eventbus-vs-vuex/">Vuex VS Event Bus</a><br><a href="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/">Vue Component provide&#x2F;inject 이해하기</a><br><a href="https://kdydesign.github.io/2019/04/27/vue-component/">Vue.JS Component 개념을 익히고 만들어보자!!</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/provide-inject/" rel="tag">provide/inject</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-component/" rel="tag">vue component</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-js/" rel="tag">vue.js</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-js-tutorial/" rel="tag">vue.js tutorial</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/27/lerna-changelog/"
+                    data-tooltip="Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                    aria-label="PREVIOUS: Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/19/open-source-flow/"
+                    data-tooltip="오픈 소스(Open-Source) 구조와 모듈 파악하기"
+                    aria-label="NEXT: 오픈 소스(Open-Source) 구조와 모듈 파악하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/27/lerna-changelog/"
+                    data-tooltip="Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                    aria-label="PREVIOUS: Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/19/open-source-flow/"
+                    data-tooltip="오픈 소스(Open-Source) 구조와 모듈 파악하기"
+                    aria-label="NEXT: 오픈 소스(Open-Source) 구조와 모듈 파악하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/';
+              
+            this.page.identifier = 'vuejs-provide-inject';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

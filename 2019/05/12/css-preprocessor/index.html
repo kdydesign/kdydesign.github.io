@@ -1,0 +1,816 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>CSS 전처리기(Pre-Processor) 배우기! - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2019/05/12/css-preprocessor/"/>
+    
+        <meta name="keywords" content="css,css3,css 전처리기 배우기,css 전처리기 튜토리얼,css 전처리기 tutorial,sass 배우기,less 배우기,stylus 배우기,sass 기초,css 전처리기,css preprocessor,sass,less,stylus,scss,sass 장점,sass 단점,전처리기 단점,전처리기 장점">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n이번 포스트에서는 Sass, Less, Stylus와 같은 CSS 전처리기(CSS Preprocessor)에 대해 알아보자.\nCSS 전처리기(CSS Preprocessor)는 모듈별로 특별한 Syntax를 가지고 있고 여기에 믹스인(mixin), 중첩 셀렉터(nesting selector), 상속 셀렉터(inheritance selector) 등 Programmatically 한 요소를 접목해 방대해지는 CSS 문서의 양을 효율적으로 처리하고 관리해 주는 통합적인 단어를 말한다. 이 CSS 전처리기(CSS Preprocessor) 자체만으로는 웹 서버가 인지하지 못하기 때문에 각 CSS 전처리기에 맞는 Compiler를 사용해야 하고 컴파일을 하게 되면 실제로 우리가 사용하는 CSS 문서로 변환이 된다.\n이번 포스트에서는 이 세 가지의 CSS 전처리기를 비교해보고 동향을 알아보며, Sass, Less, Stylus를 직접 설치 및 사용하는 방법을 배워보자.\n- 해당 포스트에서는 세 가지의 전처리기 문법을 다루지는 않습니다. -\n\n\nCSS 전처리기(CSS Preprocessor)위에 설명한 바와 같이 CSS 전처리기(CSS Preprocessor)는 CSS 문서의 작성에 도움을 주는 도구이다. 우리가 흔히 CSS 문서 작성할 때는 많은 반복적인 작업을 요구하고 Color 값을 찾는 일, tag를 닫는 일 등 번거로운 작업 역시 포함되어있다. 그뿐만 아니라 클래스의 상속과 같은 사항으로 점점 CSS 문서는 양이 많아지고 이로 인해서 이후 유지관리에 많은 영향을 준다. 이런 CSS의 문제점들을 Programmatically 한 방식. 즉 변수, 함수, 상속 등 일반적인 프로그래밍 개념을 사용하여 해결해 나갈 수 있다.\nCSS 전처리기(CSS Preprocessor)에는 다양한 모듈이 존재하고 가장 많이 사용되는 전처리기에는 Sass, Less, Stylus가 있으며, 서로의 특징에 맞게 약간의 Syntax만 다를 뿐 개념 자체는 동일하기 때문에 Learning curve가 낮은 편이다.\n장점CSS 전처리기(CSS Preprocessor) 역시 하나의 기술이기 때문에 장단점이 존재할 수밖에 없다. 장점이라 하면 위에서도 설명했지만 정리하자면 이렇다.\n\n재사용성 - 공통 요소 또는 반복적인 항목을 변수 또는 함수로 대체\n시간적 비용 감소 - 임의 함수 및 Built-in 함수로 인해 개발 시간적 비용 절약\n유지 관리 - 중첩, 상속과 같은 요소로 인해 구조화된 코드로 유지 및 관리가 용이\n\n\n\n재사용성의 장점을 가장 쉽게 파악하는 방법은 CSS에서 color를 지정하는 방법을 생각해보자. 우리가 특정 클래스에 color 속성을 주고 값을 지정할 때 hex code 또는 RGB로 지정을 한다. 하지만 특정 색상이 반복된다면 우리는 주기적으로 색상 코드를 찾고 반영을 해줘야 한다. 하지만 CSS 전처리기(CSS Preprocessor)에서는 이런 반복되는 부분을 변수로 처리할 수 있다. 대부분 실무에서는 하나의 파일 안에 color-set을 모두 정의하여 사용된다.\n$primary-color: #fff.class-A     background-color: $primary-color.class-B     background-color: $primary-color\n\n\n시간적 비용 감소에 대해서 보자. \n각 CSS 전처리기(CSS Preprocessor)에는 내장함수(Built-in Functions)가 존재한다. 이 내장 함수는 이미 전처리기 내에 포함된 함수로 우리는 필요한 값들만 전달하면 이에 대한 결과를 생성해 준다. 예를 들어 darken(color, amount)이라는 내장 함수는 색상과 퍼센티지를 지정해 주면 거기에 알맞은 값을 출력해 준다.\n$color: #2ecc71$buttonDark: darken($buttonColor, 10%)button     background: $color    box-shadow: 0px 5px 0px $buttonDark\n\n\n유지 관리는 가장 중요하고 눈에 띄는 장점 중의 하나이다. \n클래스를 정의하다 보면 상속과 공통 속성을 지정하기 위해서 무지막지하게 길게 정의를 한다. 이런 이유로 CSS 문서가 가독성이 매우 떨어지는 이유 중 하나이다. 이런 내용을 CSS 전처리기(CSS Preprocessor)에서는 중첩(Nesting)과 상속(Extend)을 통해 구조화 할 수 있다.\n중첩(Nesting)은 아래처럼 정의한다.\n중첩(Nesting)\n.class-A     width: 100%    .A-child-1         color: red        .A-child-2         color: blue\n\n위 내용을 컴파일하게 되면 아래와 같다.\n.class-A &#123;    width: 100%&#125;.class-A .A-child-1 &#123;    color: red&#125;.class-A .A-child-2 &#123;    color: blue&#125;\n\n상속(Extend)은 아래처럼 정의한다.\n상속(Extend)\n.class-A     color: red    padding: 10px.class-B     @extend .class-A    border: 1px solid red\n\n위 내용을 컴파일하게 되면 아래와 같다.\n.class-A, .class-B &#123;    color: red    padding: 10px&#125;.class-B &#123;    border: 1px solid red&#125;\n\n단점성능, 사용성 등 단점을 찾고 있겠지만 가장 중요한 것 중 하나가 실무에서의 사용이다. 그리고 이 내용이 곧 단점이 되기도 하다. 실무에서는 대부분 CSS의 작업(Publishing)은 퍼블리셔(Publisher) 또는 디자이너(Designer)가 진행하게 된다. 물론 Front-End 개발자가 진행하는 경우도 있지만 좀 더 체계가 필요한 회사나 프로젝트에서는 퍼블리셔나 디자이너가 퍼블리싱 작업을 하는 경우가 있는데 퍼블리셔나 디자이너가 개발에 대한 역량과 요소를 알아야 한다는 것이 문제이다. 지금까지 말했지만, CSS 전처리기(CSS Preprocessor)는 Programmatically 한 요소를 접목했기 때문에 분기문 처리, 변수의 이해, mixin의 이해 등 개발적인 요소를 알아야 하기 때문이다. Learning curve가 낮다는 장점은 순전히 개발자에 한해서이다.\n여기까지 해서 CSS 전처리기(CSS Preprocessor)의 장점과 이에 따른 간단한 예제를 보았다.\nSass, Less, Stylus 비교Sass, Less, Stylus는 가장 대표적인 전처리기이다. 만약 전처리기 도입을 고민한다면 사실상 이 세 개의 전처리기 차이가 크지 않기 때문에 어느 것을 선택해도 문제는 되지 않지만 그래도 선택이 어렵다면 이 섹션을 보고 조금이나마 도움이 되었으면 한다.\nTrend에서는 검색어를 통한 관심도를 볼 수 있다. 정확하게 CSS 전처리기에 대해 검색을 하지 않았고 포함된 관심도이지만 Sass를 가장 많이 사용하는 것을 볼 수 있다. 그럼 Github의 Start 수와 Fork 수를 확인해 보자.\n\nNPM 기준으로 확인해보자.\n\n수치상으로만 볼 때는 무엇이 높고 낮음은 판가름이 되지만 그게 정확한 척도는 되지 않는다.\n위 세 전처리기 모두 사용해보는 것이 좋을 것이지만 무엇을 사용할지의 판단은 본인의 몫이고 필자로서는 무엇을 써도 무방하다고 생각된다.\n이제 이 세 개의 CSS 전처리기에 대해서 간략하게 알아보도록 하자.\nSass vs Less vs Stylus초기에는 JavaScript로 작성된 Less가 가장 선호되었다. node-sass가 나오고 나서부터는 Sass가 선호되고 있다. Stylus는 가장 늦게 나온 전처리기로 최근 들어서 open-project에 많이 사용되고 있다.\nSassSass는 전처리기 중 가장 먼저 나온 전처리기이다. 최초에는 Ruby 언어를 기반으로 구동되었지만 Ruby 언어가 지닌 한계로 컴파일이 다소 느렸기 때문에 Less를 더 선호하였다. 하지만 node-sass라는 Node.js기반의 라이브러리가 나오면서 이후 Sass를 많이 사용하고 있다. 최근에는 sass 자체가 NPM에 등록되어있다. 다른 전처리기에 비해 상대적으로 다양한 기능이 제공되고 지속적인 업데이트가 진행되고\nSass 설치npm을 통한 설치 방법이다.\nnpm install -g sass\n\nSass 컴파일기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 Sass Command-Line Interface를 참고하자.\nsass styls.scss styls.css\n\nLessLess는 Twitter의 Bootstrap에서 사용되면서 전파되기 시작했고 Client(브라우저)에서 자바스크립트 Parser를 통해 실행된다. Sass와는 다르게 초창기부터 Node.js기반으로 구동되었고 Sass에 비해 컴파일 속도가 빠른 것이 장점이었으나 Sass가 캐쉬를 적용한 뒤로부터는 큰 차이가 없어졌다.\nLess 설치NPM을 통한 설치 방법이다.\nnpm install -g less\n\nLess 컴파일기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 Using Less.js를 참고하자.\nlessc style.less style.css\n\nStylusStylus는 가증 나중에 나온 전처리기로 Less와 동일하게 Node.js기반으로 구동된다. 가장 늦게 발표된 전처리기이지만 많은 기능이 구현되어있다. 몇 년 전만 해도 다른 전처리기에 비해 완성도가 낮고 여러 잔존 버그가 존재하였지만, 시간이 지남에 따라 많은 부분이 해결되어 최근에는 많은 open-project에서 사용되고 있다.\nStylus 설치NPM을 통한 설치 방법이다.\nnpm install -g stylus\n\nStylus 컴파일기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 Stylus Executable을 참고하자.\nstylus style.styl style.css\n\n\n지금까지 CSS 전처리기(CSS Preprocessor)에 대해서와 Sass, Less, Stylus를 알아보았다. 확실히 CSS 전처리기를 사용하면 많은 도움이 된다. 다만 단점 섹션에서도 말했듯이 실제로 기술을 습득하고 반영해야 하는 사람은 개발자가 아닐 수 있다는 것이다.\n해당 포트스에 각 전처리기에 대한 문법에 대해서 언급하지 않은 이유는 세 전처리기에 대한 문법이 비슷하기 때문에 오히려 어떤 전처리기를 사용할지 결정에 있어서 혼동을 줄 수 있을 것 같아서이다. 위 섹션에서 설치 방법과 컴파일하는 명령어만 보아도 비슷한 것을 알 수 있을 것이다. 각 세 전처리기의 Document는 모두 잘 되어있기 때문에 문법에 대해서는 각 API를 참고하기 바란다.\n\nSass\nLess\nStylus\n\n\n더 알아보기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드빠르게 배우는 Vue.jsNPM-Scope 패키지 어디까지 알고 있니?\n","dateCreated":"2019-05-12T15:21:40+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2019-05-12T15:21:40+00:00","description":"\n이번 포스트에서는 Sass, Less, Stylus와 같은 CSS 전처리기(CSS Pre-Processor)에 대해 알아보자. CSS 전처리기(CSS Preprocessor)는 CSS 작성 모듈별로 특별한 Syntax를 가지고 있고 여기에 믹스인(mixin), 중첩 셀렉터(nesting selector), 상속 셀렉터(inheritance selector) 등 Programmatically 한 요소를 접목해 방대해지는 CSS 문서의 양을 효율적으로 처리하고 관리해 주는 통합적인 단어를 말한다.\n","headline":"CSS 전처리기(Pre-Processor) 배우기!","image":["css-preprocessor-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2019/05/12/css-preprocessor/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2019/05/12/css-preprocessor/","keywords":"css, css pre-processor, sass, less, stylus","thumbnailUrl":"css-preprocessor-cover.png"}</script>
+    <meta name="description" content="이번 포스트에서는 Sass, Less, Stylus와 같은 CSS 전처리기(CSS Pre-Processor)에 대해 알아보자. CSS 전처리기(CSS Preprocessor)는 CSS 작성 모듈별로 특별한 Syntax를 가지고 있고 여기에 믹스인(mixin), 중첩 셀렉터(nesting selector), 상속 셀렉터(inheritance selector">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="CSS 전처리기(Pre-Processor) 배우기!">
+<meta property="og:url" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이번 포스트에서는 Sass, Less, Stylus와 같은 CSS 전처리기(CSS Pre-Processor)에 대해 알아보자. CSS 전처리기(CSS Preprocessor)는 CSS 작성 모듈별로 특별한 Syntax를 가지고 있고 여기에 믹스인(mixin), 중첩 셀렉터(nesting selector), 상속 셀렉터(inheritance selector">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/css-preprocessor-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/github.png">
+<meta property="og:image" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/npmcompare.png">
+<meta property="article:published_time" content="2019-05-12T15:21:40.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.749Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="css">
+<meta property="article:tag" content="css pre-processor">
+<meta property="article:tag" content="sass">
+<meta property="article:tag" content="less">
+<meta property="article:tag" content="stylus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/css-preprocessor-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/css-preprocessor-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2019/05/12/css-preprocessor/css-preprocessor-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            CSS 전처리기(Pre-Processor) 배우기!
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-05-12T15:21:40+00:00">
+	
+		    2019-05-12
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/css/">css</a>, <a class="category-link" href="/categories/css/css-pre-processor/">css pre-processor</a>, <a class="category-link" href="/categories/css/css-pre-processor/sass/">sass</a>, <a class="category-link" href="/categories/css/css-pre-processor/sass/less/">less</a>, <a class="category-link" href="/categories/css/css-pre-processor/sass/less/stylus/">stylus</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2019/05/12/css-preprocessor/css-preprocessor-cover.png" alt="cover"></p>
+<p>이번 포스트에서는 <code>Sass</code>, <code>Less</code>, <code>Stylus</code>와 같은 <code>CSS 전처리기(CSS Preprocessor)</code>에 대해 알아보자.</p>
+<p>CSS 전처리기(CSS Preprocessor)는 모듈별로 특별한 <code>Syntax</code>를 가지고 있고 여기에 <code>믹스인(mixin)</code>, <code>중첩 셀렉터(nesting selector)</code>, <code>상속 셀렉터(inheritance selector)</code> 등 Programmatically 한 요소를 접목해 방대해지는 CSS 문서의 양을 효율적으로 처리하고 관리해 주는 통합적인 단어를 말한다. 이 CSS 전처리기(CSS Preprocessor) 자체만으로는 웹 서버가 인지하지 못하기 때문에 각 CSS 전처리기에 맞는 <code>Compiler</code>를 사용해야 하고 컴파일을 하게 되면 실제로 우리가 사용하는 CSS 문서로 변환이 된다.</p>
+<p>이번 포스트에서는 이 세 가지의 CSS 전처리기를 비교해보고 동향을 알아보며, Sass, Less, Stylus를 직접 설치 및 사용하는 방법을 배워보자.</p>
+<p style="text-align: center;font-weight: bold">- 해당 포스트에서는 세 가지의 전처리기 문법을 다루지는 않습니다. -</p>
+
+<hr>
+<h1 id="CSS-전처리기-CSS-Preprocessor"><a href="#CSS-전처리기-CSS-Preprocessor" class="headerlink" title="CSS 전처리기(CSS Preprocessor)"></a>CSS 전처리기(CSS Preprocessor)</h1><p>위에 설명한 바와 같이 <code>CSS 전처리기(CSS Preprocessor)</code>는 CSS 문서의 작성에 도움을 주는 도구이다. 우리가 흔히 CSS 문서 작성할 때는 많은 반복적인 작업을 요구하고 Color 값을 찾는 일, tag를 닫는 일 등 번거로운 작업 역시 포함되어있다. 그뿐만 아니라 클래스의 상속과 같은 사항으로 점점 CSS 문서는 양이 많아지고 이로 인해서 이후 유지관리에 많은 영향을 준다. 이런 CSS의 문제점들을 Programmatically 한 방식. 즉 변수, 함수, 상속 등 일반적인 프로그래밍 개념을 사용하여 해결해 나갈 수 있다.</p>
+<p>CSS 전처리기(CSS Preprocessor)에는 다양한 모듈이 존재하고 가장 많이 사용되는 전처리기에는 <code>Sass</code>, <code>Less</code>, <code>Stylus</code>가 있으며, 서로의 특징에 맞게 약간의 Syntax만 다를 뿐 개념 자체는 동일하기 때문에 Learning curve가 낮은 편이다.</p>
+<h2 id="장점"><a href="#장점" class="headerlink" title="장점"></a>장점</h2><p>CSS 전처리기(CSS Preprocessor) 역시 하나의 기술이기 때문에 장단점이 존재할 수밖에 없다. 장점이라 하면 위에서도 설명했지만 정리하자면 이렇다.</p>
+<div class="alert info no-icon"><ul>
+<li>재사용성 - 공통 요소 또는 반복적인 항목을 변수 또는 함수로 대체</li>
+<li>시간적 비용 감소 - 임의 함수 및 Built-in 함수로 인해 개발 시간적 비용 절약</li>
+<li>유지 관리 - 중첩, 상속과 같은 요소로 인해 구조화된 코드로 유지 및 관리가 용이</li>
+</ul>
+</div>
+
+<p><strong>재사용성</strong>의 장점을 가장 쉽게 파악하는 방법은 <code>CSS에서 color를 지정</code>하는 방법을 생각해보자. 우리가 특정 클래스에 color 속성을 주고 값을 지정할 때 <code>hex code</code> 또는 <code>RGB</code>로 지정을 한다. 하지만 특정 색상이 반복된다면 우리는 주기적으로 색상 코드를 찾고 반영을 해줘야 한다. 하지만 CSS 전처리기(CSS Preprocessor)에서는 이런 반복되는 부분을 변수로 처리할 수 있다. 대부분 실무에서는 하나의 파일 안에 <code>color-set</code>을 모두 정의하여 사용된다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs sass">$primary-color: #fff<br><br>.class-A <br>    background-color: $primary-color<br><br><br>.class-B <br>    background-color: $primary-color<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>시간적 비용 감소</strong>에 대해서 보자. </p>
+<p>각 CSS 전처리기(CSS Preprocessor)에는 <code>내장함수(Built-in Functions)</code>가 존재한다. 이 내장 함수는 이미 전처리기 내에 포함된 함수로 우리는 필요한 값들만 전달하면 이에 대한 결과를 생성해 준다. 예를 들어 <code>darken(color, amount)</code>이라는 내장 함수는 색상과 퍼센티지를 지정해 주면 거기에 알맞은 값을 출력해 준다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs sass">$color: #2ecc71<br>$buttonDark: darken($buttonColor, 10%)<br><br>button <br>    background: $color<br>    box-shadow: 0px 5px 0px $buttonDark<br><br></code></pre></td></tr></table></figure>
+
+
+<p><strong>유지 관리</strong>는 가장 중요하고 눈에 띄는 장점 중의 하나이다. </p>
+<p>클래스를 정의하다 보면 상속과 공통 속성을 지정하기 위해서 무지막지하게 길게 정의를 한다. 이런 이유로 CSS 문서가 가독성이 매우 떨어지는 이유 중 하나이다. 이런 내용을 CSS 전처리기(CSS Preprocessor)에서는 <code>중첩(Nesting)</code>과 <code>상속(Extend)</code>을 통해 구조화 할 수 있다.</p>
+<p><code>중첩(Nesting)</code>은 아래처럼 정의한다.</p>
+<p><strong>중첩(Nesting)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs sass">.class-A <br>    width: 100%<br><br>    .A-child-1 <br>        color: red<br>    <br><br>    .A-child-2 <br>        color: blue<br></code></pre></td></tr></table></figure>
+
+<p>위 내용을 컴파일하게 되면 아래와 같다.</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.class-A</span> &#123;<br>    <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span><br>&#125;<br><br><span class="hljs-selector-class">.class-A</span> <span class="hljs-selector-class">.A-child-1</span> &#123;<br>    <span class="hljs-attribute">color</span>: red<br>&#125;<br><br><span class="hljs-selector-class">.class-A</span> <span class="hljs-selector-class">.A-child-2</span> &#123;<br>    <span class="hljs-attribute">color</span>: blue<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>상속(Extend)</code>은 아래처럼 정의한다.</p>
+<p><strong>상속(Extend)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs sass">.class-A <br>    color: red<br>    padding: 10px<br><br>.class-B <br>    @extend .class-A<br>    border: 1px solid red<br></code></pre></td></tr></table></figure>
+
+<p>위 내용을 컴파일하게 되면 아래와 같다.</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.class-A</span>, <span class="hljs-selector-class">.class-B</span> &#123;<br>    <span class="hljs-attribute">color</span>: red<br>    padding: <span class="hljs-number">10px</span><br>&#125;<br><br><span class="hljs-selector-class">.class-B</span> &#123;<br>    <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid red<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="단점"><a href="#단점" class="headerlink" title="단점"></a>단점</h2><p>성능, 사용성 등 단점을 찾고 있겠지만 가장 중요한 것 중 하나가 실무에서의 사용이다. 그리고 이 내용이 곧 단점이 되기도 하다. 실무에서는 대부분 <code>CSS의 작업(Publishing)</code>은 <code>퍼블리셔(Publisher)</code> 또는 <code>디자이너(Designer)</code>가 진행하게 된다. 물론 Front-End 개발자가 진행하는 경우도 있지만 좀 더 체계가 필요한 회사나 프로젝트에서는 퍼블리셔나 디자이너가 퍼블리싱 작업을 하는 경우가 있는데 퍼블리셔나 디자이너가 개발에 대한 역량과 요소를 알아야 한다는 것이 문제이다. 지금까지 말했지만, CSS 전처리기(CSS Preprocessor)는 Programmatically 한 요소를 접목했기 때문에 분기문 처리, 변수의 이해, mixin의 이해 등 개발적인 요소를 알아야 하기 때문이다. Learning curve가 낮다는 장점은 순전히 개발자에 한해서이다.</p>
+<p>여기까지 해서 CSS 전처리기(CSS Preprocessor)의 장점과 이에 따른 간단한 예제를 보았다.</p>
+<h1 id="Sass-Less-Stylus-비교"><a href="#Sass-Less-Stylus-비교" class="headerlink" title="Sass, Less, Stylus 비교"></a>Sass, Less, Stylus 비교</h1><p><code>Sass</code>, <code>Less</code>, <code>Stylus</code>는 가장 대표적인 전처리기이다. 만약 전처리기 도입을 고민한다면 사실상 이 세 개의 전처리기 차이가 크지 않기 때문에 어느 것을 선택해도 문제는 되지 않지만 그래도 선택이 어렵다면 이 섹션을 보고 조금이나마 도움이 되었으면 한다.</p>
+<p><a target="_blank" rel="noopener" href="https://trends.google.co.kr/trends/explore?cat=13&date=today%205-y&q=/m/054k6n_,/m/0gjd0jv,Stylus">Trend</a>에서는 검색어를 통한 관심도를 볼 수 있다. 정확하게 CSS 전처리기에 대해 검색을 하지 않았고 포함된 관심도이지만 <code>Sass</code>를 가장 많이 사용하는 것을 볼 수 있다. 그럼 Github의 Start 수와 Fork 수를 확인해 보자.</p>
+<p><img src="/2019/05/12/css-preprocessor/github.png" alt="css-github"></p>
+<p>NPM 기준으로 확인해보자.</p>
+<p><img src="/2019/05/12/css-preprocessor/npmcompare.png" alt="npmcompare"></p>
+<p>수치상으로만 볼 때는 무엇이 높고 낮음은 판가름이 되지만 그게 정확한 척도는 되지 않는다.</p>
+<p>위 세 전처리기 모두 사용해보는 것이 좋을 것이지만 무엇을 사용할지의 판단은 본인의 몫이고 필자로서는 무엇을 써도 무방하다고 생각된다.</p>
+<p>이제 이 세 개의 CSS 전처리기에 대해서 간략하게 알아보도록 하자.</p>
+<h1 id="Sass-vs-Less-vs-Stylus"><a href="#Sass-vs-Less-vs-Stylus" class="headerlink" title="Sass vs Less vs Stylus"></a>Sass vs Less vs Stylus</h1><p>초기에는 JavaScript로 작성된 <code>Less</code>가 가장 선호되었다. <code>node-sass</code>가 나오고 나서부터는 <code>Sass</code>가 선호되고 있다. <code>Stylus</code>는 가장 늦게 나온 전처리기로 최근 들어서 <code>open-project</code>에 많이 사용되고 있다.</p>
+<h2 id="Sass"><a href="#Sass" class="headerlink" title="Sass"></a>Sass</h2><p><code>Sass</code>는 전처리기 중 가장 먼저 나온 전처리기이다. 최초에는 <code>Ruby</code> 언어를 기반으로 구동되었지만 <code>Ruby</code> 언어가 지닌 한계로 컴파일이 다소 느렸기 때문에 <code>Less</code>를 더 선호하였다. 하지만 <code>node-sass</code>라는 <code>Node.js</code>기반의 라이브러리가 나오면서 이후 <code>Sass</code>를 많이 사용하고 있다. 최근에는 <code>sass</code> 자체가 NPM에 등록되어있다. 다른 전처리기에 비해 상대적으로 다양한 기능이 제공되고 지속적인 업데이트가 진행되고</p>
+<h3 id="Sass-설치"><a href="#Sass-설치" class="headerlink" title="Sass 설치"></a>Sass 설치</h3><p>npm을 통한 설치 방법이다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g sass<br></code></pre></td></tr></table></figure>
+
+<h3 id="Sass-컴파일"><a href="#Sass-컴파일" class="headerlink" title="Sass 컴파일"></a>Sass 컴파일</h3><p>기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 <a target="_blank" rel="noopener" href="https://sass-lang.com/documentation/cli">Sass Command-Line Interface</a>를 참고하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">sass styls.scss styls.css<br></code></pre></td></tr></table></figure>
+
+<h2 id="Less"><a href="#Less" class="headerlink" title="Less"></a>Less</h2><p><code>Less</code>는 <code>Twitter의 Bootstrap</code>에서 사용되면서 전파되기 시작했고 Client(브라우저)에서 자바스크립트 Parser를 통해 실행된다. <code>Sass</code>와는 다르게 초창기부터 <code>Node.js</code>기반으로 구동되었고 <code>Sass</code>에 비해 컴파일 속도가 빠른 것이 장점이었으나 <code>Sass</code>가 캐쉬를 적용한 뒤로부터는 큰 차이가 없어졌다.</p>
+<h3 id="Less-설치"><a href="#Less-설치" class="headerlink" title="Less 설치"></a>Less 설치</h3><p>NPM을 통한 설치 방법이다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g less<br></code></pre></td></tr></table></figure>
+
+<h3 id="Less-컴파일"><a href="#Less-컴파일" class="headerlink" title="Less 컴파일"></a>Less 컴파일</h3><p>기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 <a target="_blank" rel="noopener" href="http://lesscss.org/usage/">Using Less.js</a>를 참고하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lessc style.less style.css<br></code></pre></td></tr></table></figure>
+
+<h2 id="Stylus"><a href="#Stylus" class="headerlink" title="Stylus"></a>Stylus</h2><p><code>Stylus</code>는 가증 나중에 나온 전처리기로 <code>Less</code>와 동일하게 <code>Node.js</code>기반으로 구동된다. 가장 늦게 발표된 전처리기이지만 많은 기능이 구현되어있다. 몇 년 전만 해도 다른 전처리기에 비해 완성도가 낮고 여러 잔존 버그가 존재하였지만, 시간이 지남에 따라 많은 부분이 해결되어 최근에는 많은 <code>open-project</code>에서 사용되고 있다.</p>
+<h3 id="Stylus-설치"><a href="#Stylus-설치" class="headerlink" title="Stylus 설치"></a>Stylus 설치</h3><p>NPM을 통한 설치 방법이다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g stylus<br></code></pre></td></tr></table></figure>
+
+<h3 id="Stylus-컴파일"><a href="#Stylus-컴파일" class="headerlink" title="Stylus 컴파일"></a>Stylus 컴파일</h3><p>기본적인 컴파일은 아래처럼 사용하고 더 자세한 커맨드 라인은 <a target="_blank" rel="noopener" href="http://stylus-lang.com/docs/executable.html">Stylus Executable</a>을 참고하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">stylus style.styl style.css<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p>지금까지 CSS 전처리기(CSS Preprocessor)에 대해서와 <code>Sass</code>, <code>Less</code>, <code>Stylus</code>를 알아보았다. 확실히 CSS 전처리기를 사용하면 많은 도움이 된다. 다만 단점 섹션에서도 말했듯이 실제로 기술을 습득하고 반영해야 하는 사람은 개발자가 아닐 수 있다는 것이다.</p>
+<p>해당 포트스에 각 전처리기에 대한 문법에 대해서 언급하지 않은 이유는 세 전처리기에 대한 문법이 비슷하기 때문에 오히려 어떤 전처리기를 사용할지 결정에 있어서 혼동을 줄 수 있을 것 같아서이다. 위 섹션에서 설치 방법과 컴파일하는 명령어만 보아도 비슷한 것을 알 수 있을 것이다. 각 세 전처리기의 Document는 모두 잘 되어있기 때문에 문법에 대해서는 각 API를 참고하기 바란다.</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://sass-lang.com/">Sass</a></li>
+<li><a target="_blank" rel="noopener" href="http://lesscss.org/#">Less</a></li>
+<li><a target="_blank" rel="noopener" href="http://stylus-lang.com/">Stylus</a></li>
+</ul>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2017/11/15/vuejs-tutorial/">빠르게 배우는 Vue.js</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/css/" rel="tag">css</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/css-pre-processor/" rel="tag">css pre-processor</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/less/" rel="tag">less</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/sass/" rel="tag">sass</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/stylus/" rel="tag">stylus</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/web-icon-font/"
+                    data-tooltip="Web Icon Font 제작 방법을 배워보자!"
+                    aria-label="PREVIOUS: Web Icon Font 제작 방법을 배워보자!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/05/09/vuex-tutorial/"
+                    data-tooltip="[Vue.JS] Vuex 개념부터 실무에서의 사용까지 배우기!!"
+                    aria-label="NEXT: [Vue.JS] Vuex 개념부터 실무에서의 사용까지 배우기!!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/web-icon-font/"
+                    data-tooltip="Web Icon Font 제작 방법을 배워보자!"
+                    aria-label="PREVIOUS: Web Icon Font 제작 방법을 배워보자!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/05/09/vuex-tutorial/"
+                    data-tooltip="[Vue.JS] Vuex 개념부터 실무에서의 사용까지 배우기!!"
+                    aria-label="NEXT: [Vue.JS] Vuex 개념부터 실무에서의 사용까지 배우기!!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/05/12/css-preprocessor/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2019/05/12/css-preprocessor/';
+              
+            this.page.identifier = 'css-pre-processor';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,1004 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Performant NPM - PNPM - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"/>
+    
+        <meta name="keywords" content="PNPM,NPM,YARN,nodejs,monorepo,javascript">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n\n과거 웹 서비스는 텍스트와 이미지를 통해 정보를 전달하는 단순한 역할만 하였기 때문에 서비스의 규모가 그렇게 크지는 않았다.\n이후 시간이 갈수록 HTML과 JavaScript, CSS와 같은 웹 기술의 발전으로 웹에서 제공되는 서비스의 규모가 점차 커졌지만, 이 역시도 2000년대 초반의 2세대 웹에서는 HTML이나 JavaScript의 파일 크기도 상대적으로 작았으며, 서비스를 유지하는 데 큰 무리가 없었다.\n하지만 JavaScript의 계속되는 발전에 웹 서비스의 규모도 점차 커져갔으며, 관리되는 리소스나 HTML, 그리고 JavaScript 파일의 규모와 개수도 서비스의 규모와 비례하여 점차 증가해 갔다. 이때부터는 단순히 정보를 출력해주는 문서가 아닌 복잡한 처리가 가능한 하나의 애플리케이션에 가까웠다. 이에 따라 과거에 자주 사용되던 JavaScript의 순차적 로드 방식은 각 JavaScript 파일 간 스코프(scope)가 구분되지 않는 문제로 인해 서로 다른 JavaScript 파일들을 오염시키거나 충돌이 일어나는 경우 많아지면서 CJS(Common JS), AMD(Asynchronous Module Definition), UMD(Universal Module Definition), ESM(ECMAScript Module) 과 같은 JavaScript의 모듈화가 등장하기 시작했다.\n이렇게 JavaScript의 모듈화는 Node.js와 NPM, 그리고 ES6의 등장으로 더욱 활발해졌으며, 이 모듈을 관리하는 패키지 매니저인 NPM은 모듈화 또는 패키지화에 큰 변화를 주었다. 하지만 Node.js와 NPM 역시 빠른 속도로 발전해 나가는 JavaScript 생태계를 따라잡기에는 역부족이었을까? \n단일 모듈의 개수들과 서로 종속된 모듈들의 개수는 폭발적으로 증가하였고 이에 따라 성능, 모듈이 차지하는 디스크의 용량과 종속된 모듈 간의 호환성, 그리고 보안 측면인 문제가 발생하기 시작했고 이를 해결하기 위해 YARN, PNPM과 같은 개선된 패키지 매니저가 나오기 시작했다.이 중 NPM과 YARN은 이미 널리 알려진 패키지 매니저이기에 이 포스팅에서는 최근 많은 주목을 받는 Performant NPM 이라 불리는 PNPM을 소개해 보고자 한다.\n22년 회사에서 세미나 후 자료는 준비했지만 게으른 탓에 이제서야 포스팅을하게 된다.\nPackage Manager의 지속적인 발전PNPM의 장점은 곧 기존 패키지 매니저들이 가지고 있는 단점을 해결한 것이기에 PNPM을 소개하기 전 근본의 NPM을 넘어 새로운 패키지 매니저가 왜 자꾸 나오는지 알아보자.\n최초의 패키지 매니저는 NPM으로 10년이 넘는 시간 동안 존재해 왔다. 이렇게 오랜 시간 자리매김하고 있는 NPM을 넘어 왜 자꾸만 YARN, PNPM과 같은 새로운 패키지 매니저가 등장하는 것일까?\n이 질문에 정확한 답변은 존재하지 않는다. 언제나 그렇듯 JavaScript의 생태계에서는 A보다 나은 B가 나오기 마련이기 때문이다. 하지만 굳이 꼽자면 몇 가지 이유를 들 수 있겠다.\n1. node_modules과거 NPM@2 까지의 node_modules의 구조는 단순하였다. \nA → B → C 라는 패키지가 있다면 종속 깊이에 따라 순차적으로 종속된 모듈을 설치해 나가는 단순한 방식이었다. 이런 방식은 서로 종속된 모듈 간 분리가 명확했기에 일관성이 유지되었고 각 모듈 간의 오염과 충돌은 적었다.하지만 종속된 모듈이 많아지면서 디렉토리 계층 구조의 깊이는 더 깊어져 갔고 이로 인한 문제점(Windows Max Path 260자)과 종속성 그래프를 생성하는 시간 역시 길어져만 갔다.\nNode.js를 개발한 Ryan Dahl은 Design Mistakes in Node에서 node_modules에 대해 모듈 간 종속성 관리, 모듈 간 문제 해결 알고리즘을 매우 복잡하게 만든다고도 하였으며, 아래와 같이 말하기도 하였다.\n\nIt's my fault and I'm very sorry.\nUnfortunately it's impossible to undo now.\n\n\n이런 문제점은 고질적으로 설계 자체의 문제로 Ryan Dahl은 Deno를 개발하기도하였다. Deno에 대해서는 [Deno] Node.js의 대안!! Deno 알아보기를 참고하도록 하자.\n2. 디스크 효율우리가 webpack, parcel과 같은 번들링 도구로 애플리케이션을 번들링 시 명시된 devDependencies는 포함되지 않는다. 하지만 로컬 PC와 같은 우리의 개발 환경에서는 모든 종속된 모듈들이 디스크의 용량을 차지한다. 무심코 지나갔을 수 있지만 규모가 큰 애플리케이션의 경우 종속된 모듈의 용량은 은근히 크다. 물론 현 시대의 하드웨어에 무리가 갈 정도로 침범하진 않지만 말이다.\n특히 과거의 NPM인 경우 중복되는 종속성이 여러 모듈에 종속된 NPM 도플갱어로 인해 모듈이 많으면 많을수록 폭발적으로 용량이 증가한다. 이러한 문제점은 디스크 효율성도 떨어뜨리지만, 종속된 모듈이 증가하기 때문에 종속성 그래프를 생성하는 시간 역시 길어지는 이유 중 하나이다.\n3. 호이스팅(Hoisting)위에서 node_modules를 설명할 때 NPM@2의 종속성 구조는 매우 단순하다고 하였다. 하지만 이와 연관되어 NPM 도플갱어가 발생하고 또 이에 따라 디스크 효율성이 떨어지는데 NPM은 이를 해결하기 위해 NPM@3부터 동작 방식을 변경하였다.\n바로 종속성을 설치할 때 연관 관계에 따라 모듈을 디렉토리 계층 구조의 최상위로 호이스팅(Hoisting)하는 방식이다. 이 방식은 현재까지도 유지되고 있으며, 우리가 node_modules 디렉토리를 보았을 때 하나로 나열된 것을 확인해 볼 수 있다.\nNPM은 호이스팅으로 인해 NPM@3부터는 위에서 설명된 node_modules와 디스크 효율이 좋아졌지만, 보안적 측면에서 문제가 생기기 시작했다. Chrome V8 자체는 매우 좋은 보안 샌드박스였지만 Node.js는 사용자가 액세스할 수 있는 모든 것에 접근할 수 있으며, 이는 보안 측면에서 매우 취약하다. 특히나 모든 종속성 구조를 최상위로 호이스팅 한다면 사용자뿐만 아니라 코드 또는 커맨드와 같은 다른 방식으로도 접근할 수 있게 되고 수정까지 가능하게 된다.\n이러한 문제로 과거에는 아래와 같은 보안적 이슈가 존재하기도 했었다.\n\nLinux OS에서 sudo NPM 명령을 통한 시스템 파일의 소유권 변경NPM package event-stream에 악성 패키지를 내포한 비트코인 탈취 시도\n\n이 문제는 YARN 역시 동일한데 현재는 lock 파일을 통해 패키지에 대한 무결성 검증으로 많이 안정화되었다.\n4. Mono Repo과거 Github에서는 1 Project 당 1 Repository 방식인 Multi Repo 방식을 많이 사용하였다. 하지만 점차 core, cli, ui 등 하나의 패키지와 연관된 기능들이 많아지고 이에 비례하여 증가하는 레포지토리의 관리는 너무나 비효율적이었다. lint와 같은 각 프로젝트 별 공통된 패키지를 여러 레파지토리에 설치를 해줘야 하니 말이다.\n그러면서 YARN의 workspace와 Lerna 같은 Mono Repo 도구가 나오면서 하나의 레포지토리 안에 여러 패키지를 관리하는 메커니즘이 나오기 시작하였다. 현재는 대부분 프로젝트에서 Mono Repo 구조로 개발을 진행하고 있으며, 큰 효과를 보고 있다.\nMulti Repo: 여러 Repository에 패키지를 분산하여 관리Mono Repo: Multi Repo와 반대로 여러 패키지를 하나의 Repository에서 관리\n\n\n하지만 Mono Repo는 하나의 레포지토리 안에서 여러 패키지를 관리하다 보니 종속된 모듈들이 오히려 문제가 되기 시작했다.\n예를 들어 하나의 레파지토리 안에 서로 다른 A, B, C의 패키지가 존재한다면 각각의 패키지에서 공통으로 사용되는 Lint를 최상위 패키지로 설치는 하지만 결국 Lint에 종속된 특정 모듈은 B 패키지에 있는 모듈 중에서도 종속될 가능성이 있는 것이다. 이로 인해 안 그래도 복잡한 알고리즘을 가진 종속성 모듈을 더욱 복잡하게 만드는 경우이기도 하다.\n\n큰 카테고리로 패키지 매니저가 발전하는 이유 4가지인 node_modules, 디스크 효율성, 호이스팅(Hoisting), Mono Repo에 대해서 알아보았다. 사실 이 내용들은 PNPM에서 해결된 문제점이기도 하고 PNPM이 최근 많은 관심을 받는 이유이기도 하다.\n서론이 너무 길었다. 이제 본론으로 들어가 Performant NPM인 PNPM에 대해 알아보도록 하자.\n\nPerformant NPM - PNPMPNPM은 Performant Node Package Manager를 의미하는 NPM의 대체 패키지 관리자이다.\nPNPM의 주요 목적은 모든 패키지를 중앙 집중식 저장 형태로 관리하고 하드 링크와 심볼릭 링크를 통해 프로젝트에서 패키지를 참조함으로써 빠른 속도와 프로젝트 간 동일 버전의 종속성 유지 및 디스크 공간 절약을 목적으로 두고 있다.\nHard Link (ln) : 원본 파일과 inode가 동일하여 원본이 수정되면 하드 링크된 파일도 수정이 되고 원본이 삭제되더라도 하드 링크된 파일은 유지된다.Symbolic Link&#x2F;Soft Link (ln -s) : 윈도우의 바로가기와 같으며, 단순한 원본 파일의 위치 정보(point)만을 가지고 있다.\n\n\n현재 오픈 소스의 PNPM 활용최초 필자가 PNPM을 접하게 된건 vue의 Github에서이다. 하지만 이외에 많은 이름있는 프로젝트에서 PNPM을 사용하고 있다.\n\n2022 state of js - Monorepo tools 부분2022 state of js - MonoRepo Tools 부분을 보면 PNPM의 인기를 확인할 수 있다.\n\nPNPM의 특징PNPM의 종속성 관리는 NPM의 기본 메커니즘을 따라가지만, 별도의 중앙 집중화된 관리(virtual-store) 와 하드 링크, 심볼릭 링크가 핵심적이다. 이 개념 하나로 빠른 성능과 디스크의 효율성을 높였다.\n또한 진화된 NPM@3 방식의 flat node_modules 구조가 아닌 반대로 NPM@2의 non-flat node_modules 구조를 따라감으로써 전반적인 보안적 취약점이 해결되었다.\nPNPM의 특징은 크게 4가지로 나누어 볼 수 있다.\n1. 성능YARN은 NPM보다 빠른 성능을 보이지만 사실상 규모가 큰 시나리오에서는 큰 차이를 나타내지 못한다. 하지만 PNPM은 기타 패키지 관리자보다 최대 2배 빠른 속도를 보인다.\nPNPM의 벤치 마킹에 따른 성능 비교 분석을 보게 되면 여러 케이스에서 PNPM이 다른 패키지 매니저보다 우수한 성능을 나타내는 것을 볼 수 있다.\nPNPM 벤치마킹에 따른 성능 비교\n\n2. 디스크 공간의 효율적 사용NPM과 YARN은 모듈을 설치할 경우 node_modules 경로에 모두 설치되고 만약 같은 모듈을 사용하는 100개의 프로젝트가 있다면 똑같이 100개 프로젝트에 같은 모듈을 설치해야 한다. 이렇게 설치되면 디스크 사용량은 폭발적으로 증가할 것이고 100번의 설치 과정을 걸쳐야 하는 번거로움이 있지만(또는 복사하거나), PNPM의 경우 모든 종속된 모듈은 특정 디스크 위치(.pnpm-store)에 저장된다. 이후 프로젝트에서 특정 패키지가 필요한 경우 해당 패키지를 프로젝트에 하드 링크(.pnpm)되어 추가 디스크 공간을 사용하지 않기 때문에 디스크 사용이 효율적이고 패키지의 재사용 효율이 높다.\n또한 다른 버전의 종속된 모듈이 필요하다면 모든 100개의 프로젝트를 업데이트할 필요 없이 중앙에 관리되는 패키지만 업데이트가 되며 이 한 번의 업데이트로 같은 패키지를 사용하는 프로젝트에서 같은 버전의 패키지를 사용할 수 있다.\n3. Non-Flat node_modules위에서 NPM@2의 메커니즘은 단순하다고 하였으며, non-flat node_modules구조로써 얻는 이점들이 있다고 설명하였다. 하지만 NPM@3부터는 루트 경로로 호이스팅을 하는 flat node_modules 구조를 사용하였다.\nNPM과 YARN의 경우 모든 종속성 설치할 때 모든 패키지는 모듈 디렉토리의 로트로 호이스팅을 하고 결과적으로 소스 코드를 통해 종속되지 않은 모듈에도 접근할 수 있다. 하지만 PNPM은 Flat node_modules의 문제를 해결하기 위한 유일한 방법이 아니라고 설명하고 오히려 non-flat node_modules를 지향하고 NPM@2의 메커니즘을 사용하였다.\n그렇다면 PNPM도 NPM@2의 문제점을 가지고 있을까? \n이에 대한 답은 아니오이다. PNPM은 NPM@2의 non-flat node_modules 즉 루트로 호이스팅을 하지 않는 대신 종속된 모든 모듈은 하드 링크 방식과 심볼릭 링크 방식을 사용함으로써 NPM@2의 문제를 해결하였는데 이런 하드링크와 심볼릭 링크 방식으로 종속성 수와 종성 그래프의 깊이에 관계없이 유지된다.\n4. 보안위에서 설명했듯 PNPM은 애초부터 종속된 모듈들을 루트로 호이스팅을 하지 않기 때문에 호이스팅으로 인한 보안적 문제(모듈에 대한 엑세스)는 없을 뿐더러 YARN과 동일하게 PNPM에는 설치된 모든 패키지의 체크섬이 포함된 파일이 존재하여 코드가 실행되기 전 설치된 모든 패키지의 무결성을 확인한다.\n5. Mono Repo초창기 Lerna는 Mono repo로서 사용자도 많으며 유명 프로젝트에서 많이 사용되었지만, 많은 것을 스스로 알아야 했고 현재도 그렇다. 버전업도 많이 진행되고 개선되었으며, 과거보다는 안정되었지만, 소문에 의하면 메인 개발자의 번아웃으로 유지보수에 어려움을 겪는다고 한다.\nLerna 이외에 YARN을 사용하여 Mono Repo를 구축할 수도 있다. YARN Classic(YARN 1)은 17년도 Lerna와 같은 Mono Repo를 지원하기 시작하였고, YARN Berry(YARN 2)는 YARN Classic의 개념을 기반으로 개선된 Mono Repo를 지원한다.\nPNPM의 경우에도 역시나 Mono Repo를 지원하며, YARN Berry와 유사하다. 즉, PNPM은 Lerna와 YARN을 대체할 수 있는 Mono Repo를 제공한다.\nLerna에 관한 내용은 아래 내용을 참고하자.\n\nLerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악\n\n\n설치PNPM의 설치 방식에는 독립 실행형 설치 방법과 [Corepack](https://nodejs.org/api/corepack.html), NPM을 통한 설치를 제공한다.\n독립 실행형Windows PowerShell\niwr https://get.pnpm.io/install.ps1 -useb | iex\n\nPOSIX systems - curl\ncurl -fsSL https://get.pnpm.io/install.sh | sh -\n\nPOSIX systems - wget\nwget -qO- https://get.pnpm.io/install.sh | sh -\n\nCorepackNode.js v16.13부터는 패키지 관리자를 위해 Corepack을 출시하였다. v16에서는 실험적 기능으로 PNPM과 YARN을 지원하고, 해당 기능을 활성화하면 PNPM을 사용할 수 있다.\ncorepack enable\n\n이후 최신 버전의 PNPM을 사용하려면 아래와 같은 명령어를 사용한다.\n## Node.js v16.17 &gt; corepack prepare PNPM@&lt;version&gt; --activate## Node.js v16.17 &lt;=corepack prepare PNPM@latest --activate\n\nNPMPNPM도 NPM과 동일한 패키지 매니저이지만 NPM을 통해서 설치할 수 있다.\nnpm install -g pnpm\n\nNode.js 지원 버전PNPM은 2023년 09월 기준으로 v8까지 출시된 상태이고 최소 버전은 PNPM v5이다. v5의 경우 Node.js v12 이상부터 지원하며 v7은 Node.js v18까지 지원한다.\n(22년도 해당 포스팅을 준비할 때에는 v7까지 출시된 상태였고 최소 버전은 v4였으며, v4의 경우 Node.js v10 이상부터 지원이었다. 이런 과정을 보면 하상 Node.js 버전업에 맞게 업데이트를 꾸준히 해야겠다는 생각을 다시끔 한다.)\n\n\n\nNode.js\nPNPM 5\nPNPM 6\nPNPM 7\nPNPM 8\n\n\n\nNode.js v12\n✔️\n✔️\n❌\n❌\n\n\nNode.js v14\n✔️\n✔️\n✔️\n❌\n\n\nNode.js v16\n?\n✔️\n✔️\n✔️\n\n\nNode.js v18\n?\n️✔️\n✔️\n✔️\n\n\nNode.js v20\n️?\n️ ?\n✔️\n✔️\n\n\n실행PNPM의 실행 방식은 YARN과 비슷하며 크게 다를 것이 없다.\nPNPM의 CLI는 PNPM cli 공식 문서에서 확인 할 수 있다. 몇 가지 가장 많이 사용하는 CLI를 알아보자.\npnpm install\n\naliases: iPNPM install은 프로젝트의 모든 종속성을 설치한다.\n\npnpm install\n\npnpm add pnpm add는 패키지와 패키지가 의존하는 모든 패키지를 설치한다. 기본적으로 모든 새로운 패키지는 프로덕션 종속성(dependencies)으로 설치된다.\npnpm add [option] &lt;package&gt;\n\n\n\n\n\nCommand\nDescription\n\n\n\npnpm add \ndependencies 설치\n\n\npnpm add -D\ndevDependencies 설치\n\n\npnpm add -O\noptionalDependencies 설치\n\n\npnpm add -g\nglobal 설치\n\n\npnpm add @[version]\n버전 지정 설치\n\n\npnpm update\n\naliases: up, upgradePNPM update는 지정된 범위에 따라 패키지의 버전을 업데이트한다.\n\npnpm update &lt;package&gt;\n\n\n\n\n\nCommand\nDescription\n\n\n\npnpm update\n모든 종속성 업데이트\n\n\npnpm update @[version]\n특정 패키지를 특정버전으로 업데이트\n\n\npnpm update “@babel&#x2F;*”\n패키지 scope 내 모든 종속성 업데이트\n\n\npnpm update !\n특정 패키지를 제외한 모든 종속성 업데이트\n\n\npnpm remove\n\naliases: rm, uninstall, unPNPM remove는 프로젝트 내 패키지를 제거한다.\n\nPNPM remove [option]\n\n\n\n\n\nCommand\nAliases\nDescription\n\n\n\npnpm remove –recursive\n-r\nMono Repo의 Workspace 내에서 사용되는 경우 모든 작업 공간의 패키지에서 종속성 제거\n\n\npnpm remove –global\n-g\n전역 패키지 제거\n\n\npnpm remove –save-dev\n-D\ndevDependencies 에서 종속성 제거\n\n\npnpm remove –save-optionval\n-O\noptionalDependencies 에서 종속성 제거\n\n\npnpm remove –save-prod\n-P\ndependencies 에서 종속성 제거\n\n\npnpm remove –filter \n\nFiltering을 통한 특정 하위 집합으로 제거\n\n\n\nNPM의 대체로 가능한가?확실히 성능적인 부분과 디스크 효율적인 부분으로 따지면 PNPM이 승자이며, 하나의 프로젝트에 여러 그룹이 진행하거나 여러 프로젝트를 mono Repo로 관리를 한다면 PNPM은 유용하다.\n그렇다고 쉽사리 현재 진행되고 있는 프로젝트 또는 진행 될 프로젝트에 반영하기는 쉽지 않을 것이다. 언제나 그렇듯 JavaScript의 생태계에서는 A보다 좋다는 B가 나와도 근본이 있기 때문이며, 여기서 근본은 NPM이기 때문이다.\n수십 년간 Node.js와 NPM은 유지가 되어왔고 이를 개선한 새로운 오픈 소스가 출시해도 NPM과 YARN 역시 이에 뒤처지지 않게 발전해 왔으며, 문제점도 해결해 왔다. 물론 가장 효율적인 방법으로 초기 설계부터 진행해 온 것과 그렇지 않은 것의 차이는 있지만 NPM을 유지한다고 문제가 생기는 것은 아니다.\n다만 현재 본인이 겪고 있는 문제점이 PNPM으로 해결이 된다면 PNPM을 사용하는 것이 옳다고 생각한다.\n\nPNPM이 NPM보다 우월하다는 관점에서 보기보다는 NPM이 과거에 어떤 문제가 있었고 왜 패키지 매니저가 발전해 왔는지 알아보았다. 무심코 우리는 패키지를 설치 및 업데이트와 같이 단순하게 사용을 해왔지만, 이러한 단순한 도구가 왜 계속 발전해 왔는지 파악할 수 있었으며, PNPM이라는 새로운 패키지 매니저에 대해 배워보았다.\n개인적으로는 NPM이 아닌 PNPM을 사용하려고 노력하고 있지만 PNPM 역시 오픈 소스이기 때문에 문제 발생에 대한 두려움도 있기에 실무적으로 프로덕션이 필요한 경우에는 사용을 자제하고 있지만 확실히 빠른 속도로 개발적 효율은 향상했다고 느껴진다.\n앞으로 또 어떤 패키지 매니저가 나올지 모르지만, 다양한 내용을 알아 둔다면 나중에 분명 도움이 되는 날이 올 것으로 생각한다.\n\n더 알아보기[Deno] Node.js의 대안!! Deno 알아보기Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.불꽃 튀게 빠른 번들러 Parcel 개념잡기!NVM으로 Windows 환경에서 Node 버전 관리하기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드빠르게 배우는 Node.js와 NPM 설치부터 개념잡기\n","dateCreated":"2023-09-25T22:20:08+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2023-09-25T22:20:08+00:00","description":"\n\n현재 Front-End 생태계에서 패키지 관리는 중요한 요소 중 하나가 되었다. 과거 웹 애플리케이션에서는 모듈이라는 개념이 크진 않았지만, 현재는 애플리케이션의 규모가 커지면서 모듈이라는 개념이 중요해졌으며, 이를 관리하는 패키지 매니저 역시 중요해졌다. 이번 포스팅에서는 패키지 매니저가 무엇인지와 왜 패키지 매니저가 발전하는지 알아보고 최근 주목받고 있는 패키지 매니저인 PNPM을 알아보도록 하자.\n","headline":"Performant NPM - PNPM","image":["performant-npm-tutorial-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2023/09/25/pnpm-tutorial/","keywords":"javascript, nodejs, PNPM, YARN, NPM, monorepo","thumbnailUrl":"performant-npm-tutorial-cover.png"}</script>
+    <meta name="description" content="현재 Front-End 생태계에서 패키지 관리는 중요한 요소 중 하나가 되었다. 과거 웹 애플리케이션에서는 모듈이라는 개념이 크진 않았지만, 현재는 애플리케이션의 규모가 커지면서 모듈이라는 개념이 중요해졌으며, 이를 관리하는 패키지 매니저 역시 중요해졌다. 이번 포스팅에서는 패키지 매니저가 무엇인지와 왜 패키지 매니저가 발전하는지 알아보고 최근 주목받고">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Performant NPM - PNPM">
+<meta property="og:url" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="현재 Front-End 생태계에서 패키지 관리는 중요한 요소 중 하나가 되었다. 과거 웹 애플리케이션에서는 모듈이라는 개념이 크진 않았지만, 현재는 애플리케이션의 규모가 커지면서 모듈이라는 개념이 중요해졌으며, 이를 관리하는 패키지 매니저 역시 중요해졌다. 이번 포스팅에서는 패키지 매니저가 무엇인지와 왜 패키지 매니저가 발전하는지 알아보고 최근 주목받고">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/performant-npm-tutorial-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/use-pnpm.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/pnpm-benchmark-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/pnpm-benchmark-2.png">
+<meta property="article:published_time" content="2023-09-25T22:20:08.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.805Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="PNPM">
+<meta property="article:tag" content="YARN">
+<meta property="article:tag" content="NPM">
+<meta property="article:tag" content="monorepo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/performant-npm-tutorial-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/performant-npm-tutorial-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/performant-npm-tutorial-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Performant NPM - PNPM
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2023-09-25T22:20:08+00:00">
+	
+		    2023-09-25
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/PNPM/">PNPM</a>, <a class="category-link" href="/categories/javascript/nodejs/PNPM/YARN/">YARN</a>, <a class="category-link" href="/categories/javascript/nodejs/PNPM/YARN/NPM/">NPM</a>, <a class="category-link" href="/categories/javascript/nodejs/PNPM/YARN/NPM/monorepo/">monorepo</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+
+<!-- excerpt -->
+
+<p><img src="/2023/09/25/pnpm-tutorial/performant-npm-tutorial-cover.png" alt="performant-npm-tutorial-cover"></p>
+<p>과거 웹 서비스는 텍스트와 이미지를 통해 정보를 전달하는 단순한 역할만 하였기 때문에 서비스의 규모가 그렇게 크지는 않았다.</p>
+<p>이후 시간이 갈수록 HTML과 JavaScript, CSS와 같은 웹 기술의 발전으로 웹에서 제공되는 서비스의 규모가 점차 커졌지만, 이 역시도 2000년대 초반의 2세대 웹에서는 HTML이나 JavaScript의 파일 크기도 상대적으로 작았으며, 서비스를 유지하는 데 큰 무리가 없었다.</p>
+<p>하지만 JavaScript의 계속되는 발전에 웹 서비스의 규모도 점차 커져갔으며, 관리되는 리소스나 HTML, 그리고 JavaScript 파일의 규모와 개수도 서비스의 규모와 비례하여 점차 증가해 갔다. 이때부터는 단순히 정보를 출력해주는 문서가 아닌 복잡한 처리가 가능한 하나의 애플리케이션에 가까웠다. 이에 따라 과거에 자주 사용되던 JavaScript의 <code>순차적 로드 방식</code>은 각 JavaScript 파일 간 스코프(scope)가 구분되지 않는 문제로 인해 서로 다른 JavaScript 파일들을 오염시키거나 충돌이 일어나는 경우 많아지면서 <strong>CJS(Common JS)</strong>, <strong>AMD(Asynchronous Module Definition)</strong>, <strong>UMD(Universal Module Definition)</strong>, <strong>ESM(ECMAScript Module)</strong> 과 같은 <code>JavaScript의 모듈화가 등장하기 시작</code>했다.</p>
+<p>이렇게 JavaScript의 모듈화는 Node.js와 NPM, 그리고 ES6의 등장으로 더욱 활발해졌으며, 이 모듈을 관리하는 패키지 매니저인 NPM은 모듈화 또는 패키지화에 큰 변화를 주었다. 하지만 Node.js와 NPM 역시 빠른 속도로 발전해 나가는 JavaScript 생태계를 따라잡기에는 역부족이었을까? </p>
+<p>단일 모듈의 개수들과 서로 종속된 모듈들의 개수는 폭발적으로 증가하였고 이에 따라 성능, 모듈이 차지하는 디스크의 용량과 종속된 모듈 간의 호환성, 그리고 보안 측면인 문제가 발생하기 시작했고 이를 해결하기 위해 <code>YARN</code>, <code>PNPM</code>과 같은 개선된 패키지 매니저가 나오기 시작했다.<br>이 중 NPM과 YARN은 이미 널리 알려진 패키지 매니저이기에 이 포스팅에서는 최근 많은 주목을 받는 <strong>Performant NPM</strong> 이라 불리는 <strong>PNPM</strong>을 소개해 보고자 한다.</p>
+<p><em>22년 회사에서 세미나 후 자료는 준비했지만 게으른 탓에 이제서야 포스팅을하게 된다.</em></p>
+<h1 id="Package-Manager의-지속적인-발전"><a href="#Package-Manager의-지속적인-발전" class="headerlink" title="Package Manager의 지속적인 발전"></a>Package Manager의 지속적인 발전</h1><p><code>PNPM의 장점</code>은 곧 기존 패키지 매니저들이 가지고 있는 단점을 해결한 것이기에 PNPM을 소개하기 전 근본의 NPM을 넘어 새로운 패키지 매니저가 왜 자꾸 나오는지 알아보자.</p>
+<p>최초의 패키지 매니저는 NPM으로 10년이 넘는 시간 동안 존재해 왔다. 이렇게 오랜 시간 자리매김하고 있는 NPM을 넘어 왜 자꾸만 <code>YARN</code>, <code>PNPM</code>과 같은 새로운 패키지 매니저가 등장하는 것일까?</p>
+<p>이 질문에 정확한 답변은 존재하지 않는다. 언제나 그렇듯 JavaScript의 생태계에서는 A보다 나은 B가 나오기 마련이기 때문이다. 하지만 굳이 꼽자면 몇 가지 이유를 들 수 있겠다.</p>
+<h2 id="1-node-modules"><a href="#1-node-modules" class="headerlink" title="1. node_modules"></a>1. node_modules</h2><p>과거 <strong>NPM@2</strong> 까지의 node_modules의 구조는 단순하였다. </p>
+<p><code>A → B → C </code>라는 패키지가 있다면 <strong>종속 깊이에 따라 순차적으로 종속된 모듈을 설치해 나가는 단순한 방식</strong>이었다. 이런 방식은 서로 종속된 모듈 간 분리가 명확했기에 일관성이 유지되었고 각 모듈 간의 오염과 충돌은 적었다.<br>하지만 종속된 모듈이 많아지면서 디렉토리 계층 구조의 깊이는 더 깊어져 갔고 이로 인한 문제점(<em>Windows Max Path 260자</em>)과 종속성 그래프를 생성하는 시간 역시 길어져만 갔다.</p>
+<p>Node.js를 개발한 <code>Ryan Dahl</code>은 <code>Design Mistakes in Node</code>에서 node_modules에 대해 모듈 간 종속성 관리, 모듈 간 문제 해결 알고리즘을 매우 복잡하게 만든다고도 하였으며, 아래와 같이 말하기도 하였다.</p>
+<hr>
+<p style="text-align: center;font-weight: bold">It's my fault and I'm very sorry.</p>
+<p style="text-align: center;font-weight: bold">Unfortunately it's impossible to undo now.</p>
+
+<hr>
+<p>이런 문제점은 고질적으로 설계 자체의 문제로 <code>Ryan Dahl</code>은 <a target="_blank" rel="noopener" href="https://deno.land/">Deno</a>를 개발하기도하였다. <code>Deno</code>에 대해서는 <a href="https://kdydesign.github.io/2022/02/17/deno-tutorial/">[Deno] Node.js의 대안!! Deno 알아보기</a>를 참고하도록 하자.</p>
+<h2 id="2-디스크-효율"><a href="#2-디스크-효율" class="headerlink" title="2. 디스크 효율"></a>2. 디스크 효율</h2><p>우리가 <a href="https://kdydesign.github.io/2017/11/04/webpack-tutorial/">webpack</a>, <a href="https://kdydesign.github.io/2020/09/23/parcel-intro/">parcel</a>과 같은 번들링 도구로 애플리케이션을 번들링 시 명시된 devDependencies는 포함되지 않는다. 하지만 로컬 PC와 같은 우리의 개발 환경에서는 <code>모든 종속된 모듈들이 디스크의 용량을 차지</code>한다. 무심코 지나갔을 수 있지만 규모가 큰 애플리케이션의 경우 종속된 모듈의 용량은 은근히 크다. 물론 현 시대의 하드웨어에 무리가 갈 정도로 침범하진 않지만 말이다.</p>
+<p>특히 과거의 NPM인 경우 중복되는 종속성이 여러 모듈에 종속된 <a target="_blank" rel="noopener" href="https://rushjs.io/pages/advanced/npm_doppelgangers/">NPM 도플갱어</a>로 인해 모듈이 많으면 많을수록 폭발적으로 용량이 증가한다. 이러한 문제점은 디스크 효율성도 떨어뜨리지만, 종속된 모듈이 증가하기 때문에 종속성 그래프를 생성하는 시간 역시 길어지는 이유 중 하나이다.</p>
+<h2 id="3-호이스팅-Hoisting"><a href="#3-호이스팅-Hoisting" class="headerlink" title="3. 호이스팅(Hoisting)"></a>3. 호이스팅(Hoisting)</h2><p>위에서 node_modules를 설명할 때 <strong>NPM@2</strong>의 종속성 구조는 매우 단순하다고 하였다. 하지만 이와 연관되어 <a target="_blank" rel="noopener" href="https://rushjs.io/pages/advanced/npm_doppelgangers/">NPM 도플갱어</a>가 발생하고 또 이에 따라 디스크 효율성이 떨어지는데 NPM은 이를 해결하기 위해 <strong>NPM@3</strong>부터 동작 방식을 변경하였다.</p>
+<p>바로 종속성을 설치할 때 <strong>연관 관계에 따라 모듈을 디렉토리 계층 구조의 최상위로 호이스팅(Hoisting)하는 방식</strong>이다. 이 방식은 현재까지도 유지되고 있으며, 우리가 node_modules 디렉토리를 보았을 때 하나로 나열된 것을 확인해 볼 수 있다.</p>
+<p>NPM은 호이스팅으로 인해 <strong>NPM@3</strong>부터는 위에서 설명된 <code>node_modules</code>와 <code>디스크 효율</code>이 좋아졌지만, <code>보안적 측면에서 문제</code>가 생기기 시작했다. Chrome V8 자체는 매우 좋은 보안 샌드박스였지만 Node.js는 사용자가 액세스할 수 있는 모든 것에 접근할 수 있으며, 이는 보안 측면에서 매우 취약하다. 특히나 모든 종속성 구조를 최상위로 호이스팅 한다면 사용자뿐만 아니라 코드 또는 커맨드와 같은 다른 방식으로도 접근할 수 있게 되고 수정까지 가능하게 된다.</p>
+<p>이러한 문제로 과거에는 아래와 같은 보안적 이슈가 존재하기도 했었다.</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/npm/npm/issues/19883">Linux OS에서 sudo NPM 명령을 통한 시스템 파일의 소유권 변경</a><br><a target="_blank" rel="noopener" href="https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident">NPM package event-stream에 악성 패키지를 내포한 비트코인 탈취 시도</a></p>
+</blockquote>
+<p>이 문제는 YARN 역시 동일한데 현재는 <code>lock</code> 파일을 통해 패키지에 대한 무결성 검증으로 많이 안정화되었다.</p>
+<h2 id="4-Mono-Repo"><a href="#4-Mono-Repo" class="headerlink" title="4. Mono Repo"></a>4. Mono Repo</h2><p>과거 Github에서는 <code>1 Project 당 1 Repository</code> 방식인 <strong>Multi Repo</strong> 방식을 많이 사용하였다. 하지만 점차 <code>core</code>, <code>cli</code>, <code>ui</code> 등 하나의 패키지와 연관된 기능들이 많아지고 이에 비례하여 증가하는 레포지토리의 관리는 너무나 비효율적이었다. <code>lint</code>와 같은 각 프로젝트 별 공통된 패키지를 여러 레파지토리에 설치를 해줘야 하니 말이다.</p>
+<p>그러면서 <strong>YARN의 workspace</strong>와 <a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna</a> 같은 <strong>Mono Repo</strong> 도구가 나오면서 <code>하나의 레포지토리 안에 여러 패키지를 관리</code>하는 메커니즘이 나오기 시작하였다. 현재는 대부분 프로젝트에서 <code>Mono Repo</code> 구조로 개발을 진행하고 있으며, 큰 효과를 보고 있다.</p>
+<div class="alert more no-icon"><p><strong>Multi Repo</strong>: 여러 Repository에 패키지를 분산하여 관리<br><strong>Mono Repo</strong>: Multi Repo와 반대로 여러 패키지를 하나의 Repository에서 관리</p>
+</div>
+
+<p>하지만 Mono Repo는 하나의 레포지토리 안에서 여러 패키지를 관리하다 보니 종속된 모듈들이 오히려 문제가 되기 시작했다.</p>
+<p>예를 들어 하나의 레파지토리 안에 서로 다른 A, B, C의 패키지가 존재한다면 각각의 패키지에서 공통으로 사용되는 Lint를 최상위 패키지로 설치는 하지만 결국 Lint에 종속된 특정 모듈은 B 패키지에 있는 모듈 중에서도 종속될 가능성이 있는 것이다. 이로 인해 안 그래도 복잡한 알고리즘을 가진 종속성 모듈을 더욱 복잡하게 만드는 경우이기도 하다.</p>
+<hr>
+<p>큰 카테고리로 패키지 매니저가 발전하는 이유 4가지인 <code>node_modules</code>, <code>디스크 효율성</code>, <code>호이스팅(Hoisting)</code>, <code>Mono Repo</code>에 대해서 알아보았다. 사실 이 내용들은 PNPM에서 해결된 문제점이기도 하고 PNPM이 최근 많은 관심을 받는 이유이기도 하다.</p>
+<p>서론이 너무 길었다. 이제 본론으로 들어가 <code>Performant NPM</code>인 PNPM에 대해 알아보도록 하자.</p>
+<hr>
+<h1 id="Performant-NPM-PNPM"><a href="#Performant-NPM-PNPM" class="headerlink" title="Performant NPM - PNPM"></a>Performant NPM - PNPM</h1><p>PNPM은 <code>Performant Node Package Manager</code>를 의미하는 NPM의 대체 패키지 관리자이다.</p>
+<p>PNPM의 주요 목적은 <strong>모든 패키지를 중앙 집중식 저장 형태로 관리</strong>하고 <strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a>와 심볼릭 링크를 통해 프로젝트에서 패키지를 참조</strong>함으로써 <code>빠른 속도</code>와<code> 프로젝트 간 동일 버전의 종속성 유지</code> 및 <code>디스크 공간 절약</code>을 목적으로 두고 있다.</p>
+<div class="alert more no-icon"><p><strong>Hard Link (ln)</strong> : 원본 파일과 inode가 동일하여 원본이 수정되면 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a>된 파일도 수정이 되고 원본이 삭제되더라도 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a>된 파일은 유지된다.<br><strong>Symbolic Link&#x2F;Soft Link (ln -s)</strong> : 윈도우의 바로가기와 같으며, 단순한 원본 파일의 위치 정보(point)만을 가지고 있다.</p>
+</div>
+
+<h2 id="현재-오픈-소스의-PNPM-활용"><a href="#현재-오픈-소스의-PNPM-활용" class="headerlink" title="현재 오픈 소스의 PNPM 활용"></a>현재 오픈 소스의 PNPM 활용</h2><p>최초 필자가 PNPM을 접하게 된건 vue의 Github에서이다. 하지만 <a target="_blank" rel="noopener" href="https://pnpm.io/ko/users">이외에 많은 이름있는 프로젝트에서 PNPM을 사용</a>하고 있다.</p>
+<p><img src="/2023/09/25/pnpm-tutorial/use-pnpm.png" alt="use-pnpm"></p>
+<h2 id="2022-state-of-js-Monorepo-tools-부분"><a href="#2022-state-of-js-Monorepo-tools-부분" class="headerlink" title="2022 state of js - Monorepo tools 부분"></a>2022 state of js - Monorepo tools 부분</h2><p><a target="_blank" rel="noopener" href="https://2022.stateofjs.com/en-US/libraries/monorepo-tools/">2022 state of js - MonoRepo Tools 부분</a>을 보면 PNPM의 인기를 확인할 수 있다.</p>
+<p><img src="/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-1.png" alt="2022-stateofjs-pnpm-1"><br><img src="/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-2.png" alt="2022-stateofjs-pnpm-2"><br><img src="/2023/09/25/pnpm-tutorial/2022-stateofjs-pnpm-3.png" alt="2022-stateofjs-pnpm-3"></p>
+<h2 id="PNPM의-특징"><a href="#PNPM의-특징" class="headerlink" title="PNPM의 특징"></a>PNPM의 특징</h2><p>PNPM의 종속성 관리는 NPM의 기본 메커니즘을 따라가지만, 별도의 중앙 <strong>집중화된 관리(virtual-store)</strong> 와 <strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a></strong>, <strong>심볼릭 링크</strong>가 핵심적이다. 이 개념 하나로 빠른 성능과 디스크의 효율성을 높였다.</p>
+<p>또한 진화된 NPM@3 방식의 <code>flat node_modules</code> 구조가 아닌 반대로 NPM@2의 <code>non-flat node_modules</code> 구조를 따라감으로써 전반적인 보안적 취약점이 해결되었다.</p>
+<p>PNPM의 특징은 크게 4가지로 나누어 볼 수 있다.</p>
+<h3 id="1-성능"><a href="#1-성능" class="headerlink" title="1. 성능"></a>1. 성능</h3><p>YARN은 NPM보다 빠른 성능을 보이지만 사실상 규모가 큰 시나리오에서는 큰 차이를 나타내지 못한다. 하지만 PNPM은 기타 패키지 관리자보다<code> 최대 2배 빠른 속도</code>를 보인다.</p>
+<p><a target="_blank" rel="noopener" href="https://pnpm.io/ko/benchmarks">PNPM의 벤치 마킹에 따른 성능 비교 분석</a>을 보게 되면 여러 케이스에서 PNPM이 다른 패키지 매니저보다 우수한 성능을 나타내는 것을 볼 수 있다.</p>
+<p><strong>PNPM 벤치마킹에 따른 성능 비교</strong></p>
+<p><img src="/2023/09/25/pnpm-tutorial/pnpm-benchmark-1.png" alt="pnpm-benchmark-1"><br><img src="/2023/09/25/pnpm-tutorial/pnpm-benchmark-2.png" alt="pnpm-benchmark-2"></p>
+<h3 id="2-디스크-공간의-효율적-사용"><a href="#2-디스크-공간의-효율적-사용" class="headerlink" title="2. 디스크 공간의 효율적 사용"></a>2. 디스크 공간의 효율적 사용</h3><p>NPM과 YARN은 모듈을 설치할 경우 node_modules 경로에 모두 설치되고 만약 같은 모듈을 사용하는 100개의 프로젝트가 있다면 똑같이 100개 프로젝트에 같은 모듈을 설치해야 한다. 이렇게 설치되면 <code>디스크 사용량은 폭발적으로 증가</code>할 것이고 100번의 설치 과정을 걸쳐야 하는 번거로움이 있지만(또는 복사하거나), <strong>PNPM의 경우 모든 종속된 모듈은 특정 디스크 위치(.pnpm-store)에 저장</strong>된다. 이후 프로젝트에서 특정 패키지가 필요한 경우 해당 패키지를 프로젝트에 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a>(.pnpm)되어 추가 디스크 공간을 사용하지 않기 때문에 디스크 사용이 효율적이고 패키지의 재사용 효율이 높다.</p>
+<p>또한 다른 버전의 종속된 모듈이 필요하다면 모든 100개의 프로젝트를 업데이트할 필요 없이 중앙에 관리되는 패키지만 업데이트가 되며 이 한 번의 업데이트로 같은 패키지를 사용하는 프로젝트에서 같은 버전의 패키지를 사용할 수 있다.</p>
+<h3 id="3-Non-Flat-node-modules"><a href="#3-Non-Flat-node-modules" class="headerlink" title="3. Non-Flat node_modules"></a>3. Non-Flat node_modules</h3><p>위에서 <code>NPM@2</code>의 메커니즘은 단순하다고 하였으며, <code>non-flat node_modules</code>구조로써 얻는 이점들이 있다고 설명하였다. 하지만 <code>NPM@3</code>부터는 루트 경로로 호이스팅을 하는 <code>flat node_modules</code> 구조를 사용하였다.</p>
+<p>NPM과 YARN의 경우 모든 종속성 설치할 때 모든 패키지는 모듈 디렉토리의 로트로 호이스팅을 하고 결과적으로 소스 코드를 통해 종속되지 않은 모듈에도 접근할 수 있다. 하지만 PNPM은 <a target="_blank" rel="noopener" href="https://pnpm.io/blog/2020/05/27/flat-node-modules-is-not-the-only-way">Flat node_modules의 문제를 해결하기 위한 유일한 방법이 아니라고 설명</a>하고 오히려 <code>non-flat node_modules</code>를 지향하고 <code>NPM@2</code>의 메커니즘을 사용하였다.</p>
+<p>그렇다면 PNPM도 <code>NPM@2</code>의 문제점을 가지고 있을까? </p>
+<p>이에 대한 답은 <code>아니오</code>이다. PNPM은 <code>NPM@2</code>의 <code>non-flat node_modules</code> 즉 루트로 호이스팅을 하지 않는 대신 종속된 모든 모듈은 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hard_link">하드 링크</a> 방식과 심볼릭 링크 방식을 사용함으로써 <code>NPM@2</code>의 문제를 해결하였는데 이런 하드링크와 심볼릭 링크 방식으로 종속성 수와 종성 그래프의 깊이에 관계없이 유지된다.</p>
+<h3 id="4-보안"><a href="#4-보안" class="headerlink" title="4. 보안"></a>4. 보안</h3><p>위에서 설명했듯 PNPM은 애초부터 종속된 모듈들을 루트로 호이스팅을 하지 않기 때문에 <code>호이스팅으로 인한 보안적 문제(모듈에 대한 엑세스)</code>는 없을 뿐더러 YARN과 동일하게 PNPM에는 설치된 모든 패키지의 체크섬이 포함된 파일이 존재하여 코드가 실행되기 전 설치된 모든 <code>패키지의 무결성을 확인</code>한다.</p>
+<h3 id="5-Mono-Repo"><a href="#5-Mono-Repo" class="headerlink" title="5. Mono Repo"></a>5. Mono Repo</h3><p>초창기 Lerna는 Mono repo로서 사용자도 많으며 유명 프로젝트에서 많이 사용되었지만, 많은 것을 스스로 알아야 했고 현재도 그렇다. 버전업도 많이 진행되고 개선되었으며, 과거보다는 안정되었지만, 소문에 의하면 <code>메인 개발자의 번아웃으로 유지보수에 어려움을 겪는다고 한다.</code></p>
+<p>Lerna 이외에 YARN을 사용하여 Mono Repo를 구축할 수도 있다. <code>YARN Classic(YARN 1)</code>은 17년도 Lerna와 같은 Mono Repo를 지원하기 시작하였고, <code>YARN Berry(YARN 2)</code>는 <code>YARN Classic</code>의 개념을 기반으로 개선된 Mono Repo를 지원한다.</p>
+<p>PNPM의 경우에도 역시나 Mono Repo를 지원하며, YARN Berry와 유사하다. 즉, <strong>PNPM은 Lerna와 YARN을 대체할 수 있는 Mono Repo를 제공</strong>한다.</p>
+<p>Lerna에 관한 내용은 아래 내용을 참고하자.</p>
+<blockquote>
+<p><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a></p>
+</blockquote>
+<hr>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><p>PNPM의 설치 방식에는 <code>독립 실행형 설치</code> 방법과 <code>[Corepack](https://nodejs.org/api/corepack.html)</code>,<code> NPM을 통한 설치</code>를 제공한다.</p>
+<h3 id="독립-실행형"><a href="#독립-실행형" class="headerlink" title="독립 실행형"></a>독립 실행형</h3><p><strong>Windows PowerShell</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">iwr https://get.pnpm.io/install.ps1 -useb | iex<br></code></pre></td></tr></table></figure>
+
+<p><strong>POSIX systems - curl</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">curl -fsSL https://get.pnpm.io/install.sh | sh -<br></code></pre></td></tr></table></figure>
+
+<p><strong>POSIX systems - wget</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">wget -qO- https://get.pnpm.io/install.sh | sh -<br></code></pre></td></tr></table></figure>
+
+<h3 id="Corepack"><a href="#Corepack" class="headerlink" title="Corepack"></a>Corepack</h3><p>Node.js v16.13부터는 패키지 관리자를 위해 <a target="_blank" rel="noopener" href="https://nodejs.org/api/corepack.html">Corepack</a>을 출시하였다. v16에서는 실험적 기능으로 <code>PNPM과 YARN을 지원</code>하고, 해당 기능을 활성화하면 PNPM을 사용할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">corepack <span class="hljs-built_in">enable</span><br></code></pre></td></tr></table></figure>
+
+<p>이후 최신 버전의 PNPM을 사용하려면 아래와 같은 명령어를 사용한다.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># Node.js v16.17 &gt;</span></span> <br>corepack prepare PNPM@&lt;version&gt; --activate<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># Node.js v16.17 &lt;=</span></span><br>corepack prepare PNPM@latest --activate<br></code></pre></td></tr></table></figure>
+
+<h3 id="NPM"><a href="#NPM" class="headerlink" title="NPM"></a>NPM</h3><p>PNPM도 NPM과 동일한 패키지 매니저이지만 NPM을 통해서 설치할 수 있다.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">npm install -g pnpm<br></code></pre></td></tr></table></figure>
+
+<h2 id="Node-js-지원-버전"><a href="#Node-js-지원-버전" class="headerlink" title="Node.js 지원 버전"></a>Node.js 지원 버전</h2><p>PNPM은 2023년 09월 기준으로 v8까지 출시된 상태이고 최소 버전은 PNPM v5이다. v5의 경우 Node.js v12 이상부터 지원하며 v7은 Node.js v18까지 지원한다.</p>
+<p><em>(22년도 해당 포스팅을 준비할 때에는 v7까지 출시된 상태였고 최소 버전은 v4였으며, v4의 경우 Node.js v10 이상부터 지원이었다. 이런 과정을 보면 하상 Node.js 버전업에 맞게 업데이트를 꾸준히 해야겠다는 생각을 다시끔 한다.)</em></p>
+<table>
+<thead>
+<tr>
+<th>Node.js</th>
+<th>PNPM 5</th>
+<th>PNPM 6</th>
+<th>PNPM 7</th>
+<th>PNPM 8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js v12</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Node.js v14</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Node.js v16</td>
+<td>?</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+<tr>
+<td>Node.js v18</td>
+<td>?</td>
+<td>️✔️</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+<tr>
+<td>Node.js v20</td>
+<td>️?</td>
+<td>️ ?</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+</tbody></table>
+<h2 id="실행"><a href="#실행" class="headerlink" title="실행"></a>실행</h2><p>PNPM의 실행 방식은 YARN과 비슷하며 크게 다를 것이 없다.</p>
+<p>PNPM의 CLI는 <a target="_blank" rel="noopener" href="https://pnpm.io/cli/add">PNPM cli 공식 문서</a>에서 확인 할 수 있다. 몇 가지 가장 많이 사용하는 CLI를 알아보자.</p>
+<p><strong>pnpm install</strong></p>
+<ul>
+<li><code>aliases</code>: <code>i</code><br><code>PNPM install</code>은 프로젝트의 모든 종속성을 설치한다.</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">pnpm install<br></code></pre></td></tr></table></figure>
+
+<p><strong>pnpm add <package></strong><br><code>pnpm add</code>는 패키지와 패키지가 의존하는 모든 패키지를 설치한다. 기본적으로 모든 새로운 패키지는 프로덕션 종속성(dependencies)으로 설치된다.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">pnpm add [option] &lt;package&gt;<br></code></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pnpm add <package></td>
+<td>dependencies 설치</td>
+</tr>
+<tr>
+<td>pnpm add -D<package></td>
+<td>devDependencies 설치</td>
+</tr>
+<tr>
+<td>pnpm add -O<package></td>
+<td>optionalDependencies 설치</td>
+</tr>
+<tr>
+<td>pnpm add -g<package></td>
+<td>global 설치</td>
+</tr>
+<tr>
+<td>pnpm add <package>@[version]</td>
+<td>버전 지정 설치</td>
+</tr>
+</tbody></table>
+<p><strong>pnpm update</strong></p>
+<ul>
+<li><code>aliases</code>: <code>up</code>, <code>upgrade</code><br><code>PNPM update</code>는 지정된 범위에 따라 패키지의 버전을 업데이트한다.</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">pnpm update &lt;package&gt;<br></code></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pnpm update</td>
+<td>모든 종속성 업데이트</td>
+</tr>
+<tr>
+<td>pnpm update <package>@[version]</td>
+<td>특정 패키지를 특정버전으로 업데이트</td>
+</tr>
+<tr>
+<td>pnpm update “@babel&#x2F;*”</td>
+<td>패키지 scope 내 모든 종속성 업데이트</td>
+</tr>
+<tr>
+<td>pnpm update !<package></td>
+<td>특정 패키지를 제외한 모든 종속성 업데이트</td>
+</tr>
+</tbody></table>
+<p><strong>pnpm remove</strong></p>
+<ul>
+<li><code>aliases</code>: <code>rm</code>, <code>uninstall</code>, <code>un</code><br><code>PNPM remove</code>는 프로젝트 내 패키지를 제거한다.</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">PNPM remove [option]<br></code></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Aliases</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pnpm remove –recursive</td>
+<td>-r</td>
+<td>Mono Repo의 Workspace 내에서 사용되는 경우 모든 작업 공간의 패키지에서 종속성 제거</td>
+</tr>
+<tr>
+<td>pnpm remove –global</td>
+<td>-g</td>
+<td>전역 패키지 제거</td>
+</tr>
+<tr>
+<td>pnpm remove –save-dev</td>
+<td>-D</td>
+<td>devDependencies 에서 종속성 제거</td>
+</tr>
+<tr>
+<td>pnpm remove –save-optionval</td>
+<td>-O</td>
+<td>optionalDependencies 에서 종속성 제거</td>
+</tr>
+<tr>
+<td>pnpm remove –save-prod</td>
+<td>-P</td>
+<td>dependencies 에서 종속성 제거</td>
+</tr>
+<tr>
+<td>pnpm remove –filter <package_selector></td>
+<td></td>
+<td><a target="_blank" rel="noopener" href="https://pnpm.io/filtering">Filtering</a>을 통한 특정 하위 집합으로 제거</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="NPM의-대체로-가능한가"><a href="#NPM의-대체로-가능한가" class="headerlink" title="NPM의 대체로 가능한가?"></a>NPM의 대체로 가능한가?</h1><p>확실히 성능적인 부분과 디스크 효율적인 부분으로 따지면 PNPM이 승자이며, 하나의 프로젝트에 여러 그룹이 진행하거나 여러 프로젝트를 mono Repo로 관리를 한다면 PNPM은 유용하다.</p>
+<p>그렇다고 쉽사리 현재 진행되고 있는 프로젝트 또는 진행 될 프로젝트에 반영하기는 쉽지 않을 것이다. 언제나 그렇듯 JavaScript의 생태계에서는 <code>A보다 좋다는 B가 나와도</code> 근본이 있기 때문이며, 여기서 근본은 NPM이기 때문이다.</p>
+<p>수십 년간 Node.js와 NPM은 유지가 되어왔고 이를 개선한 새로운 오픈 소스가 출시해도 NPM과 YARN 역시 이에 뒤처지지 않게 발전해 왔으며, 문제점도 해결해 왔다. 물론 가장 효율적인 방법으로 초기 설계부터 진행해 온 것과 그렇지 않은 것의 차이는 있지만 NPM을 유지한다고 문제가 생기는 것은 아니다.</p>
+<p>다만 <code>현재 본인이 겪고 있는 문제점이 PNPM으로 해결이 된다면 PNPM을 사용</code>하는 것이 옳다고 생각한다.</p>
+<hr>
+<p>PNPM이 NPM보다 우월하다는 관점에서 보기보다는 <code>NPM이 과거에 어떤 문제가 있었고 왜 패키지 매니저가 발전</code>해 왔는지 알아보았다. 무심코 우리는 패키지를 설치 및 업데이트와 같이 단순하게 사용을 해왔지만, 이러한 단순한 도구가 왜 계속 발전해 왔는지 파악할 수 있었으며, PNPM이라는 새로운 패키지 매니저에 대해 배워보았다.</p>
+<p>개인적으로는 NPM이 아닌 PNPM을 사용하려고 노력하고 있지만 PNPM 역시 오픈 소스이기 때문에 문제 발생에 대한 두려움도 있기에 실무적으로 프로덕션이 필요한 경우에는 사용을 자제하고 있지만 확실히 빠른 속도로 개발적 효율은 향상했다고 느껴진다.</p>
+<p>앞으로 또 어떤 패키지 매니저가 나올지 모르지만, 다양한 내용을 알아 둔다면 나중에 분명 도움이 되는 날이 올 것으로 생각한다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/02/17/deno-tutorial/">[Deno] Node.js의 대안!! Deno 알아보기</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a><br><a href="https://kdydesign.github.io/2020/09/23/parcel-intro/">불꽃 튀게 빠른 번들러 Parcel 개념잡기!</a><br><a href="https://kdydesign.github.io/2020/09/16/nvm-for-windows/">NVM으로 Windows 환경에서 Node 버전 관리하기</a><br><a href="https://kdydesign.github.io/2020/08/28/NPM-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-NPM-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/NPM/" rel="tag">NPM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/PNPM/" rel="tag">PNPM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/YARN/" rel="tag">YARN</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/monorepo/" rel="tag">monorepo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/28/electron-rce/"
+                    data-tooltip="[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                    aria-label="PREVIOUS: [Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/03/04/firebase-pwa-tutorial/"
+                    data-tooltip="Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                    aria-label="NEXT: Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/28/electron-rce/"
+                    data-tooltip="[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                    aria-label="PREVIOUS: [Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/03/04/firebase-pwa-tutorial/"
+                    data-tooltip="Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                    aria-label="NEXT: Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/25/pnpm-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2023/09/25/pnpm-tutorial/';
+              
+            this.page.identifier = 'performant-npm-tutorial';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

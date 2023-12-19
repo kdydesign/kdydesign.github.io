@@ -1,0 +1,773 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기! - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"/>
+    
+        <meta name="keywords" content="intellij,tools,pair programming,페어 프로그래밍,인털레제이,프로그래밍 이론,programming theory,intellij 2020.03,pair programming intellij,intellij code with me,webstorm pair programming,intellij pair programming">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nIntelliJ가 이번 2020-12-01에 2020.03 버전이 배포되었다. 이번 버전이 출시되면서 추가된 기능 중 하나가 공동 개발 항목이다. 타이틀은 Code Width Me(EAP) 지원이다.\nCode Width Me(EAP)는 IDE에 열려 있는 프로젝트를 다른 사람과 공유하며 실시간으로 공동 작업을 수행할 수 있다. 즉, 이를 사용하며 페어 프로그래밍(Pair Programming)이 가능하다. 이번 포스팅에서 이 **IntelliJ를 사용하여 페어 프로그래밍(Pair Programming)**을 하는 방법을 알아보려 한다.\n지원 버전사실상 지원되는 버전은 2020.03버전이다. 이는 IntelliJ 뿐만 아니라 Pycham, WebStorm 등 JetBrains 제품군 모두 같다. 하지만 2020.03 이하 버전에도 플러그인 형태로 사용이 가능하다. 현재 안정된 버전인 2020.02에 Code With Me 플러그인이 도입되어 있어서 플러그인으로 설치 후 사용할 수 있다.\n자세한 내용은 Code With Me Adds Support for JetBrains IDEs v2020.3를 참고하자.\n설치먼저 intellij 2020.03으로 업데이트 했어도 플러그인 형태로 설치하면 된다.\nFile &gt; Settings &gt; Plugins &gt; Marketplace로 이동하여 Code With Me를 검색하여 설치 후 IDE를 재실행하자.\nPlugins\n또는 Code With Me에서 브라우저를 통해 설치할 수 있다.\n사용플러그인을 설치하고 재시작을 했다면 상단에 아이콘이 추가되었을 것이다.\nCode With Me\n이제 이 아이콘을 통해서 내 IDE에 접속을 허용하거나 다른 IDE에 접속할 수 있다.\n기능을 확인해 보자.\n\nEnable Access and Copy Invitation Link : 내 IDE를 활성화하여 접근할 수 있도록한다.\nJoin Another IDE as Participant : 다른 IDE에 접속한다.\nSubmit ‘Code With Me’ Feedback : Code With Me에 대한 Log를 전송한다.\nPermissions : 내 IDE 접속 권한 설정을 한다.\n\n\n\nEnable Access and Copy Invitation Link를 클릭하게 되면 접속 권한 설정창이 활성화된다.\n\n여기서 내 IDE에 접속할 권한을 설정하는데 읽기모드부터 모든 권한까지 설정 할 수 있다. 본인이 원하는 권한을 설정 후 Enable Access를 클릭하자. 예제에서는 Full Access로 진행하겠다.\n\ncode-with-me를 활성화하게 되면 Copy Invitation Link와 Turn Off Access and Disconnect All 메뉴가 활성화된다.\nCopy Invitation Link를 클릭하면 현재 내 IDE 고유 키가 복사된다. 이 키들은 JetBrains에 로그인한 사용자의 고유 URL이며, Join Another IDE as Participant를 통해 다른 IDE에 접속할 때 입력하여 사용하게 된다.\n여기서 특이한 점은 JetBrains 제품이 없더라도 이 URL을 브라우저에 입력하면 Code With Me 실행기를 다운로드하여 실행까지 가능하다.\n\n실행하게 되면 접속이 된 상태이며, IDE 접속은 1:N으로 접속이 되고 접속 시 접속된 사용자가 No one Joined 영역에 표시된다.\n\n여기서 접속 사용자를 누르게 되면 현재 접속된 사용자 커서가 어느 파일 어느 소스에 위치하고 있는지 Jump가 가능하다.\n\n\n페어 프로그래밍(Pair Programming) 위한 도구와 방법은 많지만, 조직이나 그룹에서 JetBrains 제품을 사용하면 사용하는 도구를 가지고 바로 사용하기 때문에 다른 애플리케이션을 이용하지 않아도 된다. 사용하다 보면 생각보다 성능도 나쁘지 않기 때문에 페어 프로그래밍이 필요한 경우 사용하면 좋을 듯하다.\n\n더 알아보기오픈 소스(Open-Source) 구조와 모듈 파악하기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.NVM으로 Windows 환경에서 Node 버전 관리하기\n","dateCreated":"2020-12-03T09:53:19+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-12-03T09:53:19+00:00","description":"\nIntelliJ 2020.03 버전이 배포되었다. 릴리즈 된 기능 중 Code Width Me(EAP)는 IDE에 열려 있는 프로젝트를 다른 사람과 공유하며 실시간으로 공동 작업을 수행할 수 있다. 즉, 이를 사용하며 Pair Programming이 가능하다.\n","headline":"IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!","image":["intellij-pair-programming-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/12/03/intellij-pair-programming/","keywords":"intellij, tools, pair programming, intellij 2020.03","thumbnailUrl":"intellij-pair-programming-cover.png"}</script>
+    <meta name="description" content="IntelliJ 2020.03 버전이 배포되었다. 릴리즈 된 기능 중 Code Width Me(EAP)는 IDE에 열려 있는 프로젝트를 다른 사람과 공유하며 실시간으로 공동 작업을 수행할 수 있다. 즉, 이를 사용하며 Pair Programming이 가능하다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!">
+<meta property="og:url" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="IntelliJ 2020.03 버전이 배포되었다. 릴리즈 된 기능 중 Code Width Me(EAP)는 IDE에 열려 있는 프로젝트를 다른 사람과 공유하며 실시간으로 공동 작업을 수행할 수 있다. 즉, 이를 사용하며 Pair Programming이 가능하다.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/intellij-pair-programming-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/intellij-plugin.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/code-with-me-icon.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/code-with-me-permission.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/access-code-with-me.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/code-with-me-browser.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/join-user.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/jump-to-source.png">
+<meta property="article:published_time" content="2020-12-03T09:53:19.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.785Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="intellij">
+<meta property="article:tag" content="tools">
+<meta property="article:tag" content="pair programming">
+<meta property="article:tag" content="intellij 2020.03">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/intellij-pair-programming-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/intellij-pair-programming-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/12/03/intellij-pair-programming/intellij-pair-programming-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-03T09:53:19+00:00">
+	
+		    2020-12-03
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/coding/">coding</a>, <a class="category-link" href="/categories/coding/intellij/">intellij</a>, <a class="category-link" href="/categories/coding/intellij/programming/">programming</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/12/03/intellij-pair-programming/intellij-pair-programming-cover.png" alt="intellij-pair-programming-cover"></p>
+<p>IntelliJ가 이번 2020-12-01에 <code>2020.03</code> 버전이 배포되었다. 이번 버전이 출시되면서 추가된 기능 중 하나가 <strong>공동 개발</strong> 항목이다. 타이틀은 <code>Code Width Me(EAP) 지원</code>이다.</p>
+<p><code>Code Width Me(EAP)</code>는 IDE에 열려 있는 프로젝트를 다른 사람과 공유하며 실시간으로 공동 작업을 수행할 수 있다. 즉, 이를 사용하며 <code>페어 프로그래밍(Pair Programming)</code>이 가능하다. 이번 포스팅에서 이 **IntelliJ를 사용하여 페어 프로그래밍(Pair Programming)**을 하는 방법을 알아보려 한다.</p>
+<h2 id="지원-버전"><a href="#지원-버전" class="headerlink" title="지원 버전"></a>지원 버전</h2><p>사실상 지원되는 버전은 <code>2020.03</code>버전이다. 이는 IntelliJ 뿐만 아니라 <code>Pycham</code>, <code>WebStorm</code> 등 <code>JetBrains</code> 제품군 모두 같다. 하지만 2020.03 이하 버전에도 플러그인 형태로 사용이 가능하다. 현재 안정된 버전인 <code>2020.02</code>에 <code>Code With Me</code> 플러그인이 도입되어 있어서 플러그인으로 설치 후 사용할 수 있다.</p>
+<p>자세한 내용은 <a target="_blank" rel="noopener" href="https://blog.jetbrains.com/blog/2020/10/23/code-with-me-jetbrains-ides-v2020-3/">Code With Me Adds Support for JetBrains IDEs v2020.3</a>를 참고하자.</p>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><p>먼저 intellij 2020.03으로 업데이트 했어도 플러그인 형태로 설치하면 된다.</p>
+<p><strong><em>File &gt; Settings &gt; Plugins &gt; Marketplace</em></strong>로 이동하여 <code>Code With Me</code>를 검색하여 설치 후 IDE를 재실행하자.</p>
+<p><strong>Plugins</strong><br><img src="/2020/12/03/intellij-pair-programming/intellij-plugin.png" alt="intellij-plugins"></p>
+<p>또는 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/14896-code-with-me">Code With Me</a>에서 브라우저를 통해 설치할 수 있다.</p>
+<h2 id="사용"><a href="#사용" class="headerlink" title="사용"></a>사용</h2><p>플러그인을 설치하고 재시작을 했다면 상단에 아이콘이 추가되었을 것이다.</p>
+<p><strong>Code With Me</strong><br><img src="/2020/12/03/intellij-pair-programming/code-with-me-icon.png" alt="code-with-me-icon"></p>
+<p>이제 이 아이콘을 통해서 내 IDE에 접속을 허용하거나 다른 IDE에 접속할 수 있다.</p>
+<p>기능을 확인해 보자.</p>
+<div class="alert info no-icon"><ul>
+<li><strong>Enable Access and Copy Invitation Link</strong> : 내 IDE를 활성화하여 접근할 수 있도록한다.</li>
+<li><strong>Join Another IDE as Participant</strong> : 다른 IDE에 접속한다.</li>
+<li><strong>Submit ‘Code With Me’ Feedback</strong> : Code With Me에 대한 Log를 전송한다.</li>
+<li><strong>Permissions</strong> : 내 IDE 접속 권한 설정을 한다.</li>
+</ul>
+</div>
+
+<p><strong>Enable Access and Copy Invitation Link</strong>를 클릭하게 되면 접속 권한 설정창이 활성화된다.</p>
+<p><img src="/2020/12/03/intellij-pair-programming/code-with-me-permission.png" alt="code-with-me-permission"></p>
+<p>여기서 내 IDE에 접속할 권한을 설정하는데 읽기모드부터 모든 권한까지 설정 할 수 있다. 본인이 원하는 권한을 설정 후 <code>Enable Access</code>를 클릭하자. 예제에서는 Full Access로 진행하겠다.</p>
+<p><img src="/2020/12/03/intellij-pair-programming/access-code-with-me.png" alt="access-code-with-me"></p>
+<p>code-with-me를 활성화하게 되면 <code>Copy Invitation Link</code>와 <code>Turn Off Access and Disconnect All</code> 메뉴가 활성화된다.</p>
+<p><code>Copy Invitation Link</code>를 클릭하면 현재 내 IDE 고유 키가 복사된다. 이 키들은 JetBrains에 로그인한 사용자의 고유 URL이며, <code>Join Another IDE as Participant</code>를 통해 다른 IDE에 접속할 때 입력하여 사용하게 된다.</p>
+<p>여기서 특이한 점은 JetBrains 제품이 없더라도 <strong>이 URL을 브라우저에 입력하면 <code>Code With Me</code> 실행기를 다운로드하여 실행까지 가능</strong>하다.</p>
+<p><img src="/2020/12/03/intellij-pair-programming/code-with-me-browser.png" alt="code-with-me-browser"></p>
+<p>실행하게 되면 접속이 된 상태이며, IDE 접속은 1:N으로 접속이 되고 접속 시 접속된 사용자가 No one Joined 영역에 표시된다.</p>
+<p><img src="/2020/12/03/intellij-pair-programming/join-user.png" alt="join-user"></p>
+<p>여기서 접속 사용자를 누르게 되면 현재 접속된 사용자 커서가 어느 파일 어느 소스에 위치하고 있는지 Jump가 가능하다.</p>
+<p><img src="/2020/12/03/intellij-pair-programming/jump-to-source.png" alt="jump-to-source"></p>
+<hr>
+<p>페어 프로그래밍(Pair Programming) 위한 도구와 방법은 많지만, 조직이나 그룹에서 JetBrains 제품을 사용하면 사용하는 도구를 가지고 바로 사용하기 때문에 다른 애플리케이션을 이용하지 않아도 된다. 사용하다 보면 생각보다 성능도 나쁘지 않기 때문에 페어 프로그래밍이 필요한 경우 사용하면 좋을 듯하다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a><br><a href="https://kdydesign.github.io/2020/09/16/nvm-for-windows/">NVM으로 Windows 환경에서 Node 버전 관리하기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/intellij/" rel="tag">intellij</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/intellij-2020-03/" rel="tag">intellij 2020.03</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/pair-programming/" rel="tag">pair programming</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/tools/" rel="tag">tools</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/23/electron-ipc-communication/"
+                    data-tooltip="[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기"
+                    aria-label="PREVIOUS: [Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/27/lerna-changelog/"
+                    data-tooltip="Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                    aria-label="NEXT: Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/23/electron-ipc-communication/"
+                    data-tooltip="[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기"
+                    aria-label="PREVIOUS: [Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/27/lerna-changelog/"
+                    data-tooltip="Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                    aria-label="NEXT: Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자."
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/03/intellij-pair-programming/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/12/03/intellij-pair-programming/';
+              
+            this.page.identifier = 'intellij-pair-programming';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,1122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Deno] Node.js의 대안!! Deno 알아보기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2022/02/17/deno-tutorial/"/>
+    
+        <meta name="keywords" content="javascript,typescript,runtime,v8,deno tutorial">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nDeno를 알게 된 것은 컨퍼런스였으며, 이후 회사 업무에 녹여 넣을 수 있을지 고민하면서 Deno에 접근하게 되었다. 결론적으로 현재 회사 환경과 업무에 사용할 수는 없지만 Deno라는 기술적 가치가 매력적으로 느끼기에 사내 세미나를 진행하고 공유하게 되었다. 이렇게 공유된 내용을 Deno를 처음 접하는 사람에게도 공유하고자 포스팅을 하였다.\n현재 Node.js는 V8 기반의 JavaScript Runtime으로 오랜 시간 자리매김해 왔으며, 그 생태계는 수셥년동안 안정화되고 확장되면서 성장해왔다. 하지만 이렇게 성장해오고 현재 JavaScript runtime의 기준이라 할 수 있는 이 Node.js에는 몇 가지 결함을 보완해야 할 점들이 있었다. 그로 인해 이러한 문제점을 이미 알고 있는 Node.js 개발자인 Ryan Dahl은 2018년도 JSConf EU에서 Node.js 설계 당시의 문제점들을 지적했고 이를 보완하는 새로운 Runtime인 Deno를 개발하기 시작하였다.\nDeno는 현재 1.18 버전까지 릴리즈된 상태로 활발한 개발이 이어지고 있고, 앞으로 Node.js의 대체로 사용될 가능성은 작지만 Node.js의 대안으로써 사용될 가능성이 높으며 현재 Node.js의 생태계만큼 성장할 가치가 높은 Runtime이라 생각한다.Deno를 검색하게 되면 Node.js와 비교하는 글들이 많은데 같은 Runtime이며, 같은 개발자가 개발하였기에 비교 대상이 될 수밖에 없다.\n이번 포스트에서도 Node.js와 Deno에 대해 알아보고 Deno의 API 사용법보다는 Deno라는 Runtime이 Node.js와 무엇이 다르고 Node.js의 문제점이 무엇이었길래 Deno로써 다시 개발되었는지 알아보도록 하자.\nNode.jsDeno를 먼저 알기 전 Node.js에 대해서 알아보도록 하자.\nNode.js는 워낙 유명하기기도하고 JavaScript를 다루는 개발자라면 한번은 필수로 접하는 Runtime이기에 간단하게만 설명하면 Node.js는 Chrome V8 JavaScript 엔진으로 빌드된 JavaScript Runtime이다. JavaScript 기반으로 구성된 서버 사이드 서비스를 JavaScript로 구현할 수 있게 만든 런타임이며, 추가로 npm은 Node.js 기반의 모듈을 모아둔 집합 저장소로 Node Package Manager로 볼 수 있다.\nNode.js의 자세한 설명은 빠르게 배우는 Node.js와 NPM 설치부터 개념 잡기를 참고하도록 하고, npm에 대해서는 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드를 살펴보도록 하자.\n이러한 Node.js는 대표적으로 C++과 JavaScript가 개발에 사용된 베이스 언어이다. 개발된 언어를 언급하는 것은 이 부분에서 Deno와 차이를 보이기 때문이고 해당 내용은 뒤에서 설명하도록 하겠다.\nDesign Mistakes in Node.jsNode.js 개발자 이자 Deno 개발자인 Ryan Dahl은 2018년 유럽에서 열린 JavaScript 컴퍼런스 인 JSConf EU - 2018에서 Design Mistakes in Node라는 주제로 발표하였다. 발표 내용인 즉슨, 그가 Node.js를 개발하면서 설계에 대한 실수와 문제점에 관한 내용이었다. \n그는 2012년도에 회사를 퇴사 할 때까지만 해도 Node.js는 친숙한 프레임워크로써 목표를 달성했다고 생각했다.\n2012년도 Node.js 목표\n\nNode.js Core는 HTTP, SSL 등의 많은 프로토콜을 지원\nWindows(IOCP 사용), Linux(epoll) 및 Mac(kqueue)에서 작동\n비교적 작은 Core로 안정적인 API를 제공\nNPM을 통해 Node.js의 외부 모듈 생태계를 성장\n\n\n\n하지만 점차 시간이 지나고 Node.js의 규모가 커지면서 문제점을 발견하게 되었다. 수많은 시간 동안 현재의 Node.js를 만들었지만, 본질적인 문제는 설계부터였고 되돌릴 수 없는 문제점들까지 존재하였다.\nDeno는 이런 문제점들을 보완하고 해결하면서 설계된 새로운 Runtime으로 볼 수 있다. \n그럼 Node.js의 문제점이 무엇이었는지 Design Mistakes in Node의 내용을 살펴보도록 하자. (일부 내용은 번역된 내용)\n1. PromisePromise는 async&#x2F;await 추상화에 필수적인 요소였으며, Node.js에서 Promise의 통일된 사용은 표준화 및 async&#x2F;await 제공을 더 빠르게 진행할 수 있었다. 하지만 Node.js 개발 당시 2009년도에 Promise를 추가했지만 이후 2010년도에 Promise를 삭제하였다.\n최초 Promise를 추가하였다면 하나의 통일된 API로 사용되었을 것이고 이로 인해 더욱더 빠른 속도를 제공할 수도 있었을 것이다. 그 결과 현재 Node Async API가 노후화되었다고 한다.\n2. SecurityChrome V8 자체는 매우 좋은 보안 샌드박스였다. 하지만 Node.js는 사용자가 액세스 할 수 있는 모든 것에 엑세스가 가능하면 이는 보안 측면에서 매우 취약했다.\n3. Build System (GYP)Chrome의 V8 엔진은 GYP를 사용하기 시작했고 Node.js 역시 GYP를 채택하여 사용하였지만, 이후 2016년도 Chromium 프로젝트는 GYP에서 GN으로 변경하였지만 Node.js는 빌드 구성을 위해 GYP에 의존하는 현재 기본 모듈 에코시스템으로 인해 GN 채택 보류하였다. 이와 관련된 이슈는 #21410 - Build node with GN에서도 확인할 수 있다.\n결국, Node.js는 2017년도에 GYP를 중단하게 되었으며, 현재는 node-gyp나 node-gn과 같은 애드온 빌드 도구를 이용하게 되었다.\n\nGYP빌드 자동화 도구이며 파이썬으로 작성된 메타빌드 시스템\n\n\nGN메타빌드 시스템으로 GYP보다 20배 빠르며 모듈별 의존성을 명확하게 파악\n\n4. package.jsonNode.js는 NPM을 포함하면서 현재의 Node.js를 만들었다고도 볼 수 있다. 하지만 package.json은 너무 불필요한 정보를 포함하고 있다. License, Repository, Description과 같은 정보는 Boilerplate에서 필요한 정보는 아니었다. 실제로 패키지를 가져올 때 파일과 URL만 사용된 경우 이 URL 경로가 버전을 정의한다. 그러므로 종속성을 나열할 필요가 없었다. 이것은 탈중앙화를 뜻하며 Deno의 개념이기도 하였다.\n5. node_modulesnode_modules는 모듈 간 종속성 관리, 모듈 간 문제 해결 알고리즘을 매우 복잡하게 만든다.\n6. .js가 없는 require(“modules”) 필요js 확장자가 없는 require()는 명시적이지 않으며, js 확장자가 없다면 브라우저에서는 JavaScript가 동작하지 않는다. 즉, 스크립트 태그 src 특성에서 .js를 생략할 수는 없다. 하지만 우리는 webpack의 loader와 같은 도구를 사용하여 확장자를 명시적으로 제거할 수 있지만 이러한 모듈 로더는 사용자가 의도한 바를 추측하기 위해 여러 위치에서 파일 시스템을 쿼리해야한다.\n&lt;script src=&quot;https://cdn.some-page.com/some-package.js&quot;&gt;&lt;/script&gt; \n\n7. index.js모듈의 시작점으로 볼 수 있는 index.js는 모듈 로딩 시스템을 불필요하도록 복잡하게 만들었다. 특히 package.json에는 main 속성을 통해 모듈의 시작점이 되는 파일을 명시하므로 package.json을 지원하면서부터는 더욱 불필요하게 되었다.\n이는 그저 index.html로부터 시작된 발상이었다.\n\n여기까지 Node.js와 Node.js 개발 시 실수에 대한 몇 가지를 간단하게 알아보았고 이제 이 내용을 상기하면서 Deno를 알아보도록 하자.\nDeno2020년도 05월에 V1이 릴리즈되었으며 현재 버전 v1.18.x 버전으로 아직은 따끈따끈한 오픈소스이다.\nDeno는 Chrome V8 엔진을 기반으로 하는 JavaScript와 TypeScript 런타임이며, Node.js의 개발자인 Ryan Dahl에 의해 Node.js의 내재된 많은 문제 해결을 중점적으로 설계되었고 개발되고 있다.\nNode.js와는 다른 게 Rust로 구축되어 안전하고 빠른 것을 장점으로 꼽을 수 있다. 특히 TypeScript를 지원하므로 TypeScript를 사용할 시 별다른 도구 없이 바로 사용할 수 있다.\n여담으로 Deno 이름의 유래는 Node의 단어를 앞뒤로 바꿔서 Deno라고 부른다고 한다.\nTrendState of JavaScript award2021 state of javascript의 JavaScript Runtime 부문을 보면 생각대로 Node.js가 압도적인 것을 알 수 있다.\nDeno의 경우 고작 5.6%의 응답밖에 없지만 릴리즈 시기로 본다면 적은 표는 아니라고 생각한다.\n\nGithubGithub의 경우를 보면 Deno의 경우 Start: 80.3k, Fork: 4.3k이며, 이에 반해 Node.js는 Start: 85.5k, Fork: 22.8k이다.\n이걸로 유추해 볼 만한 정보는 크지 않지만 Deno가 릴리즈 대비 Start 수를 보면 많은 개발자들이 눈여겨 볼만큼 관심도가 높다는 걸 알 수 있다.\n\n\n\n\nDeno\nNode.js\n\n\n\nStar\n80.3K\n85.5K\n\n\nFork\n4.3K\n22.8K\n\n\nDeno VS Node.jsDeno와 Node.js를 비교해보자.\n사실 이 두 Runtime은 비교 대상이 아니다. 위에서 설명했듯이 이미 Deno 자체가 Node.js로부터 파생했다고 볼 수 있기 때문이다. 설계 자체로 본다면 잘못된 부분을 개선한 것이 Deno라고 하였지만 사실상 문제점은 Node.js 내부에서도 해결이 된 것이기 때문이다. 하지만 엄연히 두 Runtime은 기술적으로 차이를 보이기 때문에 각 Runtime의 목적성이나 개념을 뒤로하고 기술적인 차이만 보자.\n\n\n\n\nNode.js\nDeno\n\n\n\nBase Language\nC++, JavaScript\nRust, TypeScript\n\n\nLanguage\nJavaScript\nJavaScript, TypeScript\n\n\nPackage Manager\nNPM\nURL (.ts&#x2F;.js modules)\n\n\nimporting Package\nCommonJS\nES Modules\n\n\nAsync\nCallBacks(no plans to upgrade)\nPromises(modern ECMAScript)\n\n\nSecurity\nFull Access\nPermissioned Access\n\n\nTypeScript Support\nNot Built In\nBuilt In\n\n\nUpgrade\nInstaller\nCommand\n\n\n\n** Base Language &#x2F; Language **Deno의 베이스가 되는 언어는 Rust와 TypeScript이다. Rust는 다른 언어에 비해 러닝 커브가 길고 까다롭긴 하지만 매우 안정적이고 빠르다는 장점이 있다. 그렇기 때문에 Deno는 Node.js보다 안정적으로 볼 수 있으며 보안 측면에서도 보완이 되었다. 또한 TypeScript로 작성함으로써 자연스럽게 TypeScript까지 지원하도록 설계되었다.\n\n\n** Package Manager **Design Mistakes in Node에서 언급한 package.json과 node_modules의 대안으로 Deno는 패키지 관리 시스템이 없고, URL로 처리하게 된다. 물론 뒤에 확장자는 포함한다. 이 URL의 경로가 버전 정보가 되기 때문에 package.json과 같은 명세서가 불필요하다.\n\n\n** importing Package **Deno의 목표 중 하나는 항상 최신 브라우저와의 호환성을 목표로 하며, 최신 Modern ECMAScript 기능을 지원한다. 그렇기 때문에 Deno의 모듈 import 방식은 require()가 아닌 ES Module을 사용하며 import 방식으로 사용한다.\n\n\n** Async **비동기 방식 역시 Design Mistakes in Node에서 언급한 내용이다.Node.js의 비동기 방식은 크게 CallBacks 메커니즘으로 되어 있으며 이에 대해서 이제는 업데이트할 예정이 없다. 하지만 Deno의 경우 애초에 설계부터 Promise 방식을 지원하고 모든 비동기 작업은 Promise를 반환한다.\n\n\n** Security **가장 이슈가 되고 화두 되었던 항목이 바로 보안이다.Node.js의 경우 모든 사용자가 모든 정보에 Access 할 수 있다. 하지만 Deno는 실행 환경이 되는 샌드박스 안에서 코드를 실행하는 방식으로 분리하여 권한별 접근을 허용하고 있다.\n\nSecurity\n\nlocal node_modules는 로컬 내 실행되고 로컬 내 정보에 접근할 수 있기 때문에 보안에 취약\n\n\n\n\n** TypeScript Support **Deno는 일부 TypeScript로 작성되었으며, TypeScript 지원에 필요한 도구들을 내장하고 있다. 즉, TypeScript를 사용하기 위해서 별도 외부의 모듈이 필요 없다.\n\n\n** Upgrade **Node.js의 경우 상위 버전으로 업그레이드를 하기 위해서는 설치 파일을 다운로드하여 설치하는 방법과 버전 관리 모듈인 n을 설치하여 업그레이드를 해야 하지만 Deno의 경우 upgrade 명령어를 통해서 손쉽게 업그레드할 수 있다.** Deno Upgrade **\n\ndeno upgradedeno upgrade -version &lt;new version&gt;\n\n\nDeno의 특징Deno의 특징은 결국 Design Mistakes in Node를 해결한 내용이다.\n추가로 Deno만의 특징을 살펴보면.\n\n단일 실행 파일 제공 및 배포\n~25MB 압축 실행 파일만 있으면 실행 가능\nCode Formatter &#x2F; Linter &#x2F; Test Runner와 같은 Utility 내장\n모듈 로드를 위해 URL 사용\n최초 모듈 실행 시 모듈을 캐싱하기 때문에 이후 오프라인에서도 동작\nBash 또는 Python으로 작성되었을 수 있는 Utility Script 대체 가능\n안정적인 Scripting과 항상 최신 브라우저와의 호환이 목표\n\nDeno Echo SystemDeno의 단점이라 하면 에코 시스템 및 커뮤니티가 부족하다는 점이다. 이는 아직 릴리즈가 얼마 안 되었기에 시간이 해결해줄 문제이다.\n에코 시스템과 커뮤니티의 활성화는 개발자의 개별 개발 능력과 개발 처리 속도에 많은 영향을 주기 때문에 현재로서는 처음부터 Deno에 접근하기에는 러닝 커브가 높다.\n보통 Deno의 Strandard 모듈은 Denoland에서 직접 확인하고 사용할 수 있으며, 처음으로 시작하는 사람을 위해 몇 가지 레퍼런스를 남기겠다.\nOfficial\nOfficial Site\nDeno API Reference\nDeno Unstable API Reference\nDeno Standard Library\nDeno Third Party Libraray\n\nCommunity\nAwesome Deno\nDenobeginner.com\nDenocode.com\n\n\n여기까지 Deno에 대해서 알아보았다.\n이제 Deno의 설치부터 기본적인 동작과 몇 가지 라이브러리 사용법을 알아보자.\nDeno 설치Deno는 종속성 없는 단일 실행 파일로 제공되며, 운영체제별 여러 설치 방법이 있다.\n이외에 바이너리 파일로 설치를 원한다면 Releases Page에서 다운로드하여 설치하면 된다.\nShell(Mac, Linux)\ncurl -fsSL https://deno.land/install.sh | sh\n\nPowerShell (Windows)\niwr https://deno.land/install.ps1 -useb | iex\n\nHomebrew (Mac)\nbrew install deno\n\nChocolatey (Windows)\nchoco install deno\n\nScoop (Windows)\nscoop install deno\n\nCargo\ncargo install deno --locked\n\nDeno 설치에 있어서 필요한 기타 설치 옵션은 Deno Install에서 확인하자.\nDeno 실행설치를 완료하였으면 deno를 통해 확인해 보자.\ndeno --version\n\nResult\ndenoconsole.log(&#x27;Hello World!&#x27;)\n\nResult\nDeno의 버전 또는 log가 찍힌다면 정상적으로 설치된 것이다.\n이제 간단한 예제를 활용해 보자.\nExampleDeno를 설명 할 때 Deno는 패키지 관리가 없다. 모든 게 URL 기반으로 동작한다. Deno std 라이브러리의 예제를 실행해 보도록 하자.\nDeno는 URL 기반으로 HTTPS 프로토콜로 동작한다. 만약 실행 환경에 따라 SSL 인증이 되지 않는 경우 SSL 인증서를 무시하는 옵션을 붙여 줘야 한다.\ndeno run --unsafely-ignore-certificate-errors https://deno.land/std/examples/welcome.ts \n\nwelcome.ts\ndeno run https://deno.land/std/examples/welcome.ts\n\n결과\nDeno run을 통해 실행하며 별다른 TypeScript 설정 없이 https://deno.land/std/examples/welcome.ts를 실행하였다. https://deno.land/std/examples/welcome.ts로 접속해 보면 실행되는 코드를 볼 수 있다.Deno의 명령어는 Deno -h를 통해서 확인할 수 있다.\n\n\nPermissionDeno는 Node.js와는 달리 실행 환경이 되는 샌드박스 안에서 코드를 실행하는 방식으로 분리하여 권한별 접근을 허용한다고 하였다.\n권한별 허용이 어떻게 동작되는지 예제를 통해서 살펴보자. 예제는 express와 같은 간단한 로컬 서버를 실행시키는 예제이다.\ndeno run https://deno.land/std/examples/echo_server.ts\n\n결과\n위 내용처럼 error: Uncaught PermissionDenied 오류가 발생할 것이다. 이는 특정 네트워크에 접근하기 위해서는 권한이 필요하다는 내용이다.\nDeno는 기본적으로 안전하다. 따라서 특별히 특정 기능을 활성화하지 않는 한은 Deno로 실행되는 프로그램은 파일, 네트워크 또는 환경에 액세스할 수 없다.보안에 민감한 기능에 액세스하려면 커맨드 옵션 또는 런타임 권한 프롬프트를 통해 실행 스크립트에 권한이 부여되어야 한다.\n아래 명령어로 다시 실행해보도록 하자.\ndeno run --allow-net https://deno.land/std/examples/echo_server.ts\n\n결과\n--allow-net을 통해 네트워크 접근에 대한 권한을 부여함으로써 실행할 수 있다는 것을 알 수 있다.\nDeno에는 --allow-net과 같이 권한을 부여하는 플래그 몇 가지를 가지고 있다. 확인해보도록 하자.\nPermissions list\ndeno run [PERMISSION FLAG] URL\n\n\n\n\nOPTIONS\nDescription\n\n\n\n–allow-env\n환경 변수 접근 권한 허용\n\n\n–allow-hrtime\n고해상도 시간 측정 권한 허용\n\n\n–allow-ffi\n동적 라이브러리 로드 권한 허용\n\n\n–allow-read\n파일 시스템 읽기 권한 허용\n\n\n–allow-write\n파일 시스템 쓰기 권한 허용\n\n\n–allow-run\n하위 프로세스 실행 권한 허용\n\n\n–allow-net\n네트워크 접근 권한 허용\n\n\n–allow-all, -A\n모든 권한 허용\n\n\n권한과 관련된 자세한 내용은 Deno Permission에서 확인하자.\nDeno Standard ModulesDeno 공식 페이지에는 Standard Library가 있다. 이는 외부 종속성이 없으며 Deno Core 팀에서 검토하고 반영하는 표준 모듈의 저장소이다. 기여자로서 충분히 PR(Pull Request)를 보낼 수 있으며 언제든지 사용할 수 있다. 다만 완벽하게 안정적인 버전이 아니며, API가 변경되는 항목들이 많기 때문에 Deno 버전과 맞게 호환되도록 마이그레션이 자주 필요하다.\n공식 모듈에서 몇 가지를 가지고 사용하는 방법을 알아보자. 사용 방법은 복잡하지 않기 때문에 누구나 쉽게 사용할 수 있을 것이다. 참고로 Standard Library경로에서 example에는 예제들이 있으니 확인해보기 바란다.\nHTTPHTTP 모듈은 HTTP 클라이언트와 서버 구현을 제공하는 모듈이며, 서버, 파일 서버, HTTP 상태 코드 등 여러 항목을 제공한다.\nhttp-server.js\nimport &#123; serve &#125; from &quot;https://deno.land/std@0.126.0/http/server.ts&quot;;serve(() =&gt; new Response(&quot;Hello World\\n&quot;));console.log(&quot;http://localhost:8000/&quot;);\n\nrun\ndeno run --allow-net http-server.js\n\nhttp://localhost:8000 접속하여 확인해보자.\nfsNode.js의 fs 모듈과 같은 개념이다. fs 모듈은 파일 시스템을 조작할 수 있다.파일 읽기(--allow-read) 및 쓰기(--allow-write) 권한을 필요로 한다.\nfile.js\nimport &#123;emptyDirSync&#125; from &#x27;https://deno.land/std@0.126.0/fs/mod.ts&#x27;emptyDirSync(&#x27;./foo&#x27;) // void\n\nrun\ndeno run --allow-read --allow-write file.js\n\nDeno는 URL 기반으로 HTTPS 프로토콜로 동작한다. 만약 실행 환경에 따라 SSL 인증이 되지 않는 경우 SSL 인증서를 무시하는 옵션을 붙여 줘야 한다.--unsafely-ignore-certificate-errors\n\n\n해당 경로에 foo라는 빈 폴더가 생성되는 것을 확인할 수 있다.\ndatetimedatetime은 날짜와 시간 구문을 생성 또는 변환하는 도구이다.\ndatetime.js\nimport &#123;format&#125; from &#x27;https://deno.land/std@0.126.0/datetime/mod.ts&#x27;const date = format(new Date(), &#x27;yyyy-MM-dd HH:mm:ss&#x27;)console.log(date)\n\nrun\ndeno run datetime.js\n\nThird Party LibraryDeno에서도 외부 모듈을 사용할 수 있다. Third Party Library는 Deno 스크립트용 호스팅 서비스로 Github에 저장된 오픈 소스 모듈의 릴리스를 캐시하고 하나의 기억하기 쉬운 도메인으로 제공한다.\nhttps://deno.land/x/IDENTIFIER@VERSION/FILE_PATH가 기본 형식이며, 버전을 생략하면 모듈의 가장 최신 버전이 기본적으로 사용된다.\n가장 흔히 사용할 수 있는 lodash 모듈을 사용해보자. lodash가 제공하는 URL을 Import하여 사용해보자.\ndeno-lodash.js\nimport &#x27;https://deno.land/x/lodash@4.17.19/lodash.js&#x27;console.log(_.max([4, 8, 3, 6, 7]))\n\nrun\ndeno run deno-lodash.js\n\nDeno Built-In ToolingDeno는 TypeScript 지원에 필요한 도구들이 내장되어있어서 Deno에서 TypeScript를 사용 시 외부 도구를 추가할 필요가 없다고 하였다. TypeScript뿐만 아니라. compiler, runner, linter 등 몇 가지 도구들을 내장하고 있다.\n\n\n\nBuilt-In\nCommand\nDescription\n\n\n\nbundler\ndeno bundle [URL]\n모든 종속성을 포함하는 단일 파일 출력\n\n\ncompiling executables\ndeno compile [–output ] \n실행 파일로 컴파일\n\n\ninstaller\ndeno install [–output ] \n실행 가능한 코드 설치 및 배포\n\n\ndocumentaion generator\ndeno doc\nJSDoc 문서\n\n\ndependency inspector\ndeno info [URL]\n모든 종속성 검사\n\n\nformatter\ndeno fmt\n코드 포맷터\n\n\nrepl\ndeno relp\n대화식 스케폴딩 도구\n\n\ntest runner\ndeno test\njavascript, typescript 단위 테스트 실행기\n\n\nlinter\ndeno lint\n코드 Syntax 검사\n\n\n\nDeno에 대해 기술적으로 깊이 다루지는 않았으며, Deno의 히스토리와 기본적인 사용법에 대해 알아보았다.\nDeno에 대한 결혼부터 말하자면 이 포스트의 제목과 같다.\n\nDeno는 Node.js의 대체가 아닌 대안\n- - -\n\n앞으로 Deno가 어떻게 성장하고 JavaScript와 TypeScript의 생태계에 어떤 영향을 줄지는 아직 모른다.\n이미 많은 생태계를 생성한 Node.js와는 다르게 이제 새싹을 핀 Deno이기 때문이다. Node.js 생태계는 수십년동안 이어져왔기 때문에 그만큼 안정적이고 진보되었다. 또한, 긴 시간 동안 많은 프로젝트에 채택되고 사용되어 왔기 때문에 사실상 표준에 가깝다.\n물론 Deno의 철학과 기능은 매우 뛰어나지만, 아직 초기 단계에 불과하므로 프로젝트 진행에 필요한 기술로 채택되기는 부담이 있다. 하지만 점차적으로 많은 프로젝트가 TypeScript를 채택함과 사용 빈도가 증가함에 따라 자연스럽게 Node.js의 대안으로 사용될 것으로 생각된다.\n\n더 알아보기Firebase를 활용한 PWA(Progressive Web App) 앱 만들기Performant NPM - PNPM[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정빠르게 배우는 Node.js와 NPM 설치부터 개념잡기Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악불꽃 튀게 빠른 번들러 Parcel 개념잡기!NVM으로 Windows 환경에서 Node 버전 관리하기NPM-SCOPE 패키지 어디까지 알고 있니?[Electron] Electron 개념부터 데스크탑 앱 만들기[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기\n","dateCreated":"2022-02-17T22:00:00+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2022-02-17T22:00:00+00:00","description":"\nNode.js 개발자인 Ryan Dahl은 2018년도 JSConf EU에서 Node.js 설계 당시의 문제점들을 지적했고 이를 보완하는 새로운 Runtime인 Deno를 개발하기 시작하였다. 현재 Deno는 V1.18.2로 활발한 개발과 성장을 해 나아가고 있다. 우리는 이번 포스트에서 Deno에 대한 기초적 내용을 살펴보도록 하자.\n","headline":"[Deno] Node.js의 대안!! Deno 알아보기","image":["deno-tutorial-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2022/02/17/deno-tutorial/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2022/02/17/deno-tutorial/","keywords":"javascript, runtime, deno, nodejs, typescript, modern runtime, v8","thumbnailUrl":"deno-tutorial-cover.png"}</script>
+    <meta name="description" content="Node.js 개발자인 Ryan Dahl은 2018년도 JSConf EU에서 Node.js 설계 당시의 문제점들을 지적했고 이를 보완하는 새로운 Runtime인 Deno를 개발하기 시작하였다. 현재 Deno는 V1.18.2로 활발한 개발과 성장을 해 나아가고 있다. 우리는 이번 포스트에서 Deno에 대한 기초적 내용을 살펴보도록 하자.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Deno] Node.js의 대안!! Deno 알아보기">
+<meta property="og:url" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Node.js 개발자인 Ryan Dahl은 2018년도 JSConf EU에서 Node.js 설계 당시의 문제점들을 지적했고 이를 보완하는 새로운 Runtime인 Deno를 개발하기 시작하였다. 현재 Deno는 V1.18.2로 활발한 개발과 성장을 해 나아가고 있다. 우리는 이번 포스트에서 Deno에 대한 기초적 내용을 살펴보도록 하자.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-tutorial-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/2021-stateofjs.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-version.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-hello-world.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-welcome.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-help.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-allow-net.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-allow-net2.png">
+<meta property="article:published_time" content="2022-02-17T22:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.753Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="runtime">
+<meta property="article:tag" content="deno">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="typescript">
+<meta property="article:tag" content="modern runtime">
+<meta property="article:tag" content="v8">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-tutorial-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-tutorial-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2022/02/17/deno-tutorial/deno-tutorial-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Deno] Node.js의 대안!! Deno 알아보기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-02-17T22:00:00+00:00">
+	
+		    2022-02-17
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/typescript/">typescript</a>, <a class="category-link" href="/categories/javascript/typescript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/typescript/nodejs/v8/">v8</a>, <a class="category-link" href="/categories/javascript/typescript/nodejs/v8/deno/">deno</a>, <a class="category-link" href="/categories/javascript/typescript/nodejs/v8/deno/test-framework/">test framework</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2022/02/17/deno-tutorial/deno-tutorial-cover.png" alt="deno-tutorial-cover"></p>
+<p>Deno를 알게 된 것은 컨퍼런스였으며, 이후 회사 업무에 녹여 넣을 수 있을지 고민하면서 Deno에 접근하게 되었다. 결론적으로 현재 회사 환경과 업무에 사용할 수는 없지만 Deno라는 기술적 가치가 매력적으로 느끼기에 사내 세미나를 진행하고 공유하게 되었다. 이렇게 공유된 내용을 Deno를 처음 접하는 사람에게도 공유하고자 포스팅을 하였다.</p>
+<p>현재 <code>Node.js</code>는 <strong>V8 기반의 JavaScript Runtime</strong>으로 오랜 시간 자리매김해 왔으며, 그 생태계는 수셥년동안 안정화되고 확장되면서 성장해왔다. 하지만 이렇게 성장해오고 현재 JavaScript runtime의 기준이라 할 수 있는 이 Node.js에는 몇 가지 결함을 보완해야 할 점들이 있었다. 그로 인해 이러한 문제점을 이미 알고 있는 Node.js 개발자인 <code>Ryan Dahl</code>은 2018년도 <code>JSConf EU</code>에서 Node.js 설계 당시의 문제점들을 지적했고 이를 보완하는 새로운 Runtime인 <code>Deno</code>를 개발하기 시작하였다.</p>
+<p><code>Deno</code>는 현재 1.18 버전까지 릴리즈된 상태로 활발한 개발이 이어지고 있고, 앞으로 Node.js의 대체로 사용될 가능성은 작지만 <strong>Node.js의 대안으로써 사용될 가능성이 높으며 현재 Node.js의 생태계만큼 성장할 가치가 높은 Runtime</strong>이라 생각한다.<br>Deno를 검색하게 되면 Node.js와 비교하는 글들이 많은데 같은 Runtime이며, 같은 개발자가 개발하였기에 비교 대상이 될 수밖에 없다.</p>
+<p>이번 포스트에서도 Node.js와 Deno에 대해 알아보고 Deno의 API 사용법보다는 Deno라는 Runtime이 Node.js와 무엇이 다르고 Node.js의 문제점이 무엇이었길래 Deno로써 다시 개발되었는지 알아보도록 하자.</p>
+<h1 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h1><p>Deno를 먼저 알기 전 Node.js에 대해서 알아보도록 하자.</p>
+<p>Node.js는 워낙 유명하기기도하고 JavaScript를 다루는 개발자라면 한번은 필수로 접하는 Runtime이기에 간단하게만 설명하면 Node.js는 <strong>Chrome V8 JavaScript 엔진으로 빌드된 JavaScript Runtime</strong>이다. JavaScript 기반으로 구성된 서버 사이드 서비스를 JavaScript로 구현할 수 있게 만든 런타임이며, 추가로 <code>npm</code>은 Node.js 기반의 모듈을 모아둔 집합 저장소로 <code>Node Package Manager</code>로 볼 수 있다.</p>
+<p>Node.js의 자세한 설명은 <a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념 잡기</a>를 참고하도록 하고, npm에 대해서는 <a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a>를 살펴보도록 하자.</p>
+<p>이러한 Node.js는 대표적으로 <code>C++</code>과 <code>JavaScript</code>가 개발에 사용된 베이스 언어이다. 개발된 언어를 언급하는 것은 이 부분에서 Deno와 차이를 보이기 때문이고 해당 내용은 뒤에서 설명하도록 하겠다.</p>
+<h1 id="Design-Mistakes-in-Node-js"><a href="#Design-Mistakes-in-Node-js" class="headerlink" title="Design Mistakes in Node.js"></a>Design Mistakes in Node.js</h1><p>Node.js 개발자 이자 Deno 개발자인 <code>Ryan Dahl</code>은 2018년 유럽에서 열린 JavaScript 컴퍼런스 인 <code>JSConf EU - 2018</code>에서 <a target="_blank" rel="noopener" href="https://tinyclouds.org/jsconf2018.pdf">Design Mistakes in Node</a>라는 주제로 발표하였다. 발표 내용인 즉슨, 그가 Node.js를 개발하면서 설계에 대한 실수와 문제점에 관한 내용이었다. </p>
+<p>그는 2012년도에 회사를 퇴사 할 때까지만 해도 Node.js는 친숙한 프레임워크로써 목표를 달성했다고 생각했다.</p>
+<div class="alert info no-icon"><p><strong>2012년도 Node.js 목표</strong></p>
+<ul>
+<li>Node.js Core는 HTTP, SSL 등의 많은 프로토콜을 지원</li>
+<li>Windows(IOCP 사용), Linux(epoll) 및 Mac(kqueue)에서 작동</li>
+<li>비교적 작은 Core로 안정적인 API를 제공</li>
+<li>NPM을 통해 Node.js의 외부 모듈 생태계를 성장</li>
+</ul>
+</div>
+
+<p>하지만 점차 시간이 지나고 Node.js의 규모가 커지면서 문제점을 발견하게 되었다. 수많은 시간 동안 현재의 Node.js를 만들었지만, 본질적인 문제는 설계부터였고 되돌릴 수 없는 문제점들까지 존재하였다.</p>
+<p>Deno는 이런 문제점들을 보완하고 해결하면서 설계된 새로운 Runtime으로 볼 수 있다. </p>
+<p>그럼 Node.js의 문제점이 무엇이었는지 <code>Design Mistakes in Node</code>의 내용을 살펴보도록 하자. (일부 내용은 번역된 내용)</p>
+<h2 id="1-Promise"><a href="#1-Promise" class="headerlink" title="1. Promise"></a>1. Promise</h2><p><code>Promise</code>는 async&#x2F;await 추상화에 필수적인 요소였으며, Node.js에서 Promise의 통일된 사용은 표준화 및 async&#x2F;await 제공을 더 빠르게 진행할 수 있었다. 하지만 Node.js 개발 당시 2009년도에 Promise를 추가했지만 이후 2010년도에 Promise를 삭제하였다.</p>
+<p>최초 Promise를 추가하였다면 하나의 통일된 API로 사용되었을 것이고 이로 인해 더욱더 빠른 속도를 제공할 수도 있었을 것이다. 그 <strong>결과 현재 <code>Node Async API</code>가 노후화</strong>되었다고 한다.</p>
+<h2 id="2-Security"><a href="#2-Security" class="headerlink" title="2. Security"></a>2. Security</h2><p>Chrome V8 자체는 매우 좋은 보안 샌드박스였다. 하지만 Node.js는 사용자가 액세스 할 수 있는 모든 것에 엑세스가 가능하면 이는 <strong>보안 측면에서 매우 취약</strong>했다.</p>
+<h2 id="3-Build-System-GYP"><a href="#3-Build-System-GYP" class="headerlink" title="3. Build System (GYP)"></a>3. Build System (GYP)</h2><p><code>Chrome의 V8</code> 엔진은 <code>GYP</code>를 사용하기 시작했고 Node.js 역시<code> GYP</code>를 채택하여 사용하였지만, 이후 2016년도 Chromium 프로젝트는 <code>GYP</code>에서 <code>GN</code>으로 변경하였지만 Node.js는 빌드 구성을 위해 GYP에 의존하는 현재 기본 모듈 에코시스템으로 인해 GN 채택 보류하였다. 이와 관련된 이슈는 <a target="_blank" rel="noopener" href="https://github.com/nodejs/node/issues/21410">#21410 - Build node with GN</a>에서도 확인할 수 있다.</p>
+<p>결국, Node.js는 2017년도에 GYP를 중단하게 되었으며, 현재는 <code>node-gyp</code>나 <code>node-gn</code>과 같은 애드온 빌드 도구를 이용하게 되었다.</p>
+<blockquote>
+<p><strong>GYP</strong><br>빌드 자동화 도구이며 파이썬으로 작성된 메타빌드 시스템</p>
+</blockquote>
+<blockquote>
+<p><strong>GN</strong><br>메타빌드 시스템으로 GYP보다 20배 빠르며 모듈별 의존성을 명확하게 파악</p>
+</blockquote>
+<h2 id="4-package-json"><a href="#4-package-json" class="headerlink" title="4. package.json"></a>4. package.json</h2><p>Node.js는 NPM을 포함하면서 현재의 Node.js를 만들었다고도 볼 수 있다. 하지만 <strong>package.json은 너무 불필요한 정보를 포함</strong>하고 있다. <code>License</code>, <code>Repository</code>, <code>Description</code>과 같은 정보는 Boilerplate에서 필요한 정보는 아니었다. 실제로 패키지를 가져올 때 파일과 URL만 사용된 경우 이 URL 경로가 버전을 정의한다. 그러므로 종속성을 나열할 필요가 없었다. 이것은 <strong>탈중앙화를 뜻하며 Deno의 개념</strong>이기도 하였다.</p>
+<h2 id="5-node-modules"><a href="#5-node-modules" class="headerlink" title="5. node_modules"></a>5. node_modules</h2><p><code>node_modules</code>는 모듈 간 종속성 관리, 모듈 간 문제 해결 알고리즘을 매우 복잡하게 만든다.</p>
+<h2 id="6-js가-없는-require-“modules”-필요"><a href="#6-js가-없는-require-“modules”-필요" class="headerlink" title="6. .js가 없는 require(“modules”) 필요"></a>6. .js가 없는 require(“modules”) 필요</h2><p>js 확장자가 없는 require()는 명시적이지 않으며, js 확장자가 없다면 브라우저에서는 JavaScript가 동작하지 않는다. 즉, 스크립트 태그 src 특성에서 .js를 생략할 수는 없다. 하지만 우리는 webpack의 loader와 같은 도구를 사용하여 확장자를 명시적으로 제거할 수 있지만 이러한 모듈 로더는 사용자가 의도한 바를 추측하기 위해 여러 위치에서 파일 시스템을 쿼리해야한다.</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.some-page.com/some-package.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span> <br></code></pre></td></tr></table></figure>
+
+<h3 id="7-index-js"><a href="#7-index-js" class="headerlink" title="7. index.js"></a>7. index.js</h3><p>모듈의 시작점으로 볼 수 있는 index.js는 모듈 로딩 시스템을 불필요하도록 복잡하게 만들었다. 특히 <code>package.json</code>에는 <code>main</code> 속성을 통해 모듈의 시작점이 되는 파일을 명시하므로 <code>package.json</code>을 지원하면서부터는 더욱 불필요하게 되었다.</p>
+<p>이는 그저 <code>index.html</code>로부터 시작된 발상이었다.</p>
+<hr>
+<p>여기까지 Node.js와 Node.js 개발 시 실수에 대한 몇 가지를 간단하게 알아보았고 이제 이 내용을 상기하면서 Deno를 알아보도록 하자.</p>
+<h1 id="Deno"><a href="#Deno" class="headerlink" title="Deno"></a>Deno</h1><p>2020년도 05월에 V1이 릴리즈되었으며 현재 버전 v1.18.x 버전으로 아직은 따끈따끈한 오픈소스이다.</p>
+<p>Deno는 Chrome V8 엔진을 기반으로 하는 JavaScript와 TypeScript 런타임이며, Node.js의 개발자인 <code>Ryan Dahl</code>에 의해 Node.js의 내재된 많은 문제 해결을 중점적으로 설계되었고 개발되고 있다.</p>
+<p>Node.js와는 다른 게 <code>Rust</code>로 구축되어 안전하고 빠른 것을 장점으로 꼽을 수 있다. 특히 <code>TypeScript</code>를 지원하므로 TypeScript를 사용할 시 별다른 도구 없이 바로 사용할 수 있다.</p>
+<p>여담으로 Deno 이름의 유래는 Node의 단어를 앞뒤로 바꿔서 Deno라고 부른다고 한다.</p>
+<h1 id="Trend"><a href="#Trend" class="headerlink" title="Trend"></a>Trend</h1><h2 id="State-of-JavaScript-award"><a href="#State-of-JavaScript-award" class="headerlink" title="State of JavaScript award"></a>State of JavaScript award</h2><p>2021 state of javascript의 JavaScript Runtime 부문을 보면 생각대로 Node.js가 압도적인 것을 알 수 있다.</p>
+<p>Deno의 경우 고작 <code>5.6%</code>의 응답밖에 없지만 릴리즈 시기로 본다면 적은 표는 아니라고 생각한다.</p>
+<p><img src="/2022/02/17/deno-tutorial/2021-stateofjs.png" alt="2021-stateofjs"></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p>Github의 경우를 보면 Deno의 경우 <code>Start: 80.3k</code>, <code>Fork: 4.3k</code>이며, 이에 반해 Node.js는 <code>Start: 85.5k</code>, <code>Fork: 22.8k</code>이다.</p>
+<p>이걸로 유추해 볼 만한 정보는 크지 않지만 Deno가 릴리즈 대비 Start 수를 보면 많은 개발자들이 눈여겨 볼만큼 관심도가 높다는 걸 알 수 있다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Deno</th>
+<th>Node.js</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Star</td>
+<td>80.3K</td>
+<td>85.5K</td>
+</tr>
+<tr>
+<td>Fork</td>
+<td>4.3K</td>
+<td>22.8K</td>
+</tr>
+</tbody></table>
+<h1 id="Deno-VS-Node-js"><a href="#Deno-VS-Node-js" class="headerlink" title="Deno VS Node.js"></a>Deno VS Node.js</h1><p>Deno와 Node.js를 비교해보자.</p>
+<p>사실 이 두 Runtime은 비교 대상이 아니다. 위에서 설명했듯이 이미 Deno 자체가 Node.js로부터 파생했다고 볼 수 있기 때문이다. 설계 자체로 본다면 잘못된 부분을 개선한 것이 Deno라고 하였지만 사실상 문제점은 Node.js 내부에서도 해결이 된 것이기 때문이다. 하지만 엄연히 두 Runtime은 기술적으로 차이를 보이기 때문에 각 Runtime의 목적성이나 개념을 뒤로하고 기술적인 차이만 보자.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Node.js</th>
+<th>Deno</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Base Language</td>
+<td>C++, JavaScript</td>
+<td>Rust, TypeScript</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>JavaScript</td>
+<td>JavaScript, TypeScript</td>
+</tr>
+<tr>
+<td>Package Manager</td>
+<td>NPM</td>
+<td>URL (.ts&#x2F;.js modules)</td>
+</tr>
+<tr>
+<td>importing Package</td>
+<td>CommonJS</td>
+<td>ES Modules</td>
+</tr>
+<tr>
+<td>Async</td>
+<td>CallBacks(no plans to upgrade)</td>
+<td>Promises(modern ECMAScript)</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Full Access</td>
+<td>Permissioned Access</td>
+</tr>
+<tr>
+<td>TypeScript Support</td>
+<td>Not Built In</td>
+<td>Built In</td>
+</tr>
+<tr>
+<td>Upgrade</td>
+<td>Installer</td>
+<td>Command</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>** Base Language &#x2F; Language **<br>Deno의 베이스가 되는 언어는 Rust와 TypeScript이다. Rust는 다른 언어에 비해 러닝 커브가 길고 까다롭긴 하지만 매우 안정적이고 빠르다는 장점이 있다. 그렇기 때문에 Deno는 Node.js보다 안정적으로 볼 수 있으며 보안 측면에서도 보완이 되었다. 또한 TypeScript로 작성함으로써 자연스럽게 TypeScript까지 지원하도록 설계되었다.</p>
+</blockquote>
+<blockquote>
+<p>** Package Manager **<br><code>Design Mistakes in Node</code>에서 언급한 <code>package.json</code>과 <code>node_modules</code>의 대안으로 Deno는 패키지 관리 시스템이 없고, URL로 처리하게 된다. 물론 뒤에 확장자는 포함한다. 이 URL의 경로가 버전 정보가 되기 때문에 package.json과 같은 명세서가 불필요하다.</p>
+</blockquote>
+<blockquote>
+<p>** importing Package **<br>Deno의 목표 중 하나는 항상 최신 브라우저와의 호환성을 목표로 하며, 최신 Modern ECMAScript 기능을 지원한다. 그렇기 때문에 Deno의 모듈 import 방식은 <code>require()</code>가 아닌 ES Module을 사용하며 <code>import</code> 방식으로 사용한다.</p>
+</blockquote>
+<blockquote>
+<p>** Async **<br>비동기 방식 역시 <code>Design Mistakes in Node</code>에서 언급한 내용이다.<br>Node.js의 비동기 방식은 크게 CallBacks 메커니즘으로 되어 있으며 이에 대해서 이제는 업데이트할 예정이 없다. 하지만 Deno의 경우 애초에 설계부터 Promise 방식을 지원하고 모든 비동기 작업은 Promise를 반환한다.</p>
+</blockquote>
+<blockquote>
+<p>** Security **<br>가장 이슈가 되고 화두 되었던 항목이 바로 보안이다.<br>Node.js의 경우 모든 사용자가 모든 정보에 Access 할 수 있다. 하지만 Deno는 실행 환경이 되는 샌드박스 안에서 코드를 실행하는 방식으로 분리하여 권한별 접근을 허용하고 있다.</p>
+</blockquote>
+<div class="alert info no-icon"><p><strong>Security</strong></p>
+<ul>
+<li>local node_modules는 로컬 내 실행되고 로컬 내 정보에 접근할 수 있기 때문에 보안에 취약</li>
+</ul>
+</div>
+
+<blockquote>
+<p>** TypeScript Support **<br>Deno는 일부 TypeScript로 작성되었으며, TypeScript 지원에 필요한 도구들을 내장하고 있다. 즉, TypeScript를 사용하기 위해서 별도 외부의 모듈이 필요 없다.</p>
+</blockquote>
+<blockquote>
+<p>** Upgrade **<br>Node.js의 경우 상위 버전으로 업그레이드를 하기 위해서는 설치 파일을 다운로드하여 설치하는 방법과 버전 관리 모듈인 <code>n</code>을 설치하여 업그레이드를 해야 하지만 Deno의 경우 <code>upgrade</code> 명령어를 통해서 손쉽게 업그레드할 수 있다.<br>** Deno Upgrade **</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">deno upgrade<br>deno upgrade -version &lt;new version&gt;<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="Deno의-특징"><a href="#Deno의-특징" class="headerlink" title="Deno의 특징"></a>Deno의 특징</h1><p>Deno의 특징은 결국 <code>Design Mistakes in Node</code>를 해결한 내용이다.</p>
+<p>추가로 Deno만의 특징을 살펴보면.</p>
+<ul>
+<li>단일 실행 파일 제공 및 배포</li>
+<li><strong>~25MB</strong> 압축 실행 파일만 있으면 실행 가능</li>
+<li>Code Formatter &#x2F; Linter &#x2F; Test Runner와 같은 Utility 내장</li>
+<li>모듈 로드를 위해 URL 사용</li>
+<li>최초 모듈 실행 시 모듈을 캐싱하기 때문에 이후 <strong>오프라인에서도 동작</strong></li>
+<li>Bash 또는 Python으로 작성되었을 수 있는 Utility Script 대체 가능</li>
+<li>안정적인 Scripting과 항상 최신 브라우저와의 호환이 목표</li>
+</ul>
+<h1 id="Deno-Echo-System"><a href="#Deno-Echo-System" class="headerlink" title="Deno Echo System"></a>Deno Echo System</h1><p>Deno의 단점이라 하면 에코 시스템 및 커뮤니티가 부족하다는 점이다. 이는 아직 릴리즈가 얼마 안 되었기에 시간이 해결해줄 문제이다.</p>
+<p>에코 시스템과 커뮤니티의 활성화는 개발자의 개별 개발 능력과 개발 처리 속도에 많은 영향을 주기 때문에 <strong>현재로서는 처음부터 Deno에 접근하기에는 러닝 커브가 높다.</strong></p>
+<p>보통 Deno의 Strandard 모듈은 <a target="_blank" rel="noopener" href="https://deno.land/std@0.125.0">Denoland</a>에서 직접 확인하고 사용할 수 있으며, 처음으로 시작하는 사람을 위해 몇 가지 레퍼런스를 남기겠다.</p>
+<h2 id="Official"><a href="#Official" class="headerlink" title="Official"></a>Official</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://deno.land/">Official Site</a></li>
+<li><a target="_blank" rel="noopener" href="https://doc.deno.land/builtin/stable">Deno API Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://doc.deno.land/builtin/unstable">Deno Unstable API Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://deno.land/std@0.125.0">Deno Standard Library</a></li>
+<li><a target="_blank" rel="noopener" href="https://deno.land/x">Deno Third Party Libraray</a></li>
+</ul>
+<h2 id="Community"><a href="#Community" class="headerlink" title="Community"></a>Community</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://project-awesome.org/denolib/awesome-deno">Awesome Deno</a></li>
+<li><a target="_blank" rel="noopener" href="https://denobeginner.com/">Denobeginner.com</a></li>
+<li><a target="_blank" rel="noopener" href="https://denocode.com/">Denocode.com</a></li>
+</ul>
+<hr>
+<p>여기까지 Deno에 대해서 알아보았다.</p>
+<p>이제 Deno의 설치부터 기본적인 동작과 몇 가지 라이브러리 사용법을 알아보자.</p>
+<h1 id="Deno-설치"><a href="#Deno-설치" class="headerlink" title="Deno 설치"></a>Deno 설치</h1><p>Deno는 종속성 없는 단일 실행 파일로 제공되며, 운영체제별 여러 설치 방법이 있다.</p>
+<p>이외에 바이너리 파일로 설치를 원한다면 <a target="_blank" rel="noopener" href="https://github.com/denoland/deno/releases">Releases Page</a>에서 다운로드하여 설치하면 된다.</p>
+<p><strong>Shell(Mac, Linux)</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">curl -fsSL https://deno.land/install.sh | sh<br></code></pre></td></tr></table></figure>
+
+<p><strong>PowerShell (Windows)</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">iwr https://deno.land/install.ps1 -useb | iex<br></code></pre></td></tr></table></figure>
+
+<p><strong><a target="_blank" rel="noopener" href="https://formulae.brew.sh/formula/deno">Homebrew</a> (Mac)</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">brew install deno<br></code></pre></td></tr></table></figure>
+
+<p><strong><a target="_blank" rel="noopener" href="https://community.chocolatey.org/packages/deno">Chocolatey</a> (Windows)</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">choco install deno<br></code></pre></td></tr></table></figure>
+
+<p><strong><a target="_blank" rel="noopener" href="https://scoop.sh/">Scoop</a> (Windows)</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">scoop install deno<br></code></pre></td></tr></table></figure>
+
+<p><strong><a target="_blank" rel="noopener" href="https://crates.io/crates/deno">Cargo</a></strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">cargo install deno --locked<br></code></pre></td></tr></table></figure>
+
+<p>Deno 설치에 있어서 필요한 기타 설치 옵션은 <a target="_blank" rel="noopener" href="https://github.com/denoland/deno_install">Deno Install</a>에서 확인하자.</p>
+<h1 id="Deno-실행"><a href="#Deno-실행" class="headerlink" title="Deno 실행"></a>Deno 실행</h1><p>설치를 완료하였으면 <code>deno</code>를 통해 확인해 보자.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno --version<br></code></pre></td></tr></table></figure>
+
+<p><strong>Result</strong><br><img style="margin: 0 !important;" alt="deno-version" src="./deno-version.png"/></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno<br><br>console.log(&#x27;Hello World!&#x27;)<br></code></pre></td></tr></table></figure>
+
+<p><strong>Result</strong><br><img style="margin: 0 !important;" alt="deno-hello-world" src="./deno-hello-world.png"/></p>
+<p>Deno의 버전 또는 log가 찍힌다면 정상적으로 설치된 것이다.</p>
+<p>이제 간단한 예제를 활용해 보자.</p>
+<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>Deno를 설명 할 때 Deno는 패키지 관리가 없다. 모든 게 <strong>URL 기반</strong>으로 동작한다. Deno <code>std</code> 라이브러리의 예제를 실행해 보도록 하자.</p>
+<div class="alert danger no-icon"><p>Deno는 URL 기반으로 HTTPS 프로토콜로 동작한다. 만약 <strong>실행 환경에 따라 SSL 인증이 되지 않는 경우 SSL 인증서를 무시하는 옵션</strong>을 붙여 줘야 한다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">deno run --unsafely-ignore-certificate-errors https://deno.land/std/examples/welcome.ts <br></code></pre></td></tr></table></figure></div>
+
+<p><strong>welcome.ts</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run https://deno.land/std/examples/welcome.ts<br></code></pre></td></tr></table></figure>
+
+<p><strong>결과</strong><br><img style="margin: 0 !important;" alt="deno-welcome" src="./deno-welcome.png"/></p>
+<p><code>Deno run</code>을 통해 실행하며 별다른 TypeScript 설정 없이 <code>https://deno.land/std/examples/welcome.ts</code>를 실행하였다. <code>https://deno.land/std/examples/welcome.ts</code>로 접속해 보면 실행되는 코드를 볼 수 있다.<br>Deno의 명령어는 <code>Deno -h</code>를 통해서 확인할 수 있다.</p>
+<img alt="deno-help" src="./deno-help.png"/>
+
+<h2 id="Permission"><a href="#Permission" class="headerlink" title="Permission"></a>Permission</h2><p>Deno는 Node.js와는 달리 <strong>실행 환경이 되는 샌드박스 안에서 코드를 실행하는 방식으로 분리하여 권한별 접근을 허용</strong>한다고 하였다.</p>
+<p>권한별 허용이 어떻게 동작되는지 예제를 통해서 살펴보자. 예제는 <code>express</code>와 같은 간단한 로컬 서버를 실행시키는 예제이다.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run https://deno.land/std/examples/echo_server.ts<br></code></pre></td></tr></table></figure>
+
+<p><strong>결과</strong><br><img src="/2022/02/17/deno-tutorial/deno-allow-net.png" alt="deno-allow-net"></p>
+<p>위 내용처럼 <code>error: Uncaught PermissionDenied</code> 오류가 발생할 것이다. 이는 특정 네트워크에 접근하기 위해서는 권한이 필요하다는 내용이다.</p>
+<p>Deno는 기본적으로 안전하다. 따라서 특별히 특정 기능을 활성화하지 않는 한은 Deno로 실행되는 프로그램은 파일, 네트워크 또는 환경에 액세스할 수 없다.<br>보안에 민감한 기능에 액세스하려면 커맨드 옵션 또는 런타임 권한 프롬프트를 통해 실행 스크립트에 권한이 부여되어야 한다.</p>
+<p>아래 명령어로 다시 실행해보도록 하자.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run --allow-net https://deno.land/std/examples/echo_server.ts<br></code></pre></td></tr></table></figure>
+
+<p><strong>결과</strong><br><img style="margin: 0 !important;" alt="deno-allow-net2" src="./deno-allow-net2.png"/></p>
+<p><code>--allow-net</code>을 통해 네트워크 접근에 대한 권한을 부여함으로써 실행할 수 있다는 것을 알 수 있다.</p>
+<p>Deno에는 <code>--allow-net</code>과 같이 권한을 부여하는 플래그 몇 가지를 가지고 있다. 확인해보도록 하자.</p>
+<p><strong>Permissions list</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run [PERMISSION FLAG] URL<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>OPTIONS</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–allow-env</td>
+<td>환경 변수 접근 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-hrtime</td>
+<td>고해상도 시간 측정 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-ffi</td>
+<td>동적 라이브러리 로드 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-read</td>
+<td>파일 시스템 읽기 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-write</td>
+<td>파일 시스템 쓰기 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-run</td>
+<td>하위 프로세스 실행 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-net</td>
+<td>네트워크 접근 권한 허용</td>
+</tr>
+<tr>
+<td>–allow-all, -A</td>
+<td>모든 권한 허용</td>
+</tr>
+</tbody></table>
+<p>권한과 관련된 자세한 내용은 <a target="_blank" rel="noopener" href="https://deno.land/manual@v1.18.2/getting_started/permissions">Deno Permission</a>에서 확인하자.</p>
+<h1 id="Deno-Standard-Modules"><a href="#Deno-Standard-Modules" class="headerlink" title="Deno Standard Modules"></a>Deno Standard Modules</h1><p>Deno 공식 페이지에는 <a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0">Standard Library</a>가 있다. 이는 외부 종속성이 없으며 Deno Core 팀에서 검토하고 반영하는 표준 모듈의 저장소이다. 기여자로서 충분히 PR(Pull Request)를 보낼 수 있으며 언제든지 사용할 수 있다. 다만 완벽하게 안정적인 버전이 아니며, API가 변경되는 항목들이 많기 때문에 Deno 버전과 맞게 호환되도록 마이그레션이 자주 필요하다.</p>
+<p>공식 모듈에서 몇 가지를 가지고 사용하는 방법을 알아보자. 사용 방법은 복잡하지 않기 때문에 누구나 쉽게 사용할 수 있을 것이다. 참고로 <a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0">Standard Library</a>경로에서 <a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0/examples">example</a>에는 예제들이 있으니 확인해보기 바란다.</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p><a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0/http">HTTP</a> 모듈은 HTTP 클라이언트와 서버 구현을 제공하는 모듈이며, 서버, 파일 서버, HTTP 상태 코드 등 여러 항목을 제공한다.</p>
+<p><strong>http-server.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123; serve &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;https://deno.land/std@0.126.0/http/server.ts&quot;</span>;<br><br><span class="hljs-title function_">serve</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Response</span>(<span class="hljs-string">&quot;Hello World\n&quot;</span>));<br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;http://localhost:8000/&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p><strong>run</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run --allow-net http-server.js<br></code></pre></td></tr></table></figure>
+
+<p><code>http://localhost:8000</code> 접속하여 확인해보자.</p>
+<h2 id="fs"><a href="#fs" class="headerlink" title="fs"></a>fs</h2><p>Node.js의 <code>fs</code> 모듈과 같은 개념이다. <a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0/fs">fs</a> 모듈은 파일 시스템을 조작할 수 있다.<br>파일 읽기(<code>--allow-read</code>) 및 쓰기(<code>--allow-write</code>) 권한을 필요로 한다.</p>
+<p><strong>file.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;emptyDirSync&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;https://deno.land/std@0.126.0/fs/mod.ts&#x27;</span><br><br><span class="hljs-title function_">emptyDirSync</span>(<span class="hljs-string">&#x27;./foo&#x27;</span>) <span class="hljs-comment">// void</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>run</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run --allow-read --allow-write file.js<br></code></pre></td></tr></table></figure>
+
+<div class="alert danger no-icon"><p>Deno는 URL 기반으로 HTTPS 프로토콜로 동작한다. 만약 <strong>실행 환경에 따라 SSL 인증이 되지 않는 경우 SSL 인증서를 무시하는 옵션</strong>을 붙여 줘야 한다.<br><code>--unsafely-ignore-certificate-errors</code></p>
+</div>
+
+<p>해당 경로에 <code>foo</code>라는 빈 폴더가 생성되는 것을 확인할 수 있다.</p>
+<h2 id="datetime"><a href="#datetime" class="headerlink" title="datetime"></a>datetime</h2><p><a target="_blank" rel="noopener" href="https://deno.land/std@0.126.0/datetime">datetime</a>은 날짜와 시간 구문을 생성 또는 변환하는 도구이다.</p>
+<p><strong>datetime.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;format&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;https://deno.land/std@0.126.0/datetime/mod.ts&#x27;</span><br><br><span class="hljs-keyword">const</span> date = <span class="hljs-title function_">format</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(), <span class="hljs-string">&#x27;yyyy-MM-dd HH:mm:ss&#x27;</span>)<br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(date)<br></code></pre></td></tr></table></figure>
+
+<p><strong>run</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run datetime.js<br></code></pre></td></tr></table></figure>
+
+<h1 id="Third-Party-Library"><a href="#Third-Party-Library" class="headerlink" title="Third Party Library"></a>Third Party Library</h1><p>Deno에서도 외부 모듈을 사용할 수 있다. <a target="_blank" rel="noopener" href="https://deno.land/x">Third Party Library</a>는 Deno 스크립트용 호스팅 서비스로 Github에 저장된 오픈 소스 모듈의 릴리스를 캐시하고 하나의 기억하기 쉬운 도메인으로 제공한다.</p>
+<p><code>https://deno.land/x/IDENTIFIER@VERSION/FILE_PATH</code>가 기본 형식이며, 버전을 생략하면 모듈의 가장 최신 버전이 기본적으로 사용된다.</p>
+<p>가장 흔히 사용할 수 있는 <code>lodash</code> 모듈을 사용해보자. lodash가 제공하는 URL을 Import하여 사용해보자.</p>
+<p><strong>deno-lodash.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;https://deno.land/x/lodash@4.17.19/lodash.js&#x27;</span><br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(_.<span class="hljs-title function_">max</span>([<span class="hljs-number">4</span>, <span class="hljs-number">8</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>]))<br></code></pre></td></tr></table></figure>
+
+<p><strong>run</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">deno run deno-lodash.js<br></code></pre></td></tr></table></figure>
+
+<h2 id="Deno-Built-In-Tooling"><a href="#Deno-Built-In-Tooling" class="headerlink" title="Deno Built-In Tooling"></a>Deno Built-In Tooling</h2><p>Deno는 TypeScript 지원에 필요한 도구들이 내장되어있어서 Deno에서 TypeScript를 사용 시 외부 도구를 추가할 필요가 없다고 하였다. TypeScript뿐만 아니라. compiler, runner, linter 등 몇 가지 도구들을 내장하고 있다.</p>
+<table>
+<thead>
+<tr>
+<th>Built-In</th>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/bundler">bundler</a></td>
+<td>deno <code>bundle</code> [URL]</td>
+<td>모든 종속성을 포함하는 단일 파일 출력</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/compiler">compiling executables</a></td>
+<td>deno <code>compile</code> [–output <OUT>] <SRC></td>
+<td>실행 파일로 컴파일</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/script_installer">installer</a></td>
+<td>deno <code>install</code> [–output <OUT>] <SRC></td>
+<td>실행 가능한 코드 설치 및 배포</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/documentation_generator">documentaion generator</a></td>
+<td>deno <code>doc</code></td>
+<td>JSDoc 문서</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/dependency_inspector">dependency inspector</a></td>
+<td>deno <code>info</code> [URL]</td>
+<td>모든 종속성 검사</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/formatter">formatter</a></td>
+<td>deno <code>fmt</code></td>
+<td>코드 포맷터</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/formatter">repl</a></td>
+<td>deno <code>relp</code></td>
+<td>대화식 스케폴딩 도구</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/testing">test runner</a></td>
+<td>deno <code>test</code></td>
+<td>javascript, typescript 단위 테스트 실행기</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://deno.land/manual@v1.19.0/tools/linter">linter</a></td>
+<td>deno <code>lint</code></td>
+<td>코드 Syntax 검사</td>
+</tr>
+</tbody></table>
+<hr>
+<p>Deno에 대해 기술적으로 깊이 다루지는 않았으며, Deno의 히스토리와 기본적인 사용법에 대해 알아보았다.</p>
+<p>Deno에 대한 결혼부터 말하자면 이 포스트의 제목과 같다.</p>
+<hr>
+<p style="text-align: center;font-weight: bold">Deno는 Node.js의 대체가 아닌 대안</p>
+- - -
+
+<p>앞으로 Deno가 어떻게 성장하고 JavaScript와 TypeScript의 생태계에 어떤 영향을 줄지는 아직 모른다.</p>
+<p>이미 많은 생태계를 생성한 Node.js와는 다르게 이제 새싹을 핀 Deno이기 때문이다. Node.js 생태계는 수십년동안 이어져왔기 때문에 그만큼 안정적이고 진보되었다. 또한, 긴 시간 동안 많은 프로젝트에 채택되고 사용되어 왔기 때문에 사실상 표준에 가깝다.</p>
+<p>물론 Deno의 철학과 기능은 매우 뛰어나지만, 아직 초기 단계에 불과하므로 프로젝트 진행에 필요한 기술로 채택되기는 부담이 있다. 하지만 <strong>점차적으로 많은 프로젝트가 TypeScript를 채택함과 사용 빈도가 증가함에 따라 자연스럽게 Node.js의 대안으로 사용</strong>될 것으로 생각된다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2023/09/28/electron-rce/">[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정</a><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/09/23/parcel-intro/">불꽃 튀게 빠른 번들러 Parcel 개념잡기!</a><br><a href="https://kdydesign.github.io/2020/09/16/nvm-for-windows/">NVM으로 Windows 환경에서 Node 버전 관리하기</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-SCOPE 패키지 어디까지 알고 있니?</a><br><a href="https://kdydesign.github.io/2019/04/15/electron-tutorial/">[Electron] Electron 개념부터 데스크탑 앱 만들기</a><br><a href="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/">[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/deno/" rel="tag">deno</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/modern-runtime/" rel="tag">modern runtime</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/runtime/" rel="tag">runtime</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/typescript/" rel="tag">typescript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/v8/" rel="tag">v8</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/03/04/firebase-pwa-tutorial/"
+                    data-tooltip="Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                    aria-label="PREVIOUS: Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/01/14/vue-eventbus-vs-vuex/"
+                    data-tooltip="[Vue.JS] Vuex VS Event Bus"
+                    aria-label="NEXT: [Vue.JS] Vuex VS Event Bus"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/03/04/firebase-pwa-tutorial/"
+                    data-tooltip="Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                    aria-label="PREVIOUS: Firebase를 활용한 PWA(Progressive Web App) 앱 만들기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/01/14/vue-eventbus-vs-vuex/"
+                    data-tooltip="[Vue.JS] Vuex VS Event Bus"
+                    aria-label="NEXT: [Vue.JS] Vuex VS Event Bus"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/02/17/deno-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2022/02/17/deno-tutorial/';
+              
+            this.page.identifier = 'deno-tutorial';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

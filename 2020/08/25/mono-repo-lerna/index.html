@@ -1,0 +1,972 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"/>
+    
+        <meta name="keywords" content="javascript,lerna,mono-repo,multi-repo,poly-repo,lerna tutorial,mono-repo tutorial,multi-repo tutorial,git repository,git,lerna example,lerna sample">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nmono-repo 구축을 위한 가이드! mono-repo와 multi-repo의 차이를 알아보고 mono-repo 구축을 위한 도구인 lerna를 살펴보자.\n먼저 mono-repo에 대한 개념을 다지고 mono-repo의 장단점을 면밀히 살펴본 후 lerna를 파악해보자. 이 후 섹션에서는 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악을 통해 lerna의 사용법을 예제를 통해서 정확하게 알아보자.\n아직 Mono-Repo나 이를 도와주는 lerna가 널리 알려지지 않을 것 같다.근래에 Mono-Repo 구축과 lerna를 사용할 기회가 있어서 실제로 반영하고 정보를 수집해 보았다. 모든 lerna 관련된 포스팅을 보았지만 lerna에 관련된 주요 명령어라든가 Mono-Repo에 대한 간략한 설명뿐 예제를 통한 하나의 workflow를 설명하는 곳이 없어서 아쉬움이 있었다.\nlerna의 명령어와 설정은 단순하지만, 생각보다 잘 안 되었다. 여러 번의 초기화와 Package 생성을 하면서 어느 정도 감을 잡을 수 있었다.이렇게 쌓은 노하우 나와 같이 하나의 완성도 있는 절차가 필요하고 개념을 파악하는 사람들에게 도움이 되기를 바라며 정리를 해보았다.\nlerna를 알기 전에 Mono-Repo에 대해서 알아야 하고 Mono-Repo를 알기 위해서는 비교 대상인 Multi-Repo를 알아야 한다. 그러므로 해당 포스팅에서는 Multi-Repo와 Mono-Repo를 먼저 정리하겠다. \n\nMulti-RepoMulti-Repo는 여러 Repository에 Package를 분산해 두는 것을 의미한다.\n말 그대로 하나 또는 두 개 이상의 Package 관리를 하나 또는 두 개 이상의 Repository로 구성하여 관리하는 것이다. 예를 들어 A라는 Package를 구성하는 B, C라는 Package가 있을 경우 B-Repository, C-Repository로 나누어 두는 것을 의미한다.여기서 꼭 A라는 Package가 없어도 상관없다. 의미 자체를 보면 Package 별로 Repository를 분리한다고 보면 된다. 보통 Package와 Repository는 1:1 관계를 맺으면 통상 사용하는 방식으로 생각하면 된다.\n장점\nRepository 별 Owner를 지정\n\nPackage 별로 Repository가 분리되어 있다는 것은 각 Package 별로 관리가 가능하다는 것이다. 이에 대해 각 Repository 별 Owner를 지정할 수 있고 이로 인해서 패키지 관리가 수월해 진다.\n\n\n빠른 CI Build\n\n각 Package가 Repository로 분리된다면 하나의 Repository는 하나의 CI를 구성할 수 있다. 이렇게 되면 하나의 큰 덩어리로 구성된 Package보다 리소스가 적기 때문에 CI의 Build 속도가 빨라지게 된다.\n\n\n패키지의 명확한 분리로 인한 유연성 향상\n\nRepository가 분리되어있기 때문에 각 패키지는 마스터 코드의 충돌을 방지 할 수 있으며, Repository 상 서로 연계 관계가 없기 때문에 추가, 수정, 유지 관리에 있어서 유연성이 향상된다.\n\n\n\n단점\n중복된 설정 및 반복된 설치\n\n단일 Package를 구성할 때 이 패키지를 구성하는 Package를 Repository로 나눔으로써 모든 공통된 설정과 모듈들을 반복적으로 설정 및 설치해야 한다. 예를 들어 eslint와 babel을 설정한다고 하면 모든 Repository에 eslint와 babel을 설치하고 설정 파일을 동일하게 구성해야 한다.\n\n\n이슈의 분산\n\nRepository가 분리되어 있기 때문에 각 Repository는 이슈 트래킹을 가진다. 전혀 다른 Package라면 이슈 트래킹이 분리되는 게 정상이지만 하나의 큰 Package를 구성하고 내부 Sub Package가 필요한 상황이라면 이슈 트래킹은 분리되는 것이 옳지 않다. 이슈뿐만 아니라 CHANGELOG 역시 분리됨으로써 관리 포인트가 증가한다.\n\n\nDependency Hell\n\n프로젝트 및 Package의 규모가 커짐에 따라 의존 그래프가 매우 복잡해지게 된다. 특정 Package들이 같은 모듈을 사용하지만, 버전 차이에 따라 종속성이 달라지고 이로 인한 충돌을 야기할 수 있다.\n\n\n중복 코드의 가능성\n\n중복된 설정 및 반복된 설치와 비슷한 이유이며, 서로 Repository가 분리되어있기 때문에 공통된 코드가 중복될 가능성이 커진다.\n\n\n\nMono-RepoMulti-Repo와 반대로 Mono-Repo는 여러 Package를 Repository에서 관리하는 것을 의미한다.\nMulti-Repo의 단점을 보완하면서 분리된 Package를 하나의 Repository로 합쳐 관리한다. 쉽사리 실 업무에 적용해 보기 쉽지 않기 때문에 Multi-Repo에 비해 활성화가 많이 되지는 않았다.하지만 점차적으로 오픈 소스에서 지원하는 기능(CLI, UI, Core)이 많아지면서 오픈 소스에서 Mono-Repo를 많이 채택하고 있다.\n이러한 Mono-Repo에 대해서 어떤 장단점이 있는지 알아보자.\n장점\n공통 항목 단일화\n\neslint, Build, Unit Test 등 공통된 설정 및 필요한 node module을 한 번의 설치와 한 번의 설정으로 모든 패키지가 사용할 수 있다. Repository가 분산되어있지 않고 하나의 Repository에 있기 때문에 dependencies의 업데이트 역시 한 번으로 해결이 가능하다.\n\n\n쉬운 Pacakge 공유\n\nMulti-Repo의 경우 Pacakge가 분리되어 있기 때문에 Package 간 공유가 쉽지 않다. 그렇기 때문에 중복 코드가 발생할 가능성이 있는데 Mono-Repo의 경우엔 하나의 Repository이기 때문에 패키지 간 공유가 수월하며 중복 코드 역시 발생할 염려가 없다.\n\n\n단일 이슈 트래킹\n\n하나의 Repository에 패키지가 Mono-Repo로 구성되었다면 그 패키지의 모든 종속된 패키지는 서로 연관 관계를 가질 수 있다. 이로 인해서 이슈 트래킹은 분산 없이 하나로 처리가 가능하며 Mono-Repo는 이를 지원한다.\n\n\n효율적인 의존성 관리\n\n전체 Package의 의존 관계가 하나의 Repository에서 이루어지기 때문에 Package 간 의존성 관리가 수월해 진다.\n\n\n\n단점\nRepository의 거대화\n\n분산되어 있던 모든 리소스를 하나의 Repository에서 관리가 되기 때문에 하나의 Repository의 규모가 커진다. 이로 인한 문제들은 나비효과처럼 커질 가능성을 보인다.\n\n\n느린 CI Build\n\nMulti-Repo와 반대로 Repository가 하나로 되어 있기 때문에 CI가 하나로 구성된다는 장점이 있지만, Package가 규모가 커짐으로 인해 분산된 CI Build보다 속도가 느릴 수밖에 없다.\n\n\n무분별한 의존성\n\nPackage 간 의존성 관리가 쉽다는 장점이 있지만, 오히려 이러한 장점으로 인해 과도한 의존 관계가 나타날 수 있다.\n\n\nDev Tools의 인덱싱 저하\n\n개발 도구를 사용할 때 Package가 분산되어있다면 각각의 Package를 열어 사용하면 되지만 Mono-Repo의 경우는 하나의 개발 도구로 열 경우 해당 Package의 인덱싱 처리 속도가 길어진다.\n\n\n\n위 내용을 얼추 보면 Mono-Repo의 장점은 Multi-Repo의 단점이고 Multi-Repo의 장점은 Mono-Repo의 단점이라는 것을 알 수 있다. 이렇게 장단점이 교차하기 때문에 무조건 Mono-Repo가 좋은 것은 아니다. 어떤 상황에서는 Multi-Repo가 빛을 발하는 경우가 있을 것이다.\nQuasar Framework의 Mono-RepoDesktop, Mobile을 지원하며 Vue 기반의 Framework인 Quasar의 구조를 보자. Quasar의 경우 최초에는 Mono-Repo로 구성되어 있진 않았지만, CLI, Extras 등 기능이 확장됨에 따라 Mono-Repo로 구성이 변경되었다.lerna를 사용하진 않았지만 구조는 Mono-Repo라는 것을 알 수 있다.\n규모가 큰 Mono-Repo의 대표적인 사례사실 Mono-Repo가 활성화되는 시점은 이 사례부터일지도 모른다. 이 사례를 통해서 Mono-Repo를 보장한다고 볼 수 있다.\n\nGoogle\n\n초기 Google은 중앙 집중식 소스 제어 시스템을 통해 관리되는 공유 코드 베이스로 작업하기로 결정했다. 이 접근 방식은 16년 이상 Google에 좋은 서비스를 제공해 왔으며, 오늘날 Google의 소프트웨어 대부분이 Mono-Repo로 구성되어있다. 대표적인 예로 Google은 Bazel을 빌드 시스템으로 사용하며, Mono-Repo로 구성되어있다.\n\n\nFacebook\n\n수십만 개의 파일에 대해 매주 수천 개의 커밋이 있는 Facebook의 기본 소스 저장소는 Linux 커널보다 훨씬 더 크다. 대표적으로 Buck 및 Scaling Mercurial이 있다.\n\n\nTwitter\n\nTwitter에는 확장이 가능한 Mono-Repo Build System인 Pants를 제공하고 있다.\n\n\n\n\n\n\nMono-Repo는 언제 사용해야할까?Mono-Repo를 구성하는 적절한 시기는 정확하지 않다. 그러므로 구글링 자체로도 정보를 얻기엔 힘든 부분이 있다.이러한 이유는 모든 프로젝트와 Package의 구조가 규모, 형태, 구조가 모두 다르기 때문이다. 하지만 아래와 같은 상황이라면 Mono-Repo를 구성해도 좋다.\n\n서로 다른 패키지가 연관 관계를 가질 경우\n첫 번째 항목이 고려된 상황에서 N개의 패키지의 형태와 목적이 유사한 경우\n두 번째 항목이 고려된 상황에서 N개의 패키지 중 배포되어야 할 패키지의 비중이 큰 경우\n\n\n\n이 외에 애매한 경우는 Package의 규모이다. Package의 클수록 개발 및 Build 등 Mono-Repo로 투자되는 비용이 많이 들기에 적당한 규모를 찾아야 하는데 이는 설계자 또는 개발자 역량에 따라 다르기 때문에 참고하기 바란다.\n\n지금까지 Mono-Repo에 대해서 알아보았다. 단순하게 Mono-Repo를 알고 구성하는 것은 어렵지 않지만 빠른 Scaffolding과 빠른 배포, 그리고 좀 더 효율적인 종속성 관리가 필요하다.이를 위해 필요한 기능을 가진 모듈을 찾아 설치하고 설정하고 우리가 원하는 대로 처리 할 수 있고 이런 과정은 lerna가 처리해준다.\n즉, Lerna는 Mono-Repo를 위한 CLI 도구이다.\nLernalerna는 Git과 NPM을 사용하여 MOno-Repo 관리와 Workflow를 최적화는 도구이고, 발음상 러나 또는 레르나라고 읽을 수 있다.\n\nlerna의 BI는 Lernaean Hydra 또는 Lerna의 Hydra로 알려진 그리스 신화 생물이고, 많은 머리를 가지고 있었는데 그 정확한 수는 출처에 따라 다르다. 가장 최근의 Hydra 신화에서는 괴물에 재생 능력이 추가되어 머리가 잘릴 때마다 머리가 두 개씩 다시 자라난다고 한다.\n\n특징lerna의 특징은 Mono-Repo를 구성하고 배포하는 데 중점에 둔 기능으로 볼 수 있다.\n\n다중 패키지의 종속성 관리 및 모듈의 중복성 제거\n\nlerna를 사용하여 node module을 설치할 경우 자체적으로 패키지들의 모듈을 설치하며, 그 과정에서 종속성을 관리하여 중복된 모듈을 하나로 통합한다.\n\n\n다중 패키지의 단일 버전 및 독립적 버전 관리\n\nMono-Repo의 구성을 따르면 여러 개의 Package로 구성된다. 이런 Package는 어떤 상황에서 하나의 버전 정책을 가져갈 수 있지만, 또 어떤 경우에는 서로 독립적인 버전 정책을 가져가야 하는 경우가 있는데 lerna는 이러한 기능을 지원하여 버전 정책을 정할 수 있다.\n\n\n변경된 패키지를 일괄적으로 GIt Remote Repository에 Push\n\n여러 Package가 수정되었다면 Package 별로 Git Remote Repository에 commit과 push를 할 필요가 없다. lerna를 사용하면 단 한 번의 commit과 push로 Remote Repository에 반영할 수 있다.\n\n\n변경된 패키지를 일괄적으로 NPM Repository에 Publish\n\nNPM Repository에 node module을 배포하기 위해서 publish 명령을 사용한다. Mono-Repo에서 각 Package를 NPM Repository에 배포하기 위해서 하나하나 publish를 입력할 필요가 없다. 단 한 번의 publish로 변경 사항이 있는 Package만 배포가 될 것이다.\n\n\n\nLerna 기반의 Mono-Repo앞서 설명했듯이 이미 많은 오픈 소스들이 Mono-Repo를 채택하였고 이를 위해 lerna를 사용하였다. 그렇다면 Lerna를 실제로 사용한 오픈소스에는 어떤 것들이 있을까?\n\nBabel\nvue-cli\njest\nnuxt.js\nnuxt.js\nwebdriverio\ncreate-react-app\ncreate-nuxt-app\nwebpack-cli\ngraphql-server\ntypescript-eslint\nreact-router\n\n\n\nBable은 lerna 도입의 선두주자이고 bable의 파생 모듈은 매우 많기 때문에 Mono-Repo로써 적합하다고 볼 수 있다. \nlerna의 활동OpenBase-lerna에서 lerna의 활동 상태를 확인해보자.\n현재 3.22.x 버전까지 릴리즈가 된 상태이고 다운로드 수와 start가 점차 증가하는 것을 볼 수 있다. 하지만 개인적으로 버전이 3.x에 비해 안정적이진 않다고 생각된다. 아래에서 설명을 할 테지만 현재로서는 npm보다 yarn에 적합함을 보이고 이슈 생성과 PR의 요청이 많을 것으로 보아 앞으로 개발이 필요한 사항이 많아 보인다.\n\nlerna의 구조lerna의 기본 구조는 Root 경로 아래 packages 폴더가 있고 그 하위에 각 package 별 폴더가 생성된다. pacakges 폴더는 기본값이며 설정에 따라 유동적으로 변경할 수 있다. 각 pacakge 폴더는 package 별 이름을 지정할 수 있으며 각각의 packages에는 package.json이 명시되는 것처럼 하나의 모듈로 간주한다.\nRoot 경로에 있는 pacakge.json에는 모든 package가 공통으로 사용되는 dependencies가 명시되는 등 공통 항목이 나열된다. \n\nlerna의 주요 기능Fixed Mode\n다중 패키지의 버전이 단일 버전 라인에서 작동하며 관리\n버전은 프로젝트 Root에서 관리되며 lerna publish를 실행할 경우 새 버전으로 패키지를 게시\n하나의 패키지가 수정되더라도 모든 패키지는 새로운 버전을 게시\n\nIndependent Mode\n패키지의 유지 관리자가 서로 독립적으로 패키지 버전을 관리\nlerna publish 시 변경된 패키지에 대해서만 새 버전을 업데이트\n버전은 각 패키지의 package.json에 명시\n\nHoisting\n다중 패키지에서 사용되는 node module을 최적화하여 중복되는 node module을 최상위 경로로 재구축\n공통 종속성을 최상위 수준에서만 설치되며 개별 패키지는 생략\n\n\n그림에서 보듯이 hoist를 통해서 node_module을 최적화하여 중복되는 모듈을(B (1.0)))을 최상위로 재구축한다.\nYarn Workspace\nYarn은 유일하게 Mono-Repo 기능을 지원하고 Yarn Workspace의 목적은 Mono-Repo의 Workflow를 용이하게 하는 것이다.\nYarn Workspace를 통해 각 패키지는 서로 참조하는 연관 관계를 가질 수 있다.\nNPM은 Version 7부터 worksapce 개념이 제공될 예정\n\nlerna 주요 명령어lerna의 핵심 명령어는 bootstrap과 publish이다. bootstrap을 통해서 모든 package에 node module을 설치하며 최적화를 통해 중복된 모듈을 정리해준다. publish는 npm publish와 동일한 기능을 하지만 lerna에서는 모든 pacakge를 대상으로 한 번의 명령어로 배포할 수 있다.\n이 외의 핵심 명령어는 아래 내용을 참고하고 자세한 옵션은 Lerna 공식 사이드를 참고하자.\nlerna clean\nRoot를 제외한 package에서 node_module을 제거한다.\n\nlerna clean\nlerna bootstrap\n모든 패키지의 node_module을 설치한다.\n\nlerna bootstrap\n\n\nlerna run\n각 패키지의 package.json에 명시된 script를 실행한다.\n\nlerna run\n\n\nlerna publish\n마지막 릴리즈 이후 업데이트 된 패키지를 배포한다.\n\nlerna publish\n\n\nlerna exec\n각 패키지에서 임의의 커맨드 명령어를 실행한다.\n\nlerna exec\n\n\n여기까지 해서 Mono-Repo와 lerna에 대해 개념부터 파악을 하였다. 사실상 lerna의 명령어는 몇 개 안되지만 이대로 진행하더라도 정확하게 개념을 파악하기는 어렵다. 생각지도 못한 오류와 예상 밖으로 명령어가 실행되기 때문이다.\n그렇기 때문에 다음 섹션에서는 lerna를 활용한 Log 출력 패키지 예제로 lerna와 Mono-Repo의 전체적인 흐름을 파악해 보자.\n\n더 알아보기Performant NPM - PNPMFirebase를 활용한 PWA(Progressive Web App) 앱 만들기오픈 소스(Open-Source) 구조와 모듈 파악하기Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?\n","dateCreated":"2020-08-25T13:47:03+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-08-25T13:47:03+00:00","description":"\nmono-repo 구축을 위한 가이드! mono-repo와 multi-repo의 차이를 알아보고 mono-repo 구축을 위한 도구인 lerna를 살펴보자.먼저 mono-repo에 대한 개념을 다지고 mono-repo의 장단점을 면밀히 살펴본 후 lerna를 파악해보자. 이 후 섹션에서는 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악을 통해 lerna의 사용법을 예제를 통해서 정확하게 알아보자.\n","headline":"Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/08/25/mono-repo-lerna/","keywords":"git, lerna, mono-repo, multi-repo, poly-repo, repository, lerna tutorial, lerna example","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="mono-repo 구축을 위한 가이드! mono-repo와 multi-repo의 차이를 알아보고 mono-repo 구축을 위한 도구인 lerna를 살펴보자.먼저 mono-repo에 대한 개념을 다지고 mono-repo의 장단점을 면밀히 살펴본 후 lerna를 파악해보자. 이 후 섹션에서는 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리">
+<meta property="og:url" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="mono-repo 구축을 위한 가이드! mono-repo와 multi-repo의 차이를 알아보고 mono-repo 구축을 위한 도구인 lerna를 살펴보자.먼저 mono-repo에 대한 개념을 다지고 mono-repo의 장단점을 면밀히 살펴본 후 lerna를 파악해보자. 이 후 섹션에서는 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/openbase-lerna.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/lerna-file-structure.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/lerna-hoisting.png">
+<meta property="article:published_time" content="2020-08-25T13:47:03.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.793Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="lerna">
+<meta property="article:tag" content="mono-repo">
+<meta property="article:tag" content="multi-repo">
+<meta property="article:tag" content="poly-repo">
+<meta property="article:tag" content="repository">
+<meta property="article:tag" content="lerna tutorial">
+<meta property="article:tag" content="lerna example">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-25T13:47:03+00:00">
+	
+		    2020-08-25
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/git/">git</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/">repository</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/mono-repo/">mono-repo</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/mono-repo/lerna/">lerna</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/08/25/mono-repo-lerna/cover.png" alt="cover"></p>
+<p><code>mono-repo</code> 구축을 위한 가이드! <code>mono-repo</code>와 <code>multi-repo</code>의 차이를 알아보고 <code>mono-repo</code> 구축을 위한 도구인 <code>lerna</code>를 살펴보자.</p>
+<p>먼저 <code>mono-repo</code>에 대한 개념을 다지고 <code>mono-repo</code>의 장단점을 면밀히 살펴본 후 <code>lerna</code>를 파악해보자. 이 후 섹션에서는 <a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a>을 통해 <code>lerna</code>의 사용법을 예제를 통해서 정확하게 알아보자.</p>
+<p>아직 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Monorepo">Mono-Repo</a>나 이를 도와주는 <a target="_blank" rel="noopener" href="https://github.com/lerna/lerna">lerna</a>가 널리 알려지지 않을 것 같다.<br>근래에 <code>Mono-Repo</code> 구축과 <code>lerna</code>를 사용할 기회가 있어서 실제로 반영하고 정보를 수집해 보았다. 모든 lerna 관련된 포스팅을 보았지만 lerna에 관련된 주요 명령어라든가 Mono-Repo에 대한 간략한 설명뿐 예제를 통한 하나의 workflow를 설명하는 곳이 없어서 아쉬움이 있었다.</p>
+<p><code>lerna</code>의 명령어와 설정은 단순하지만, 생각보다 잘 안 되었다. 여러 번의 초기화와 Package 생성을 하면서 어느 정도 감을 잡을 수 있었다.<br>이렇게 쌓은 노하우 나와 같이 하나의 완성도 있는 절차가 필요하고 개념을 파악하는 사람들에게 도움이 되기를 바라며 정리를 해보았다.</p>
+<p><code>lerna</code>를 알기 전에 <code>Mono-Repo</code>에 대해서 알아야 하고 <code>Mono-Repo</code>를 알기 위해서는 비교 대상인 <code>Multi-Repo</code>를 알아야 한다. 그러므로 해당 포스팅에서는 <code>Multi-Repo</code>와 <code>Mono-Repo</code>를 먼저 정리하겠다. </p>
+<hr>
+<h1 id="Multi-Repo"><a href="#Multi-Repo" class="headerlink" title="Multi-Repo"></a>Multi-Repo</h1><p><code>Multi-Repo</code>는 <code>여러 Repository에 Package를 분산해 두는 것을 의미</code>한다.</p>
+<p>말 그대로 하나 또는 두 개 이상의 Package 관리를 하나 또는 두 개 이상의 Repository로 구성하여 관리하는 것이다. 예를 들어 <code>A</code>라는 Package를 구성하는 <code>B</code>, <code>C</code>라는 Package가 있을 경우 <code>B-Repository</code>, <code>C-Repository</code>로 나누어 두는 것을 의미한다.<br>여기서 꼭 <code>A</code>라는 Package가 없어도 상관없다. 의미 자체를 보면 Package 별로 Repository를 분리한다고 보면 된다. 보통 Package와 Repository는 1:1 관계를 맺으면 통상 사용하는 방식으로 생각하면 된다.</p>
+<h2 id="장점"><a href="#장점" class="headerlink" title="장점"></a>장점</h2><ul>
+<li><p><strong>Repository 별 Owner를 지정</strong></p>
+<ul>
+<li>Package 별로 Repository가 분리되어 있다는 것은 각 Package 별로 관리가 가능하다는 것이다. 이에 대해 각 Repository 별 Owner를 지정할 수 있고 이로 인해서 패키지 관리가 수월해 진다.</li>
+</ul>
+</li>
+<li><p><strong>빠른 CI Build</strong></p>
+<ul>
+<li>각 Package가 Repository로 분리된다면 하나의 Repository는 하나의 CI를 구성할 수 있다. 이렇게 되면 하나의 큰 덩어리로 구성된 Package보다 리소스가 적기 때문에 CI의 Build 속도가 빨라지게 된다.</li>
+</ul>
+</li>
+<li><p><strong>패키지의 명확한 분리로 인한 유연성 향상</strong></p>
+<ul>
+<li>Repository가 분리되어있기 때문에 각 패키지는 마스터 코드의 충돌을 방지 할 수 있으며, Repository 상 서로 연계 관계가 없기 때문에 추가, 수정, 유지 관리에 있어서 유연성이 향상된다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="단점"><a href="#단점" class="headerlink" title="단점"></a>단점</h2><ul>
+<li><p><strong>중복된 설정 및 반복된 설치</strong></p>
+<ul>
+<li>단일 Package를 구성할 때 이 패키지를 구성하는 Package를 Repository로 나눔으로써 모든 공통된 설정과 모듈들을 반복적으로 설정 및 설치해야 한다. 예를 들어 <code>eslint</code>와 <code>babel</code>을 설정한다고 하면 모든 Repository에 <code>eslint</code>와 <code>babel</code>을 설치하고 설정 파일을 동일하게 구성해야 한다.</li>
+</ul>
+</li>
+<li><p><strong>이슈의 분산</strong></p>
+<ul>
+<li>Repository가 분리되어 있기 때문에 각 Repository는 이슈 트래킹을 가진다. 전혀 다른 Package라면 이슈 트래킹이 분리되는 게 정상이지만 하나의 큰 Package를 구성하고 내부 Sub Package가 필요한 상황이라면 이슈 트래킹은 분리되는 것이 옳지 않다. 이슈뿐만 아니라 <code>CHANGELOG</code> 역시 분리됨으로써 관리 포인트가 증가한다.</li>
+</ul>
+</li>
+<li><p><strong>Dependency Hell</strong></p>
+<ul>
+<li>프로젝트 및 Package의 규모가 커짐에 따라 의존 그래프가 매우 복잡해지게 된다. 특정 Package들이 같은 모듈을 사용하지만, 버전 차이에 따라 종속성이 달라지고 이로 인한 충돌을 야기할 수 있다.</li>
+</ul>
+</li>
+<li><p><strong>중복 코드의 가능성</strong></p>
+<ul>
+<li><strong>중복된 설정 및 반복된 설치</strong>와 비슷한 이유이며, 서로 Repository가 분리되어있기 때문에 공통된 코드가 중복될 가능성이 커진다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="Mono-Repo"><a href="#Mono-Repo" class="headerlink" title="Mono-Repo"></a>Mono-Repo</h1><p><code>Multi-Repo</code>와 반대로 <code>Mono-Repo</code>는 <code>여러 Package를 Repository에서 관리하는 것을 의미</code>한다.</p>
+<p><code>Multi-Repo</code>의 단점을 보완하면서 분리된 Package를 하나의 Repository로 합쳐 관리한다. 쉽사리 실 업무에 적용해 보기 쉽지 않기 때문에 <code>Multi-Repo</code>에 비해 활성화가 많이 되지는 않았다.<br>하지만 점차적으로 오픈 소스에서 지원하는 기능(CLI, UI, Core)이 많아지면서 오픈 소스에서 <code>Mono-Repo</code>를 많이 채택하고 있다.</p>
+<p>이러한 <code>Mono-Repo</code>에 대해서 어떤 장단점이 있는지 알아보자.</p>
+<h2 id="장점-1"><a href="#장점-1" class="headerlink" title="장점"></a>장점</h2><ul>
+<li><p><strong>공통 항목 단일화</strong></p>
+<ul>
+<li>eslint, Build, Unit Test 등 공통된 설정 및 필요한 node module을 한 번의 설치와 한 번의 설정으로 모든 패키지가 사용할 수 있다. Repository가 분산되어있지 않고 하나의 Repository에 있기 때문에 dependencies의 업데이트 역시 한 번으로 해결이 가능하다.</li>
+</ul>
+</li>
+<li><p><strong>쉬운 Pacakge 공유</strong></p>
+<ul>
+<li><code>Multi-Repo</code>의 경우 Pacakge가 분리되어 있기 때문에 Package 간 공유가 쉽지 않다. 그렇기 때문에 중복 코드가 발생할 가능성이 있는데 <code>Mono-Repo</code>의 경우엔 하나의 Repository이기 때문에 패키지 간 공유가 수월하며 중복 코드 역시 발생할 염려가 없다.</li>
+</ul>
+</li>
+<li><p><strong>단일 이슈 트래킹</strong></p>
+<ul>
+<li>하나의 Repository에 패키지가 <code>Mono-Repo</code>로 구성되었다면 그 패키지의 모든 종속된 패키지는 서로 연관 관계를 가질 수 있다. 이로 인해서 이슈 트래킹은 분산 없이 하나로 처리가 가능하며 <code>Mono-Repo</code>는 이를 지원한다.</li>
+</ul>
+</li>
+<li><p><strong>효율적인 의존성 관리</strong></p>
+<ul>
+<li>전체 Package의 의존 관계가 하나의 Repository에서 이루어지기 때문에 Package 간 의존성 관리가 수월해 진다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="단점-1"><a href="#단점-1" class="headerlink" title="단점"></a>단점</h2><ul>
+<li><p><strong>Repository의 거대화</strong></p>
+<ul>
+<li>분산되어 있던 모든 리소스를 하나의 Repository에서 관리가 되기 때문에 하나의 Repository의 규모가 커진다. 이로 인한 문제들은 나비효과처럼 커질 가능성을 보인다.</li>
+</ul>
+</li>
+<li><p><strong>느린 CI Build</strong></p>
+<ul>
+<li><code>Multi-Repo</code>와 반대로 Repository가 하나로 되어 있기 때문에 <code>CI가 하나로 구성된다는 장점</code>이 있지만, Package가 규모가 커짐으로 인해 분산된 CI Build보다 속도가 느릴 수밖에 없다.</li>
+</ul>
+</li>
+<li><p><strong>무분별한 의존성</strong></p>
+<ul>
+<li>Package 간 의존성 관리가 쉽다는 장점이 있지만, 오히려 이러한 장점으로 인해 과도한 의존 관계가 나타날 수 있다.</li>
+</ul>
+</li>
+<li><p><strong>Dev Tools의 인덱싱 저하</strong></p>
+<ul>
+<li>개발 도구를 사용할 때 Package가 분산되어있다면 각각의 Package를 열어 사용하면 되지만 <code>Mono-Repo</code>의 경우는 하나의 개발 도구로 열 경우 해당 Package의 인덱싱 처리 속도가 길어진다.</li>
+</ul>
+</li>
+</ul>
+<p>위 내용을 얼추 보면 <code>Mono-Repo</code>의 장점은 <code>Multi-Repo</code>의 단점이고 <code>Multi-Repo</code>의 장점은 <code>Mono-Repo</code>의 단점이라는 것을 알 수 있다. 이렇게 장단점이 교차하기 때문에 무조건 <code>Mono-Repo</code>가 좋은 것은 아니다. 어떤 상황에서는 <code>Multi-Repo</code>가 빛을 발하는 경우가 있을 것이다.</p>
+<h2 id="Quasar-Framework의-Mono-Repo"><a href="#Quasar-Framework의-Mono-Repo" class="headerlink" title="Quasar Framework의 Mono-Repo"></a>Quasar Framework의 Mono-Repo</h2><p>Desktop, Mobile을 지원하며 <code>Vue 기반의 Framework</code>인 <code>Quasar의</code> 구조를 보자. <code>Quasar</code>의 경우 최초에는 <code>Mono-Repo</code>로 구성되어 있진 않았지만, CLI, Extras 등 기능이 확장됨에 따라 <code>Mono-Repo</code>로 구성이 변경되었다.<br><code>lerna</code>를 사용하진 않았지만 구조는 <code>Mono-Repo</code>라는 것을 알 수 있다.</p>
+<h2 id="규모가-큰-Mono-Repo의-대표적인-사례"><a href="#규모가-큰-Mono-Repo의-대표적인-사례" class="headerlink" title="규모가 큰 Mono-Repo의 대표적인 사례"></a>규모가 큰 Mono-Repo의 대표적인 사례</h2><p>사실 <code>Mono-Repo</code>가 활성화되는 시점은 이 사례부터일지도 모른다. 이 사례를 통해서 <code>Mono-Repo</code>를 보장한다고 볼 수 있다.</p>
+<div class="alert info no-icon"><ul>
+<li><p><strong>Google</strong></p>
+<ul>
+<li>초기 Google은 중앙 집중식 소스 제어 시스템을 통해 관리되는 공유 코드 베이스로 작업하기로 결정했다. 이 접근 방식은 16년 이상 Google에 좋은 서비스를 제공해 왔으며, 오늘날 Google의 소프트웨어 대부분이 <code>Mono-Repo</code>로 구성되어있다. 대표적인 예로 Google은 <a target="_blank" rel="noopener" href="https://bazel.build/">Bazel</a>을 빌드 시스템으로 사용하며, <code>Mono-Repo</code>로 구성되어있다.</li>
+</ul>
+</li>
+<li><p><strong>Facebook</strong></p>
+<ul>
+<li>수십만 개의 파일에 대해 매주 수천 개의 커밋이 있는 Facebook의 기본 소스 저장소는 Linux 커널보다 훨씬 더 크다. 대표적으로 <a target="_blank" rel="noopener" href="https://buck.build/">Buck</a> 및 <a target="_blank" rel="noopener" href="https://engineering.fb.com/core-data/scaling-mercurial-at-facebook/">Scaling Mercurial</a>이 있다.</li>
+</ul>
+</li>
+<li><p><strong>Twitter</strong></p>
+<ul>
+<li>Twitter에는 확장이 가능한 <code>Mono-Repo</code> Build System인 <a target="_blank" rel="noopener" href="https://www.pantsbuild.org/docs/welcome-to-pants">Pants</a>를 제공하고 있다.</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+<h2 id="Mono-Repo는-언제-사용해야할까"><a href="#Mono-Repo는-언제-사용해야할까" class="headerlink" title="Mono-Repo는 언제 사용해야할까?"></a>Mono-Repo는 언제 사용해야할까?</h2><p><code>Mono-Repo</code>를 구성하는 적절한 시기는 정확하지 않다. 그러므로 구글링 자체로도 정보를 얻기엔 힘든 부분이 있다.<br>이러한 이유는 모든 프로젝트와 Package의 구조가 규모, 형태, 구조가 모두 다르기 때문이다. 하지만 아래와 같은 상황이라면 <code>Mono-Repo</code>를 구성해도 좋다.</p>
+<div class="alert info no-icon"><ol>
+<li>서로 다른 패키지가 연관 관계를 가질 경우</li>
+<li>첫 번째 항목이 고려된 상황에서 <strong>N개의 패키지의 형태와 목적이 유사</strong>한 경우</li>
+<li>두 번째 항목이 고려된 상황에서 <strong>N개의 패키지 중 배포되어야 할 패키지의 비중이 큰</strong> 경우</li>
+</ol>
+</div>
+
+<p>이 외에 애매한 경우는 Package의 규모이다. Package의 클수록 개발 및 Build 등 Mono-Repo로 투자되는 비용이 많이 들기에 적당한 규모를 찾아야 하는데 이는 설계자 또는 개발자 역량에 따라 다르기 때문에 참고하기 바란다.</p>
+<hr>
+<p>지금까지 <code>Mono-Repo</code>에 대해서 알아보았다. 단순하게 <code>Mono-Repo</code>를 알고 구성하는 것은 어렵지 않지만 빠른 Scaffolding과 빠른 배포, 그리고 좀 더 효율적인 종속성 관리가 필요하다.<br>이를 위해 필요한 기능을 가진 모듈을 찾아 설치하고 설정하고 우리가 원하는 대로 처리 할 수 있고 이런 과정은 <code>lerna</code>가 처리해준다.</p>
+<p>즉, <em>Lerna는 <code>Mono-Repo</code>를 위한 <code>CLI 도구</code>이다.</em></p>
+<h1 id="Lerna"><a href="#Lerna" class="headerlink" title="Lerna"></a>Lerna</h1><p><code>lerna</code>는 <strong>Git과 NPM을 사용하여 MOno-Repo 관리와 Workflow를 최적화는 도구</strong>이고, 발음상 러나 또는 레르나라고 읽을 수 있다.</p>
+<blockquote>
+<p><code>lerna</code>의 BI는 Lernaean Hydra 또는 Lerna의 Hydra로 알려진 그리스 신화 생물이고, 많은 머리를 가지고 있었는데 그 정확한 수는 출처에 따라 다르다. 가장 최근의 Hydra 신화에서는 괴물에 재생 능력이 추가되어 머리가 잘릴 때마다 머리가 두 개씩 다시 자라난다고 한다.</p>
+</blockquote>
+<h2 id="특징"><a href="#특징" class="headerlink" title="특징"></a>특징</h2><p><code>lerna</code>의 특징은 <code>Mono-Repo</code>를 구성하고 배포하는 데 중점에 둔 기능으로 볼 수 있다.</p>
+<ul>
+<li><p><strong>다중 패키지의 종속성 관리 및 모듈의 중복성 제거</strong></p>
+<ul>
+<li>lerna를 사용하여 node module을 설치할 경우 자체적으로 패키지들의 모듈을 설치하며, 그 과정에서 종속성을 관리하여 중복된 모듈을 하나로 통합한다.</li>
+</ul>
+</li>
+<li><p><strong>다중 패키지의 단일 버전 및 독립적 버전 관리</strong></p>
+<ul>
+<li><code>Mono-Repo</code>의 구성을 따르면 여러 개의 Package로 구성된다. 이런 Package는 어떤 상황에서 하나의 버전 정책을 가져갈 수 있지만, 또 어떤 경우에는 서로 독립적인 버전 정책을 가져가야 하는 경우가 있는데 <code>lerna</code>는 이러한 기능을 지원하여 버전 정책을 정할 수 있다.</li>
+</ul>
+</li>
+<li><p><strong>변경된 패키지를 일괄적으로 GIt Remote Repository에 Push</strong></p>
+<ul>
+<li>여러 Package가 수정되었다면 Package 별로 Git Remote Repository에 commit과 push를 할 필요가 없다. <code>lerna</code>를 사용하면 단 한 번의 commit과 push로 Remote Repository에 반영할 수 있다.</li>
+</ul>
+</li>
+<li><p><strong>변경된 패키지를 일괄적으로 NPM Repository에 Publish</strong></p>
+<ul>
+<li>NPM Repository에 node module을 배포하기 위해서 <code>publish</code> 명령을 사용한다. <code>Mono-Repo</code>에서 각 Package를 NPM Repository에 배포하기 위해서 하나하나 publish를 입력할 필요가 없다. <strong>단 한 번의 publish로 변경 사항이 있는 Package만 배포</strong>가 될 것이다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Lerna-기반의-Mono-Repo"><a href="#Lerna-기반의-Mono-Repo" class="headerlink" title="Lerna 기반의 Mono-Repo"></a>Lerna 기반의 Mono-Repo</h2><p>앞서 설명했듯이 이미 많은 오픈 소스들이 <code>Mono-Repo</code>를 채택하였고 이를 위해 <code>lerna</code>를 사용하였다. 그렇다면 Lerna를 실제로 사용한 오픈소스에는 어떤 것들이 있을까?</p>
+<div class="alert info no-icon"><ul>
+<li>Babel</li>
+<li>vue-cli</li>
+<li>jest</li>
+<li>nuxt.js</li>
+<li>nuxt.js</li>
+<li>webdriverio</li>
+<li>create-react-app</li>
+<li>create-nuxt-app</li>
+<li>webpack-cli</li>
+<li>graphql-server</li>
+<li>typescript-eslint</li>
+<li>react-router</li>
+</ul>
+</div>
+
+<p><code>Bable</code>은 <code>lerna</code> 도입의 선두주자이고 bable의 파생 모듈은 매우 많기 때문에 <code>Mono-Repo</code>로써 적합하다고 볼 수 있다. </p>
+<h2 id="lerna의-활동"><a href="#lerna의-활동" class="headerlink" title="lerna의 활동"></a>lerna의 활동</h2><p><a target="_blank" rel="noopener" href="https://openbase.io/js/lerna">OpenBase-lerna</a>에서 lerna의 활동 상태를 확인해보자.</p>
+<p>현재 3.22.x 버전까지 릴리즈가 된 상태이고 다운로드 수와 start가 점차 증가하는 것을 볼 수 있다. 하지만 개인적으로 버전이 3.x에 비해 안정적이진 않다고 생각된다. 아래에서 설명을 할 테지만 현재로서는 npm보다 yarn에 적합함을 보이고 이슈 생성과 PR의 요청이 많을 것으로 보아 앞으로 개발이 필요한 사항이 많아 보인다.</p>
+<p><img src="/2020/08/25/mono-repo-lerna/openbase-lerna.png" alt="openbase-lerna"></p>
+<h2 id="lerna의-구조"><a href="#lerna의-구조" class="headerlink" title="lerna의 구조"></a>lerna의 구조</h2><p><code>lerna</code>의 기본 구조는 Root 경로 아래 <code>packages</code> 폴더가 있고 그 하위에 각 package 별 폴더가 생성된다. <code>pacakges</code> 폴더는 기본값이며 설정에 따라 유동적으로 변경할 수 있다. 각 pacakge 폴더는 package 별 이름을 지정할 수 있으며 각각의 packages에는 <code>package.json</code>이 명시되는 것처럼 <strong>하나의 모듈로 간주</strong>한다.</p>
+<p>Root 경로에 있는 <code>pacakge.json</code>에는 모든 package가 공통으로 사용되는 <code>dependencies</code>가 명시되는 등 공통 항목이 나열된다. </p>
+<p><img src="/2020/08/25/mono-repo-lerna/lerna-file-structure.png" alt="lerna-file-structure"></p>
+<h2 id="lerna의-주요-기능"><a href="#lerna의-주요-기능" class="headerlink" title="lerna의 주요 기능"></a>lerna의 주요 기능</h2><h3 id="Fixed-Mode"><a href="#Fixed-Mode" class="headerlink" title="Fixed Mode"></a>Fixed Mode</h3><ul>
+<li>다중 패키지의 버전이 <code>단일 버전 라인</code>에서 작동하며 관리</li>
+<li>버전은 프로젝트 Root에서 관리되며 lerna publish를 실행할 경우 새 버전으로 패키지를 게시</li>
+<li>하나의 패키지가 수정되더라도 모든 패키지는 새로운 버전을 게시</li>
+</ul>
+<h3 id="Independent-Mode"><a href="#Independent-Mode" class="headerlink" title="Independent Mode"></a>Independent Mode</h3><ul>
+<li>패키지의 유지 관리자가 서로 <code>독립적으로 패키지 버전을 관리</code></li>
+<li>lerna publish 시 변경된 패키지에 대해서만 새 버전을 업데이트</li>
+<li>버전은 각 패키지의 package.json에 명시</li>
+</ul>
+<h3 id="Hoisting"><a href="#Hoisting" class="headerlink" title="Hoisting"></a>Hoisting</h3><ul>
+<li>다중 패키지에서 사용되는 node module을 최적화하여 중복되는 node module을 최상위 경로로 재구축</li>
+<li>공통 종속성을 최상위 수준에서만 설치되며 개별 패키지는 생략</li>
+</ul>
+<p><img src="/2020/08/25/mono-repo-lerna/lerna-hoisting.png" alt="lerna-hoisting"></p>
+<p>그림에서 보듯이 <code>hoist</code>를 통해서 node_module을 최적화하여 중복되는 모듈을(B (1.0)))을 최상위로 재구축한다.</p>
+<h3 id="Yarn-Workspace"><a href="#Yarn-Workspace" class="headerlink" title="Yarn Workspace"></a>Yarn Workspace</h3><ul>
+<li>Yarn은 유일하게 Mono-Repo 기능을 지원하고 <code>Yarn Workspace의 목적은 Mono-Repo의 Workflow를 용이</code>하게 하는 것이다.</li>
+<li>Yarn Workspace를 통해 각 패키지는 서로 참조하는 연관 관계를 가질 수 있다.</li>
+<li>NPM은 Version 7부터 worksapce 개념이 제공될 예정</li>
+</ul>
+<h2 id="lerna-주요-명령어"><a href="#lerna-주요-명령어" class="headerlink" title="lerna 주요 명령어"></a>lerna 주요 명령어</h2><p><code>lerna</code>의 핵심 명령어는 <code>bootstrap</code>과 <code>publish</code>이다. <code>bootstrap</code>을 통해서 모든 package에 node module을 설치하며 최적화를 통해 중복된 모듈을 정리해준다. <code>publish</code>는 <code>npm publish</code>와 동일한 기능을 하지만 <code>lerna</code>에서는 모든 pacakge를 대상으로 한 번의 명령어로 배포할 수 있다.</p>
+<p>이 외의 핵심 명령어는 아래 내용을 참고하고 자세한 옵션은 <a target="_blank" rel="noopener" href="https://github.com/lerna/lerna">Lerna 공식 사이드</a>를 참고하자.</p>
+<h3 id="lerna-clean"><a href="#lerna-clean" class="headerlink" title="lerna clean"></a>lerna clean</h3><ul>
+<li>Root를 제외한 package에서 node_module을 제거한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna clean<br></code></pre></td></tr></table></figure>
+<h3 id="lerna-bootstrap"><a href="#lerna-bootstrap" class="headerlink" title="lerna bootstrap"></a>lerna bootstrap</h3><ul>
+<li>모든 패키지의 node_module을 설치한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna bootstrap<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="lerna-run"><a href="#lerna-run" class="headerlink" title="lerna run"></a>lerna run</h3><ul>
+<li>각 패키지의 package.json에 명시된 script를 실행한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna run<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="lerna-publish"><a href="#lerna-publish" class="headerlink" title="lerna publish"></a>lerna publish</h3><ul>
+<li>마지막 릴리즈 이후 업데이트 된 패키지를 배포한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna publish<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="lerna-exec"><a href="#lerna-exec" class="headerlink" title="lerna exec"></a>lerna exec</h3><ul>
+<li>각 패키지에서 임의의 커맨드 명령어를 실행한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna <span class="hljs-built_in">exec</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<p>여기까지 해서 <code>Mono-Repo</code>와 <code>lerna</code>에 대해 개념부터 파악을 하였다. 사실상 <code>lerna</code>의 명령어는 몇 개 안되지만 이대로 진행하더라도 정확하게 개념을 파악하기는 어렵다. 생각지도 못한 오류와 예상 밖으로 명령어가 실행되기 때문이다.</p>
+<p>그렇기 때문에 다음 섹션에서는 <code>lerna를 활용한 Log 출력 패키지 예제</code>로 <code>lerna</code>와 <code>Mono-Repo</code>의 전체적인 흐름을 파악해 보자.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/git/" rel="tag">git</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna/" rel="tag">lerna</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-example/" rel="tag">lerna example</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-tutorial/" rel="tag">lerna tutorial</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mono-repo/" rel="tag">mono-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/multi-repo/" rel="tag">multi-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/poly-repo/" rel="tag">poly-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/repository/" rel="tag">repository</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/27/mono-repo-lerna-example/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악"
+                    aria-label="PREVIOUS: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/web-icon-font/"
+                    data-tooltip="Web Icon Font 제작 방법을 배워보자!"
+                    aria-label="NEXT: Web Icon Font 제작 방법을 배워보자!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/27/mono-repo-lerna-example/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악"
+                    aria-label="PREVIOUS: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/web-icon-font/"
+                    data-tooltip="Web Icon Font 제작 방법을 배워보자!"
+                    aria-label="NEXT: Web Icon Font 제작 방법을 배워보자!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/mono-repo-lerna/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/08/25/mono-repo-lerna/';
+              
+            this.page.identifier = 'mono-repo-lerna';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

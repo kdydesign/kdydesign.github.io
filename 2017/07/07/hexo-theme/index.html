@@ -1,0 +1,815 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2017/07/07/hexo-theme/"/>
+    
+        <meta name="keywords" content="hexo blog,hexo theme,hexo 블로그,hexo 테마,javascript,nodejs,hexo,git,github,githubio,blog,블로그,블로그 만들기,github page,github 블로그,github 블로그 hexo,hexo page,hexo new post,jekyll">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nhexo와 github page에 테마를 입히는 것이 hexo와 github page를 사용하여 블로그를 구축하는 것보다 어려울 수 있다. 일단 Document가 한글이 아니기 때문인데 먼저 이 포스트에서 하나의 테마를 잡아 적용을 해보고 원하는 테마를 골라서 별도로 적용해보자.\n\nHexo 테마 선택하기먼저 테마가 어떤 것들이 있는지 살펴보자.Hexo Theme에서 개발자들이 hexo를 사용하여 만든 테마 목록을 확인하고 다운받을 수 있다. 물론 우리도 hexo 테마를 제작할 수 있다.\n대충 둘러보면 알겠지만 그저 그런 테마들이 아니다. 모두 개인의 Identity가 들어가 있는 디자인뿐만 아니라 더 나아가 반응형 디자인으로 제작되어 있다. 이 반응형 디자인으로 인해 우리는 하나의 페이지를 모바일에서 볼 때와 PC 브라우저에서 볼 때 모두 다른 형태의 UI, UX로 보이는 것이다. 훌륭하다. 우린 그저 가져다 쓰기만 하면 된다.\n이 훌륭한 테마 중 우리는 Clean Blog를 선택하고 적용해 보자. 이 Clean Blog는 매우 깔끔한 디자인을 가지고 있고 jekyll에서도 지원하는 블로그 테마이다.\n\nHexo 테마 설치하기처음에 말했듯이 테마들은 모두 오픈소스로 되어있다. 그리고 그 오픈소스들은 github에 올려져 있다. 우리는 Hexo와 Github Page로 시작하는 블로그 만들기에서 블로그를 구축하며 대충 배워 본 git과 github사용 방법을 통해 테마 역시 github에서 git을 통해 다운 받을 것이다.\nClean Blog Github에 가보면 Clean Blog를 적용하는데 필요한 프로젝와 적용 방법과 기타 기능들에 대한 설명이 나와있다. 여기만 잘 읽고 따라하면 문제없이 적용된다. 물론 영어지만.\n이전에 Hexo와 Github Page로 시작하는 블로그 만들기 포스팅에서 만들어 놓은 폴더 경로로 이동하자. 해당 폴더에 가면 themes라는 폴더가 존재할 것이다. 이 themes 경로로 가보면 처음에 hexo 블로그를 만들 때 기본으로 적용되는 landscape테마가 있다. themes경로에는 여러 개의 테마 폴더가 존재해도 상관없다 hexo에서 설정된 단 하나의 테마만 적용된다. 그리고 themes 경로에서 마우스 우클릭을 눌러 Git Bash Here메뉴를 클릭하자. 이후에 실행되는 git bash창에 명령어를 입력하여 github에 있는 소스를 다운받자.\ngit clone https://github.com/klugjo/hexo-theme-clean-blog.git\n\n또는 Clean Blog Github에서 우측 상단에 Clone or download버튼을 통해 zip 압축파일로 다운받을 수 있다.\n\n다운을 받게 되면 themes경로 안에 hexo-theme-clean-blog라는 폴더가 생성되었을 것이다. 이 폴더명을 clean-blog로 변경해 주자.\n테마 소스 구조 살펴보기잠깐 테마의 소스들이 어떻게 구성되어있는지 보자. \n\n\n\nFile\nDescription\n\n\n\nlanguage\nblog를 구성하는 다국어 파일\n\n\nlayout\nblog를 구성하는 파일\n\n\nsource\nblog 구성에 필요한 리소스 파일\n\n\n_config.yml\n해당 테마의 설정 파일\n\n\n대표적인 파일을 보게 되면 language, layout, source, _config.yml이다. 이 파일들은 대부분의 테마들이 가지고 있으며 _config.yml의 경우는 필수이다. hexo블로그를 구성하는 설정파일 역시 _config.yml파일이다. 두 파일을 혼동해서는 안된다.\n테마 설정하기우리는 themes/clean-blog경로에 있는 _config.yml을 수정하여 메뉴, 블로그 타이틀 등 블로그를 구성하는 내용들을 변경할 수 있다. _config.yml을 열어 원하는 내용대로 수정하자. 설정 파일의 내용은 아래 주석을 보자.\n# Headermenu:  Home: /                               #메인 페이지 경로   Archives: /archives                   #Archives 메뉴 경로  Tags: /tags                           #tags 메뉴 경로  Categories: /categories               #categories 메뉴 경로  Github:    url: https://github.com/klugjo/hexo-theme-clean-blog             #사용자 github url                          icon: github               #github icon# Title on top left of menu. Leave empty to use main blog titlemenu_title: Configurable Title          #좌측 상단 메뉴 타이틀# URL of the Home page imageindex_cover: http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg       #커버 이미지 경로# Default post titledefault_post_title: Untitled             #포스트 생성 시 기본 타이틀# Comments. Choose one by filling up the informationcomments:# Disqus commentsdisqus_shortname:# Facebook commentsfacebook:  appid:                #사용자 facebook app id  comment_count: 5  comment_colorscheme: light# Google Analytics Tracking IDgoogle_analytics:         #사용자 google analytics id# Addthis IDaddthis:                  #사용자 addthis id# set your own faviconfavicon:                  #브라우저 탭에 표시된 favicon 이미지 경로# Social Accountstwitter_url:              #사용자 twitter urltwitter_handle:facebook_url:             #사용자 facebook urlgithub_url: https://github.com/klugjo/hexo-theme-clean-blog         #사용자 github urlgitlab_url:               #사용자 gitlab urllinkedin_url:             #사용자 linkin urlmailto:                   #사용자 메일\n\n\n여기까지가 hexo clean-blog에 대한 설정이고 이제 hexo블로그 자체의 설정을 변경해 보자.블로그가 존재하는 최상위 폴더로 이동해서 hexo블로그의 설정 파일인 _config.yml을 열어 수정하자.\n# Sitetitle: title                   #블로그 메인 타이틀 입력subtitle: subtitle             #블로그 서브 타이틀 입력description: description       #블로그 설명keywords: keywords             #블로그 키워드author: author                 #블로그 관리자 이름language: en                   #블로그 언어(한국어 지원은 없으므로 en인 영어로 하자.)timezone:# URL## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;url: https://[계정이름].github.io\n\n_config.yml이 hexo 기본 구조와 themes에 동일하게 포함되어 있어서 혼동할 수 있다. 정리를 해보면..\n\n블로그 폴더 경로의 _config.yml - hexo 블로그 전반적인 설정\nthemes&#x2F;테마 폴더 경로의 _config.yml - hexo 블로그에 적용된 테마의 설정\n\n\n\nTags 페이지 만들기Tags페이지를 만들어 tag들을 관리하자. tags페이지는 post를 작성할 때와 비슷한 명령어를 사용한다. 우리는 페이지를 만들 것이기 때문에 post가 아닌 page를 사용하면 된다.\n$ hexo new page &quot;tags&quot;\n\npage를 생성하게 되면 source경로에 tags라는 폴더가 생기고 index.md라는 markdown파일이 생성된다. 이 index.md파일을 열어 아래와 같이 수정하고 저장하다.\n---title: All tagstype: &quot;tags&quot;---\n\nCatetories 페이지 만들기Categories페이지도 Tags페이지와 동일하게 만들면 된다.\nhexo new page &quot;categories&quot;\n\n---title: All tagstype: &quot;categories&quot;---\n\nPost 쓰기이제 어느 정도 테마의 설정이 끝났다. 이제 실제로 포스트를 써보도록 하자.\nhexo new post &quot;post-clean-blog&quot;\n\npost파일을 생성하고 수정하자.\n---title: &quot;Clean-blog 테마를 적용하다.&quot;           #post 제목date: 2017-07-07 00:23:23                     #post 생성 날짜tags: [&quot;hexo&quot;, &quot;clean-blog&quot;, &quot;theme&quot;]         #tagscover: /assets/contact-bg.jpg                 #post 커버 이미지subtitle: &quot;처음으로 테마를 적용해보다.&quot;         #post 부제---\n\npost를 작성하는 md파일에서 상단에 들어가는 post와 관련된 설정값들이다. 적당하게 입력하도록 한다.\n테마 적용하기hexo테마인 clean-blog를 다운받았으면 이제 실제로 hexo블로그에서 이 테마를 사용하겠다는 언급을 해줘야 한다. 블로그 최상위 폴더로 이동하여 _config.yml파일을 열어 아래처럼 수정하자.\n# Extensions## Plugins: https://hexo.io/plugins/## Themes: https://hexo.io/themes/theme: clean-blog\n\n그다음 hexo 명령어를 통해 다시 markup으로 변환하고 로컬에서 확인해 보자. hexo server포트는 4000번이므로 http://localhost:4000으로 접속하자.\nhexo ghexo server\n\n\nhexo가 jekyll보다는 많은 테마를 제공하지는 않지만 그래도 나름대로의 깔끔한 테마들이 넘치기에 테마를 적용하는 데는 문제가 없다. 다만 그 테마를 적용하기 위해서는 테마의 설정 파일은 _config.yml을 다룰 줄 알아야 하고 그 테마의 Document를 봐야한다. 물론 영어라 파악하기가 쉽지만은 않겠지만(난 그렇다.ㅠㅠ) 내가 원하는 테마를 처음에 구축해 놓으면 그 이후부터 포스팅은 복붙이기에 어렵지 않게 느낄 것이다.\n\n더 알아보기Firebase를 활용한 PWA(Progressive Web App) 앱 만들기Hexo와 Github page로 시작하는 블로그 만들기\n","dateCreated":"2017-07-07T23:04:19+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2017-07-07T23:04:19+00:00","description":"\nhexo와 github page를 이용하여 만든 블로그에 아름다움을 입혀보자. hexo는 jeykyll과 마찬가지로 블로그에 테마를 입힐 수 있다. hexo와 github page에 테마를 입히는 데 어려움은 없지만 테마가 개발자 개개인이 오픈소스로 만들어 제공하기 때문에 테마마다 사용이나 설정법이 약간 다를 수 있다.\n","headline":"Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/07/07/hexo-theme/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2017/07/07/hexo-theme/","keywords":"hexo, git, github, 블로그, hexo theme","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="hexo와 github page를 이용하여 만든 블로그에 아름다움을 입혀보자. hexo는 jeykyll과 마찬가지로 블로그에 테마를 입힐 수 있다. hexo와 github page에 테마를 입히는 데 어려움은 없지만 테마가 개발자 개개인이 오픈소스로 만들어 제공하기 때문에 테마마다 사용이나 설정법이 약간 다를 수 있다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기">
+<meta property="og:url" content="https://kdydesign.github.io/2017/07/07/hexo-theme/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="hexo와 github page를 이용하여 만든 블로그에 아름다움을 입혀보자. hexo는 jeykyll과 마찬가지로 블로그에 테마를 입힐 수 있다. hexo와 github page에 테마를 입히는 데 어려움은 없지만 테마가 개발자 개개인이 오픈소스로 만들어 제공하기 때문에 테마마다 사용이나 설정법이 약간 다를 수 있다.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2017/07/07/hexo-theme/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/07/07/hexo-theme/thumb02.png">
+<meta property="og:image" content="https://kdydesign.github.io/2017/07/07/hexo-theme/thumb01.png">
+<meta property="article:published_time" content="2017-07-07T23:04:19.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.785Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="hexo">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="github">
+<meta property="article:tag" content="블로그">
+<meta property="article:tag" content="hexo theme">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2017/07/07/hexo-theme/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2017/07/07/hexo-theme/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2017/07/07/hexo-theme/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Hexo와 Github page로 만든 블로그에 Hexo 테마 적용하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-07-07T23:04:19+00:00">
+	
+		    2017-07-07
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/hexo/">hexo</a>, <a class="category-link" href="/categories/javascript/nodejs/hexo/github/">github</a>, <a class="category-link" href="/categories/javascript/nodejs/hexo/github/theme/">theme</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2017/07/07/hexo-theme/cover.png" alt="cover"></p>
+<p><code>hexo</code>와 <code>github page</code>에 테마를 입히는 것이 <code>hexo</code>와 <code>github page</code>를 사용하여 블로그를 구축하는 것보다 어려울 수 있다. 일단 <strong>Document가 한글이 아니기 때문</strong>인데 먼저 이 포스트에서 하나의 테마를 잡아 적용을 해보고 원하는 테마를 골라서 별도로 적용해보자.</p>
+<hr>
+<h2 id="Hexo-테마-선택하기"><a href="#Hexo-테마-선택하기" class="headerlink" title="Hexo 테마 선택하기"></a>Hexo 테마 선택하기</h2><p>먼저 테마가 어떤 것들이 있는지 살펴보자.<br><a target="_blank" rel="noopener" href="https://hexo.io/themes/index.html">Hexo Theme</a>에서 개발자들이 <code>hexo</code>를 사용하여 만든 테마 목록을 확인하고 다운받을 수 있다. 물론 우리도 <code>hexo</code> 테마를 제작할 수 있다.</p>
+<p>대충 둘러보면 알겠지만 그저 그런 테마들이 아니다. 모두 개인의 <code>Identity</code>가 들어가 있는 디자인뿐만 아니라 더 나아가 <code>반응형 디자인</code>으로 제작되어 있다. 이 <code>반응형 디자인</code>으로 인해 우리는 하나의 페이지를 모바일에서 볼 때와 PC 브라우저에서 볼 때 모두 다른 형태의 UI, UX로 보이는 것이다. 훌륭하다. 우린 그저 가져다 쓰기만 하면 된다.</p>
+<p>이 훌륭한 테마 중 우리는 <a target="_blank" rel="noopener" href="http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/">Clean Blog</a>를 선택하고 적용해 보자. 이 <a target="_blank" rel="noopener" href="http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/">Clean Blog</a>는 매우 깔끔한 디자인을 가지고 있고 <code>jekyll</code>에서도 지원하는 블로그 테마이다.</p>
+<p><img src="/2017/07/07/hexo-theme/thumb02.png" alt="thumb02"></p>
+<h2 id="Hexo-테마-설치하기"><a href="#Hexo-테마-설치하기" class="headerlink" title="Hexo 테마 설치하기"></a>Hexo 테마 설치하기</h2><p>처음에 말했듯이 테마들은 모두 오픈소스로 되어있다. 그리고 그 오픈소스들은 <code>github</code>에 올려져 있다. 우리는 <a href="https://kdydesign.github.io/2017/07/07/hexo-theme/">Hexo와 Github Page로 시작하는 블로그 만들기</a>에서 블로그를 구축하며 대충 배워 본 <code>git</code>과 <code>github</code>사용 방법을 통해 테마 역시 <code>github</code>에서 <code>git</code>을 통해 다운 받을 것이다.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog Github</a>에 가보면 <code>Clean Blog</code>를 적용하는데 필요한 프로젝와 적용 방법과 기타 기능들에 대한 설명이 나와있다. 여기만 잘 읽고 따라하면 문제없이 적용된다. 물론 영어지만.</p>
+<p>이전에 <a href="https://kdydesign.github.io/2017/07/07/hexo-theme/">Hexo와 Github Page로 시작하는 블로그 만들기</a> 포스팅에서 만들어 놓은 폴더 경로로 이동하자. 해당 폴더에 가면 <code>themes</code>라는 폴더가 존재할 것이다. 이 <code>themes</code> 경로로 가보면 처음에 <code>hexo</code> 블로그를 만들 때 기본으로 적용되는 <code>landscape</code>테마가 있다. <code>themes</code>경로에는 여러 개의 테마 폴더가 존재해도 상관없다 <code>hexo</code>에서 설정된 단 하나의 테마만 적용된다. 그리고 <code>themes</code> 경로에서 <code>마우스 우클릭</code>을 눌러 <code>Git Bash Here</code>메뉴를 클릭하자. 이후에 실행되는 <code>git bash</code>창에 명령어를 입력하여 <code>github</code>에 있는 소스를 다운받자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> https://github.com/klugjo/hexo-theme-clean-blog.git<br></code></pre></td></tr></table></figure>
+
+<p>또는 <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog Github</a>에서 우측 상단에 <code>Clone or download</code>버튼을 통해 zip 압축파일로 다운받을 수 있다.</p>
+<p><img src="/2017/07/07/hexo-theme/thumb01.png" alt="thumb01"></p>
+<p>다운을 받게 되면 <code>themes</code>경로 안에 <code>hexo-theme-clean-blog</code>라는 폴더가 생성되었을 것이다. 이 폴더명을 <code>clean-blog</code>로 변경해 주자.</p>
+<h3 id="테마-소스-구조-살펴보기"><a href="#테마-소스-구조-살펴보기" class="headerlink" title="테마 소스 구조 살펴보기"></a>테마 소스 구조 살펴보기</h3><p>잠깐 테마의 소스들이 어떻게 구성되어있는지 보자. </p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>language</td>
+<td>blog를 구성하는 다국어 파일</td>
+</tr>
+<tr>
+<td>layout</td>
+<td>blog를 구성하는 파일</td>
+</tr>
+<tr>
+<td>source</td>
+<td>blog 구성에 필요한 리소스 파일</td>
+</tr>
+<tr>
+<td>_config.yml</td>
+<td>해당 테마의 설정 파일</td>
+</tr>
+</tbody></table>
+<p>대표적인 파일을 보게 되면 <code>language</code>, <code>layout</code>, <code>source</code>, <code>_config.yml</code>이다. 이 파일들은 대부분의 테마들이 가지고 있으며 <code>_config.yml</code>의 경우는 필수이다. <code>hexo</code>블로그를 구성하는 설정파일 역시 <code>_config.yml</code>파일이다. <strong>두 파일을 혼동해서는 안된다.</strong></p>
+<h2 id="테마-설정하기"><a href="#테마-설정하기" class="headerlink" title="테마 설정하기"></a>테마 설정하기</h2><p>우리는 <code>themes/clean-blog</code>경로에 있는 <code>_config.yml</code>을 수정하여 메뉴, 블로그 타이틀 등 블로그를 구성하는 내용들을 변경할 수 있다. <code>_config.yml</code>을 열어 원하는 내용대로 수정하자. 설정 파일의 내용은 아래 주석을 보자.</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Header</span><br><span class="hljs-attr">menu:</span><br>  <span class="hljs-attr">Home:</span> <span class="hljs-string">/</span>                               <span class="hljs-comment">#메인 페이지 경로 </span><br>  <span class="hljs-attr">Archives:</span> <span class="hljs-string">/archives</span>                   <span class="hljs-comment">#Archives 메뉴 경로</span><br>  <span class="hljs-attr">Tags:</span> <span class="hljs-string">/tags</span>                           <span class="hljs-comment">#tags 메뉴 경로</span><br>  <span class="hljs-attr">Categories:</span> <span class="hljs-string">/categories</span>               <span class="hljs-comment">#categories 메뉴 경로</span><br>  <span class="hljs-attr">Github:</span><br>    <span class="hljs-attr">url:</span> <span class="hljs-string">https://github.com/klugjo/hexo-theme-clean-blog</span>             <span class="hljs-comment">#사용자 github url                      </span><br>    <span class="hljs-attr">icon:</span> <span class="hljs-string">github</span>               <span class="hljs-comment">#github icon</span><br><br><span class="hljs-comment"># Title on top left of menu. Leave empty to use main blog title</span><br><span class="hljs-attr">menu_title:</span> <span class="hljs-string">Configurable</span> <span class="hljs-string">Title</span>          <span class="hljs-comment">#좌측 상단 메뉴 타이틀</span><br><br><span class="hljs-comment"># URL of the Home page image</span><br><span class="hljs-attr">index_cover:</span> <span class="hljs-string">http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg</span>       <span class="hljs-comment">#커버 이미지 경로</span><br><br><span class="hljs-comment"># Default post title</span><br><span class="hljs-attr">default_post_title:</span> <span class="hljs-string">Untitled</span>             <span class="hljs-comment">#포스트 생성 시 기본 타이틀</span><br><br><span class="hljs-comment"># Comments. Choose one by filling up the information</span><br><span class="hljs-attr">comments:</span><br><span class="hljs-comment"># Disqus comments</span><br><span class="hljs-attr">disqus_shortname:</span><br><span class="hljs-comment"># Facebook comments</span><br><span class="hljs-attr">facebook:</span><br>  <span class="hljs-attr">appid:</span>                <span class="hljs-comment">#사용자 facebook app id</span><br>  <span class="hljs-attr">comment_count:</span> <span class="hljs-number">5</span><br>  <span class="hljs-attr">comment_colorscheme:</span> <span class="hljs-string">light</span><br><br><span class="hljs-comment"># Google Analytics Tracking ID</span><br><span class="hljs-attr">google_analytics:</span>         <span class="hljs-comment">#사용자 google analytics id</span><br><br><span class="hljs-comment"># Addthis ID</span><br><span class="hljs-attr">addthis:</span>                  <span class="hljs-comment">#사용자 addthis id</span><br><br><span class="hljs-comment"># set your own favicon</span><br><span class="hljs-attr">favicon:</span>                  <span class="hljs-comment">#브라우저 탭에 표시된 favicon 이미지 경로</span><br><br><span class="hljs-comment"># Social Accounts</span><br><span class="hljs-attr">twitter_url:</span>              <span class="hljs-comment">#사용자 twitter url</span><br><span class="hljs-attr">twitter_handle:</span><br><span class="hljs-attr">facebook_url:</span>             <span class="hljs-comment">#사용자 facebook url</span><br><span class="hljs-attr">github_url:</span> <span class="hljs-string">https://github.com/klugjo/hexo-theme-clean-blog</span>         <span class="hljs-comment">#사용자 github url</span><br><span class="hljs-attr">gitlab_url:</span>               <span class="hljs-comment">#사용자 gitlab url</span><br><span class="hljs-attr">linkedin_url:</span>             <span class="hljs-comment">#사용자 linkin url</span><br><span class="hljs-attr">mailto:</span>                   <span class="hljs-comment">#사용자 메일</span><br></code></pre></td></tr></table></figure>
+
+
+<p>여기까지가 <code>hexo clean-blog</code>에 대한 설정이고 이제 <code>hexo</code>블로그 자체의 설정을 변경해 보자.<br>블로그가 존재하는 최상위 폴더로 이동해서 <code>hexo</code>블로그의 설정 파일인 <code>_config.yml</code>을 열어 수정하자.</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Site</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">title</span>                   <span class="hljs-comment">#블로그 메인 타이틀 입력</span><br><span class="hljs-attr">subtitle:</span> <span class="hljs-string">subtitle</span>             <span class="hljs-comment">#블로그 서브 타이틀 입력</span><br><span class="hljs-attr">description:</span> <span class="hljs-string">description</span>       <span class="hljs-comment">#블로그 설명</span><br><span class="hljs-attr">keywords:</span> <span class="hljs-string">keywords</span>             <span class="hljs-comment">#블로그 키워드</span><br><span class="hljs-attr">author:</span> <span class="hljs-string">author</span>                 <span class="hljs-comment">#블로그 관리자 이름</span><br><span class="hljs-attr">language:</span> <span class="hljs-string">en</span>                   <span class="hljs-comment">#블로그 언어(한국어 지원은 없으므로 en인 영어로 하자.)</span><br><span class="hljs-attr">timezone:</span><br><br><span class="hljs-comment"># URL</span><br><span class="hljs-comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span><br><span class="hljs-attr">url:</span> <span class="hljs-string">https://[계정이름].github.io</span><br></code></pre></td></tr></table></figure>
+
+<p><code>_config.yml</code>이 <code>hexo</code> 기본 구조와 <code>themes</code>에 동일하게 포함되어 있어서 혼동할 수 있다. 정리를 해보면..</p>
+<div class="alert info no-icon"><ul>
+<li><strong>블로그 폴더 경로의 _config.yml</strong> - hexo 블로그 전반적인 설정</li>
+<li><strong>themes&#x2F;테마 폴더 경로의 _config.yml</strong> - hexo 블로그에 적용된 테마의 설정</li>
+</ul>
+</div>
+
+<h2 id="Tags-페이지-만들기"><a href="#Tags-페이지-만들기" class="headerlink" title="Tags 페이지 만들기"></a>Tags 페이지 만들기</h2><p><code>Tags</code>페이지를 만들어 <code>tag</code>들을 관리하자. <code>tags</code>페이지는 <code>post</code>를 작성할 때와 비슷한 명령어를 사용한다. 우리는 페이지를 만들 것이기 때문에 <code>post</code>가 아닌 <code>page</code>를 사용하면 된다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">$ hexo new page &quot;tags&quot;<br></code></pre></td></tr></table></figure>
+
+<p><code>page</code>를 생성하게 되면 <code>source</code>경로에 <code>tags</code>라는 폴더가 생기고 <code>index.md</code>라는 <code>markdown</code>파일이 생성된다. 이 <code>index.md</code>파일을 열어 아래와 같이 수정하고 저장하다.</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><code class="hljs markdown">---<br>title: All tags<br><span class="hljs-section">type: &quot;tags&quot;</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Catetories-페이지-만들기"><a href="#Catetories-페이지-만들기" class="headerlink" title="Catetories 페이지 만들기"></a>Catetories 페이지 만들기</h2><p><code>Categories</code>페이지도 <code>Tags</code>페이지와 동일하게 만들면 된다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">hexo new page <span class="hljs-string">&quot;categories&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight markdown"><table><tr><td class="code"><pre><code class="hljs markdown">---<br>title: All tags<br><span class="hljs-section">type: &quot;categories&quot;</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Post-쓰기"><a href="#Post-쓰기" class="headerlink" title="Post 쓰기"></a>Post 쓰기</h2><p>이제 어느 정도 테마의 설정이 끝났다. 이제 실제로 포스트를 써보도록 하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">hexo new post <span class="hljs-string">&quot;post-clean-blog&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><code>post</code>파일을 생성하고 수정하자.</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><code class="hljs markdown">---<br>title: &quot;Clean-blog 테마를 적용하다.&quot;           #post 제목<br>date: 2017-07-07 00:23:23                     #post 생성 날짜<br>tags: [&quot;hexo&quot;, &quot;clean-blog&quot;, &quot;theme&quot;]         #tags<br>cover: /assets/contact-bg.jpg                 #post 커버 이미지<br><span class="hljs-section">subtitle: &quot;처음으로 테마를 적용해보다.&quot;         #post 부제</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
+
+<p><code>post</code>를 작성하는 <code>md</code>파일에서 상단에 들어가는 <code>post</code>와 관련된 설정값들이다. 적당하게 입력하도록 한다.</p>
+<h2 id="테마-적용하기"><a href="#테마-적용하기" class="headerlink" title="테마 적용하기"></a>테마 적용하기</h2><p><code>hexo</code>테마인 <code>clean-blog</code>를 다운받았으면 이제 실제로 <code>hexo</code>블로그에서 이 테마를 사용하겠다는 언급을 해줘야 한다. 블로그 최상위 폴더로 이동하여 <code>_config.yml</code>파일을 열어 아래처럼 수정하자.</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># Extensions</span><br><span class="hljs-comment">## Plugins: https://hexo.io/plugins/</span><br><span class="hljs-comment">## Themes: https://hexo.io/themes/</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">clean-blog</span><br></code></pre></td></tr></table></figure>
+
+<p>그다음 <code>hexo</code> 명령어를 통해 다시 <code>markup</code>으로 변환하고 로컬에서 확인해 보자. <code>hexo server</code>포트는 4000번이므로 <a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000</a>으로 접속하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">hexo g<br>hexo server<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p><code>hexo</code>가 <code>jekyll</code>보다는 많은 테마를 제공하지는 않지만 그래도 나름대로의 깔끔한 테마들이 넘치기에 테마를 적용하는 데는 문제가 없다. 다만 그 테마를 적용하기 위해서는 테마의 설정 파일은 <code>_config.yml</code>을 다룰 줄 알아야 하고 그 테마의 Document를 봐야한다. 물론 영어라 파악하기가 쉽지만은 않겠지만(난 그렇다.ㅠㅠ) 내가 원하는 테마를 처음에 구축해 놓으면 그 이후부터 포스팅은 <code>복붙</code>이기에 어렵지 않게 느낄 것이다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/posts/hexo-blog.html">Hexo와 Github page로 시작하는 블로그 만들기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/git/" rel="tag">git</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/github/" rel="tag">github</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/hexo/" rel="tag">hexo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/hexo-theme/" rel="tag">hexo theme</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/%EB%B8%94%EB%A1%9C%EA%B7%B8/" rel="tag">블로그</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/07/15/nodejs-npm-tutorial/"
+                    data-tooltip="빠르게 배우는 Node.js와 NPM 설치부터 개념잡기"
+                    aria-label="PREVIOUS: 빠르게 배우는 Node.js와 NPM 설치부터 개념잡기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/23/hexo-blog/"
+                    data-tooltip="Hexo와 Github page로 시작하는 블로그 만들기"
+                    aria-label="NEXT: Hexo와 Github page로 시작하는 블로그 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/07/15/nodejs-npm-tutorial/"
+                    data-tooltip="빠르게 배우는 Node.js와 NPM 설치부터 개념잡기"
+                    aria-label="PREVIOUS: 빠르게 배우는 Node.js와 NPM 설치부터 개념잡기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/06/23/hexo-blog/"
+                    data-tooltip="Hexo와 Github page로 시작하는 블로그 만들기"
+                    aria-label="NEXT: Hexo와 Github page로 시작하는 블로그 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/07/07/hexo-theme/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2017/07/07/hexo-theme/';
+              
+            this.page.identifier = 'hexothemes01';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://kdydesign.github.io/</loc>
+        <changefreq>daily</changefreq>
+        <priority>1</priority>
+    </url>
+
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/11/04/webpack-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.849Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/07/27/webpack/</loc>
+        <lastmod>2023-12-19T00:27:17.849Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/08/25/web-icon-font/</loc>
+        <lastmod>2023-12-19T00:27:17.845Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/05/09/vuex-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.841Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/11/15/vuejs-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.837Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/</loc>
+        <lastmod>2023-12-19T00:27:17.837Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/10/vuejs-performance/</loc>
+        <lastmod>2023-12-19T00:27:17.833Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/</loc>
+        <lastmod>2023-12-19T00:27:17.833Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/27/vue-component/</loc>
+        <lastmod>2023-12-19T00:27:17.829Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2021/01/14/vue-eventbus-vs-vuex/</loc>
+        <lastmod>2023-12-19T00:27:17.829Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/10/vue-store-state/</loc>
+        <lastmod>2023-12-19T00:27:17.829Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.817Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/10/06/spa-route-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.809Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2023/12/13/tauri-story/</loc>
+        <lastmod>2023-12-19T00:27:17.809Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2023/11/24/vite-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.809Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/09/23/parcel-intro/</loc>
+        <lastmod>2023-12-19T00:27:17.805Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2023/09/25/pnpm-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.805Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/09/16/nvm-for-windows/</loc>
+        <lastmod>2023-12-19T00:27:17.801Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/10/19/open-source-flow/</loc>
+        <lastmod>2023-12-19T00:27:17.801Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.797Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.797Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/08/28/npm-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.797Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.797Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/08/25/mono-repo-lerna/</loc>
+        <lastmod>2023-12-19T00:27:17.793Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/11/27/lerna-changelog/</loc>
+        <lastmod>2023-12-19T00:27:17.789Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2023/10/08/module-system-bundler/</loc>
+        <lastmod>2023-12-19T00:27:17.789Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/</loc>
+        <lastmod>2023-12-19T00:27:17.789Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/07/07/hexo-theme/</loc>
+        <lastmod>2023-12-19T00:27:17.785Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/12/03/intellij-pair-programming/</loc>
+        <lastmod>2023-12-19T00:27:17.785Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/23/hexo-blog/</loc>
+        <lastmod>2023-12-19T00:27:17.781Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/04/15/electron-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.761Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.761Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2020/12/23/electron-ipc-communication/</loc>
+        <lastmod>2023-12-19T00:27:17.757Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2023/09/28/electron-rce/</loc>
+        <lastmod>2023-12-19T00:27:17.757Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2022/02/17/deno-tutorial/</loc>
+        <lastmod>2023-12-19T00:27:17.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/19/Mocha-step-08/</loc>
+        <lastmod>2023-12-19T00:27:17.749Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/21/Mocha-step-09/</loc>
+        <lastmod>2023-12-19T00:27:17.749Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/08/Mocha/</loc>
+        <lastmod>2023-12-19T00:27:17.749Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2019/05/12/css-preprocessor/</loc>
+        <lastmod>2023-12-19T00:27:17.749Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/15/Mocha-step-01/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/15/Mocha-step-02/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/16/Mocha-step-03/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/16/Mocha-step-04/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/16/Mocha-step-05/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/16/Mocha-step-06/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kdydesign.github.io/2017/06/19/Mocha-step-07/</loc>
+        <lastmod>2023-12-19T00:27:17.745Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+</urlset>
+<!-- XML Sitemap generated by Hexo SEO Friendly Sitemap Generator -->

@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"/>
+    
+        <meta name="keywords" content="javascript,lerna,mono-repo,multi-repo,poly-repo,lerna tutorial,mono-repo tutorial,multi-repo tutorial,git repository,git,lerna example,lerna sample,lerna publish,nuxt monorepo,git config 초기화,vue cli 버전 확인,도구 설명">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nLerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리 에서 Lerna와 Mono-Repo에 대한 개념을 잡았다면 이번 포스팅에서는 Lerna를 설치하고 주요 명령어 및 실제로 패키지를 만들고 배포까지 따라 하면서 완벽하게 Lerna와 Mono-Repo를 파악하자\n예제는 CLI를 통해 간단한 로그를 출력하는 패키지로 Lerna를 활용한 Mono-Repo 구조로 구축, 개발, 배포까지 진행할 것이다.\nlerna의 독립 모드의 경우 패키지의 버전을 독립적으로 가져가며 좀 더 까다로운 면이 있기 때문에 해당 예제에서는 lerna의 고정모드 (Fixed Mode)가 아닌 독립 모드(Independent Mode)로 구축할 것이다.또한 npm보다는 yarn을 추구하고 lerna와 좋은 궁합을 보이고 Yarn Workspace를 사용할 것이기 때문에 yarn을 사용할 것이다.\n\nCLI를 통한 간단한 로그 출력 패키지\n독립 모드(Independent Mode)\nYarn\nYarn Workspace\n\n\n\n\nCLI를 통하여 간단한 로그를 출력하는 패키지를 만들어 보자.1. lerna 설치먼저 이전 포스팅에서 개념을 익혔으니 실제로 lerna를 설치해보자.\nnpm install -g lerna\n\n위처럼 lerna를 설치하기가 싫다면 아래처럼 npx를 통하여 바로 사용하자.\nnpx lerna init\n\n2. Git 초기화lerna의 publish 명령어는 변경된 패키지를 일괄적으로 Git Remote Repository에 Push를 하므로 Git을 사용해야 한다. Github Repository를 미리 구축해 놓자.\nGit을 통해 초기화 및 폴더까지 생성하자.\ngit init [DIR_NAME]cd [DIR_NAME]\n\n\n3. Lerna Repository로 변경폴더를 생성하고 Git을 초기화하였다면 해당 Repository를 lerna로 구성하자.\nlerna init --independent // or -i\n\n\nlerna.jsonlerna.json은 lerna를 구성하는 설정 파일이다.\n패키지로 배포와 관리된 packages를 명시해 주며 version 정책을 어떻게 가져갈 것인지며 npmClint는 npm을 사용하지 yarn을 사용할지 지정해 줄 수 있다.\n아래와 같이 수정하자.\n&#123;  &quot;version&quot;: &quot;independent&quot;,  &quot;npmClient&quot;: &quot;yarn&quot;,  &quot;useWorkspaces&quot;: true,  &quot;packages&quot;: [    &quot;packages/*&quot;  ]&#125;\n\n우리는 version 정책을 독립 모드로 가져가기 때문에 version: &quot;independent&quot;로 지정한 것이고,yarn을 사용할 것이기 때문에 npmClient: &quot;yarn&quot; 그리고 yarn workspace 사용을 위해 useWorkspaces: true로 지정하였다.\npackage.jsonRoot 경로에 있는 package.json의 역할은 공통된 node module들의 devDependencies와 최상위에서 실행될 script들을 명시해준다.\n아래와 같이 수정하자. \n&#123;  &quot;private&quot;: true,  &quot;workspaces&quot;: [    &quot;packages/*&quot;  ],  &quot;devDependencies&quot;: &#123;    &quot;lerna&quot;: &quot;^3.20.2&quot;  &#125;&#125;\n\nlerna.json에서 yarn workspace를 사용하였기 때문에 실제로 workspace에 어떤 패키지가 담길 것인지 지정해준다. 보통 lerna.json의 packages의 경로와 일치한다. 그리고 private: true로 지정함으로써 Root가 NPM Repository로 배포되는 것을 막아준다.\n4. 패키지 생성이제 실제로 사용될 패키지를 만들어보자.\n패키지는 packages 경로에 포함되어있어야 하며, 모든 패키지는 lerna.json의 packages 속성에 따른다. 수동으로 직접 폴더를 생성할 수도 있지만 lerna의 create 명령을 통해서도 기본 패키지의 구조를 Scaffolding 할 수 있다.\nlerna create [PACKAGE_NAME]\n\n우리는 CLI를 통한 Log 출력 패키지를 예시로 들고 있어서 log-cli와 log-core라는 두 패키지를 생성하자.\nlerna create log-cli\n\nlerna create log-core\n\nlog-cli는 우리가 CLI command를 입력하여 그 값을 받아 처리하는 패키지이고, log-core는 입력받은 command를 통해 실제로 로그를 출력하는 패키지이다.\n5. 공통 종속성 설치Root 경로에 모든 패키지가 공통으로 사용될 모듈을 설치하자. lerna add라는 명령어를 사용할 수도 있지만 lerna add는 패키지 간 종속성 설치 시 사용하는 걸 추천한다.그냥 사용한다 하더라고 Root 경로에 모듈은 설치되겠지만 각 패키지에 dependencies가 걸리게 되어있다. 그렇기 때문에 Root 경로의 공통 모듈을 npm또는 yarn을 통하여 설치하자.\n공통으로 사용될 모듈로 eslint를 설치해보자 \nyarn add eslint --dev --ignore-workspace-root-check\n\nnpm install eslint --dev\n\nyarn을 통해 eslint를 설치하기 위해서는 workspace를 지정하였기 때문에 일반 add를 통해서는 설치가 불가능하다. 그렇기 때문에 --ignore-workspace-root-check 옵션을 지정하도록 하자. \n\n\n설치 후 Root 경로의 package.json을 보면 devDependencies에 eslint가 설치된 것을 확인 할 수 있다.\n6. 각 패키지에 모듈 설치이제 각 패키지에 필요한 모듈을 설치해보자.\nlog-cli 모듈 설치command를 입력받아야 하는 log-cli에 commander를 설치하자.\n각 패키지에 모듈을 설치할 때에는 공통 모듈을 설치하는 것과는 다르게 lerna add를 통해서 각 패키지에 설치 할 수 있다. 이 과정에서 hoisting이 일어나고 종속성을 최적화시킨다.\nlerna add를 사용할 때는 --scope 옵션을 통해서 어느 패키지에 설치할 것인가를 명시해준다. --scope를 주지 않을 경우 모든 패키지에 설치된다.\nlerna add commander --scope=log-cli\n\n위 명령어 실행 후 파일 주로를 보면 log-cli 경로에 node_modules 폴더가 생성되지 않았다. 하지만 package.json을 보게 되면 commander 모듈이 추가되어있는 것을 볼 수 있다. 이는 종속성 최적화로 인해 Root 경로에 추가된 것이다.\nlog-core 모듈 설치log-core에서는 console.log를 출력하는 모듈을 만들 것이다.\n패키지 설치 방법을 익히기 위해 임의로 로그 문구에 색상을 입힐 수 있는 chalk 모듈을 설치해보자.\nlerna add chalk --scope=log-core\n\n설치 방법은 log-cli에서 설치한 방법과 동일하다. 다만 다른 게 있다면 log-cli와는 다르게 log-core에는 node_modules 경로가 생성되었다. 이 역시 hoisting 과정에서 일어난 사항이니 그게 염두에 두지 않아도 된다.\n7. 각 패키지에 기능 추가필요한 모듈은 설치가 되었기 때문에 이제 각 패키지에서 기능이 동작되도록 구현하자.\nlog-core 수정log-core.js를 수정하자.\nlog-core.js\nconst &#123; red &#125; = require(&#x27;chalk&#x27;)function core () &#123;  console.log(red(&#x27;❤  Running Core !!!!!&#x27;))&#125;module.exports = core\n\nlog-core에서는 chalk를 사용하여 console.log를 출력해 주는 코드를 작성하였다.\nlog-cli 수정log-cli.js와 log-cli/package.json을 수정하자 \nlog-cli.js\n#!/usr/bin/env nodeconst &#123; program &#125; = require(&#x27;commander&#x27;)const LogCore = require(&#x27;log-core&#x27;)// actionprogram.action(cmd =&gt; LogCore())program.parse(process.argv)\n\nlog-cli&#x2F;package.json\n&#123;  &quot;name&quot;: &quot;log-cli&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;description&quot;: &quot;log-cli-example&quot;,  &quot;author&quot;: &quot;Your name&quot;,  &quot;license&quot;: &quot;MIT&quot;,  &quot;bin&quot;: &#123;    &quot;log-cli&quot;: &quot;lib/log-cli.js&quot;  &#125;,  &quot;files&quot;: [    &quot;lib&quot;  ],  &quot;dependencies&quot;: &#123;    &quot;commander&quot;: &quot;^6.0.0&quot;  &#125;&#125;\n\n\nlog-cli.js에서는 commander와 log-core를 추가하고 commander를 통해 command를 입력받으면 log-core를 수행되게 되어있다.\npackage.json에서는 기본적으로 추가되어있던 main속성 대신 bin 속성을 추가하여 CLI가 가능하게 수정한다.\n8. 로컬에서 CLI 테스트 수행기능까지 완성이 되었으니 로컬에서 만든 모듈들을 실행해보자.\n최초 실행은 log-cli를 실행하는 것이기 때문에 log-cli를 설치 후 실행해 보자. 여기서는 npm link를 통하여 global로 symbolic link를 생성하였다.\nnpm link packages/log-cli\n\nlog-cli\n\nlog-cli를 입력하면 결과가 출력되는 것을 확인할 수 있다.\n9. 패키지 내 참조 및 설치위처럼 로컬에서 실행하면 정상적으로 동작된다. 로컬에서는 log-cli와 log-core 연관 관계를 인지하고 있기 때문이다. 그렇기 때문에 실제로 패키지를 배포 후 배포된 패키지를 설치하여 실행한다면 아래와 같은 오류가 출력될 것이다.\n\n이 오류는 log-cli에서 log-core를 삽입하였는데 실제로 log-cli에는 log-core가 종속되지 않았기 때문에 발생한다. 이를 해결하기 위해서는 lerna add를 통해서 log-cli에 log-core를 설치해 해줘야 한다.\nlerna add log-core --scope=log-cli\n\n\n10. Git Commit과 Push이제 모든 변경 사항을 연동된 Git Remote Repository에 반영하자. 그 전에 불필요한 리소스들이 반영되지 않도록 Root 경로에 .gitignore 작성하는 것을 잊지 말자.\n아래는 .gitignore 예시이다.\n.gitignore\n.ideanode_modules*.lock*lock.json\n\n\ngit add .git commit -m &quot;deploy&quot; git push -u origin master\n\n11. 패키지 배포이제 패키지 배포 이전의 모든 작업이 끝이 났다. 실제로 지금까지 만든 log-cli와 log-core를 NPM Repository에 배포해 보자. NPM Repository에 대해서는 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드을 참고하자.\nNPM 설정이 준비되었다면 lerna publish를 통해서 모든 패키지를 배포하자.\nNPM Repository에 배포하기 전 log-cli와 log-core의 package.json에서 name 속성을 변경하자. 해당 명칭은 이미 배포된 다른 모듈과 충돌이 나므로 변경해야 한다. \n\n\nlerna publish\n\n위 명령어를 입력하면 log-cli와 log-core가 동시에 NPM Repository로 배포된 것을 확인할 수 있다.\n위 예제는 lerna-example에서 다운받거나 확인할 수 있다.\n\nNPM Repository에 배포된 패키지는 72시간이 지나면 직접 지울 수 없어서 불필요하다면 즉시 삭제하기 바란다.\nnpm unpublish log-core -fnpm unpublish log-cli -f\n\nlog-cli에서 log-core가 종속되어있기 때문에 log-cli먼저 삭제해야 한다.\n\n\n\n12. 릴리즈 패키지 설치 및 실행이제 실제로 배포된 패키지를 설치하여 사용해 보자.\nnpm install -g log-cli // or PACKAGE_NAME\n\n\n릴리즈 노트 생성lerna에서 독립 모드(Independent)로 사용하게 되면 릴리즈 노트가 걸릴 것이다. 릴리즈 노트는 보통 CHANGELOG.md로 남게 되는데 이를 위해서는 lerna.json을 아래와 같이 설정해 주면 기본적인 CHANGELOG를 사용할 수 있다.\n&#123;  &quot;version&quot;: &quot;independent&quot;,  &quot;npmClient&quot;: &quot;yarn&quot;,  &quot;useWorkspaces&quot;: true,  &quot;packages&quot;: [    &quot;packages/*&quot;  ],  &quot;command&quot;: &#123;    &quot;publish&quot;: &#123;      &quot;conventionalCommits&quot;: true    &#125;  &#125;&#125;\n\nlerna의 publish 명령어를 실행하면 conventiaonalCommit이 실행되도록 conventionalCommits 옵션을 지정해 주었다. Conventional commits는 이곳에서 참고하자.\nconventionalCommits 옵션을 지정하면 semver에 따른 버전이 결정되고 commit message의 기록에 따라 CHANGELOG.md가 각 패키지 별로 생성된다.기본적인 옵션 이외에 lerna-changelog를 사용하면 더 적합한 릴리즈 노트를 작성할 수 있다.\n\n여기까지 해서 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리부터 예제를 통하여 Lerna와 Mono-Repo에 대해 알아보았다.\n여기서 집고 넘어갈 것은 Lerna는 단순히 Mono-Repo를 구축하는 데 도움을 주는 도구에 불과하다. 귀찮고 오래 걸리겠지만 Mono-Repo의 구조에서 수동으로 생성, 배포, 설치 모두 할 수 있는 것이다. Mono-Repo의 구조로 간다면 패키지의 관리와 배포가 쉬워지니 반영해 볼 기회가 있다면 적극적으로 추천한다.\n\n더 알아보기Performant NPM - PNPMFirebase를 활용한 PWA(Progressive Web App) 앱 만들기Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?오픈 소스(Open-Source) 구조와 모듈 파악하기\n","dateCreated":"2020-08-27T08:37:12+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-08-27T08:37:12+00:00","description":"\n이전 섹션인 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리 에서 Lerna와 Mono-Repo에 대한 개념을 파악하였다. 이번 섹션에서는 실제로 lerna를 활용하여 간단하게 log를 출력하는 패키지를 Mono-Repo로 구성해 보고 NPM Registry에 배포까지 해보자.예제는 CLI를 통해 간단한 로그를 출력하는 패키지로 Lerna를 활용한 Mono-Repo 구조로 구축, 개발, 배포까지 진행할 것이다.\n","headline":"Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/","keywords":"git, lerna, mono-repo, multi-repo, poly-repo, repository, lerna tutorial, lerna example","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="이전 섹션인 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리 에서 Lerna와 Mono-Repo에 대한 개념을 파악하였다. 이번 섹션에서는 실제로 lerna를 활용하여 간단하게 log를 출력하는 패키지를 Mono-Repo로 구성해 보고 NPM Registry에 배포까지 해보자.예제는 CLI를 통해 간단한 로그를 출력하는 패키지로 Le">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악">
+<meta property="og:url" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이전 섹션인 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리 에서 Lerna와 Mono-Repo에 대한 개념을 파악하였다. 이번 섹션에서는 실제로 lerna를 활용하여 간단하게 log를 출력하는 패키지를 Mono-Repo로 구성해 보고 NPM Registry에 배포까지 해보자.예제는 CLI를 통해 간단한 로그를 출력하는 패키지로 Le">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/error-capture.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/lerna-publish-example.png">
+<meta property="article:published_time" content="2020-08-27T08:37:12.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.789Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="lerna">
+<meta property="article:tag" content="mono-repo">
+<meta property="article:tag" content="multi-repo">
+<meta property="article:tag" content="poly-repo">
+<meta property="article:tag" content="repository">
+<meta property="article:tag" content="lerna tutorial">
+<meta property="article:tag" content="lerna example">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-27T08:37:12+00:00">
+	
+		    2020-08-27
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/git/">git</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/">repository</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/mono-repo/">mono-repo</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/08/27/mono-repo-lerna-example/cover.png" alt="cover"></p>
+<p><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a> 에서 <code>Lerna</code>와 <code>Mono-Repo</code>에 대한 개념을 잡았다면 이번 포스팅에서는 <code>Lerna</code>를 설치하고 주요 명령어 및 실제로 패키지를 만들고 배포까지 따라 하면서 완벽하게 <code>Lerna</code>와 <code>Mono-Repo</code>를 파악하자</p>
+<p>예제는 <strong>CLI를 통해 간단한 로그를 출력하는 패키지</strong>로 <code>Lerna</code>를 활용한 <code>Mono-Repo</code> 구조로 구축, 개발, 배포까지 진행할 것이다.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/lerna/lerna">lerna</a>의 독립 모드의 경우 패키지의 버전을 독립적으로 가져가며 좀 더 까다로운 면이 있기 때문에 해당 예제에서는 lerna의 <strong>고정모드 (Fixed Mode)</strong>가 아닌 <strong>독립 모드(Independent Mode)</strong>로 구축할 것이다.<br>또한 <a target="_blank" rel="noopener" href="https://www.npmjs.com/">npm</a>보다는 <a target="_blank" rel="noopener" href="https://classic.yarnpkg.com/en/">yarn</a>을 추구하고 lerna와 좋은 궁합을 보이고 <code>Yarn Workspace</code>를 사용할 것이기 때문에 <code>yarn</code>을 사용할 것이다.</p>
+<div class="alert info no-icon"><ul>
+<li>CLI를 통한 간단한 로그 출력 패키지</li>
+<li>독립 모드(Independent Mode)</li>
+<li>Yarn</li>
+<li>Yarn Workspace</li>
+</ul>
+</div>
+
+
+<h1 id="CLI를-통하여-간단한-로그를-출력하는-패키지를-만들어-보자"><a href="#CLI를-통하여-간단한-로그를-출력하는-패키지를-만들어-보자" class="headerlink" title="CLI를 통하여 간단한 로그를 출력하는 패키지를 만들어 보자."></a>CLI를 통하여 간단한 로그를 출력하는 패키지를 만들어 보자.</h1><h2 id="1-lerna-설치"><a href="#1-lerna-설치" class="headerlink" title="1. lerna 설치"></a>1. lerna 설치</h2><p>먼저 이전 포스팅에서 개념을 익혔으니 실제로 lerna를 설치해보자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g lerna<br></code></pre></td></tr></table></figure>
+
+<p>위처럼 lerna를 설치하기가 싫다면 아래처럼 <code>npx</code>를 통하여 바로 사용하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npx lerna init<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-Git-초기화"><a href="#2-Git-초기화" class="headerlink" title="2. Git 초기화"></a>2. Git 초기화</h2><p>lerna의 <code>publish</code> 명령어는 변경된 패키지를 일괄적으로 <code>Git Remote Repository</code>에 <code>Push</code>를 하므로 Git을 사용해야 한다. Github Repository를 미리 구축해 놓자.</p>
+<p>Git을 통해 초기화 및 폴더까지 생성하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">git init [DIR_NAME]<br><span class="hljs-built_in">cd</span> [DIR_NAME]<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="3-Lerna-Repository로-변경"><a href="#3-Lerna-Repository로-변경" class="headerlink" title="3. Lerna Repository로 변경"></a>3. Lerna Repository로 변경</h2><p>폴더를 생성하고 Git을 초기화하였다면 해당 Repository를 lerna로 구성하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna init --independent // or -i<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="lerna-json"><a href="#lerna-json" class="headerlink" title="lerna.json"></a>lerna.json</h3><p><code>lerna.json</code>은 lerna를 구성하는 설정 파일이다.</p>
+<p>패키지로 배포와 관리된 <code>packages</code>를 명시해 주며 version 정책을 어떻게 가져갈 것인지며 <code>npmClint</code>는 npm을 사용하지 yarn을 사용할지 지정해 줄 수 있다.</p>
+<p>아래와 같이 수정하자.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;independent&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;npmClient&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;yarn&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;useWorkspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;packages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>우리는 version 정책을 독립 모드로 가져가기 때문에 <code>version: &quot;independent&quot;</code>로 지정한 것이고,<br><a target="_blank" rel="noopener" href="https://classic.yarnpkg.com/en/">yarn</a>을 사용할 것이기 때문에 <code>npmClient: &quot;yarn&quot;</code> 그리고 yarn workspace 사용을 위해 <code>useWorkspaces: true</code>로 지정하였다.</p>
+<h3 id="package-json"><a href="#package-json" class="headerlink" title="package.json"></a>package.json</h3><p>Root 경로에 있는 <code>package.json</code>의 역할은 <code>공통된 node module들의 devDependencies</code>와 <code>최상위에서 실행될 script</code>들을 명시해준다.</p>
+<p>아래와 같이 수정하자. </p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;private&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;workspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;lerna&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^3.20.2&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>lerna.json에서 yarn workspace를 사용하였기 때문에 실제로 workspace에 어떤 패키지가 담길 것인지 지정해준다. 보통 <code>lerna.json의 packages의 경로와 일치</code>한다. 그리고 <code>private: true</code>로 지정함으로써 Root가 NPM Repository로 배포되는 것을 막아준다.</p>
+<h2 id="4-패키지-생성"><a href="#4-패키지-생성" class="headerlink" title="4. 패키지 생성"></a>4. 패키지 생성</h2><p>이제 실제로 사용될 패키지를 만들어보자.</p>
+<p>패키지는 <code>packages</code> 경로에 포함되어있어야 하며, 모든 패키지는 <code>lerna.json의 packages 속성에 따른다.</code> 수동으로 직접 폴더를 생성할 수도 있지만 lerna의 <code>create</code> 명령을 통해서도 기본 패키지의 구조를 Scaffolding 할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna create [PACKAGE_NAME]<br></code></pre></td></tr></table></figure>
+
+<p>우리는 <strong>CLI를 통한 Log 출력 패키지</strong>를 예시로 들고 있어서 <strong><code>log-cli</code></strong>와 <strong><code>log-core</code></strong>라는 두 패키지를 생성하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna create log-cli<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna create log-core<br></code></pre></td></tr></table></figure>
+
+<p><code>log-cli</code>는 우리가 CLI command를 입력하여 그 값을 받아 처리하는 패키지이고, <code>log-core</code>는 입력받은 command를 통해 실제로 로그를 출력하는 패키지이다.</p>
+<h2 id="5-공통-종속성-설치"><a href="#5-공통-종속성-설치" class="headerlink" title="5. 공통 종속성 설치"></a>5. 공통 종속성 설치</h2><p>Root 경로에 모든 패키지가 공통으로 사용될 모듈을 설치하자. <code>lerna add</code>라는 명령어를 사용할 수도 있지만 <code>lerna add</code>는 패키지 간 종속성 설치 시 사용하는 걸 추천한다.<br>그냥 사용한다 하더라고 Root 경로에 모듈은 설치되겠지만 각 패키지에 dependencies가 걸리게 되어있다. 그렇기 때문에 Root 경로의 공통 모듈을 <code>npm</code>또는 <code>yarn</code>을 통하여 설치하자.</p>
+<p>공통으로 사용될 모듈로 <code>eslint</code>를 설치해보자 </p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add eslint --dev --ignore-workspace-root-check<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install eslint --dev<br></code></pre></td></tr></table></figure>
+
+<div class="alert danger no-icon"><p><code>yarn</code>을 통해 eslint를 설치하기 위해서는 workspace를 지정하였기 때문에 일반 <code>add</code>를 통해서는 설치가 불가능하다. 그렇기 때문에 <code>--ignore-workspace-root-check</code> 옵션을 지정하도록 하자. </p>
+</div>
+
+<p>설치 후 Root 경로의 <code>package.json</code>을 보면 <code>devDependencies</code>에 <code>eslint</code>가 설치된 것을 확인 할 수 있다.</p>
+<h2 id="6-각-패키지에-모듈-설치"><a href="#6-각-패키지에-모듈-설치" class="headerlink" title="6. 각 패키지에 모듈 설치"></a>6. 각 패키지에 모듈 설치</h2><p>이제 각 패키지에 필요한 모듈을 설치해보자.</p>
+<h3 id="log-cli-모듈-설치"><a href="#log-cli-모듈-설치" class="headerlink" title="log-cli 모듈 설치"></a>log-cli 모듈 설치</h3><p>command를 입력받아야 하는 log-cli에 <a target="_blank" rel="noopener" href="https://github.com/tj/commander.js#readme">commander</a>를 설치하자.</p>
+<p>각 패키지에 모듈을 설치할 때에는 공통 모듈을 설치하는 것과는 다르게 <code>lerna add</code>를 통해서 각 패키지에 설치 할 수 있다. 이 과정에서 <code>hoisting</code>이 일어나고 종속성을 최적화시킨다.</p>
+<p><code>lerna add</code>를 사용할 때는 <code>--scope</code> 옵션을 통해서 어느 패키지에 설치할 것인가를 명시해준다. <code>--scope</code>를 주지 않을 경우 모든 패키지에 설치된다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna add commander --scope=log-cli<br></code></pre></td></tr></table></figure>
+
+<p>위 명령어 실행 후 파일 주로를 보면 log-cli 경로에 <code>node_modules</code> 폴더가 생성되지 않았다. 하지만 <code>package.json</code>을 보게 되면 commander 모듈이 추가되어있는 것을 볼 수 있다. 이는 종속성 최적화로 인해 Root 경로에 추가된 것이다.</p>
+<h3 id="log-core-모듈-설치"><a href="#log-core-모듈-설치" class="headerlink" title="log-core 모듈 설치"></a>log-core 모듈 설치</h3><p>log-core에서는 console.log를 출력하는 모듈을 만들 것이다.</p>
+<p>패키지 설치 방법을 익히기 위해 임의로 로그 문구에 색상을 입힐 수 있는 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/chalk">chalk</a> 모듈을 설치해보자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna add chalk --scope=log-core<br></code></pre></td></tr></table></figure>
+
+<p>설치 방법은 log-cli에서 설치한 방법과 동일하다. 다만 다른 게 있다면 log-cli와는 다르게 <code>log-core에는 node_modules 경로가 생성</code>되었다. 이 역시 <code>hoisting</code> 과정에서 일어난 사항이니 그게 염두에 두지 않아도 된다.</p>
+<h2 id="7-각-패키지에-기능-추가"><a href="#7-각-패키지에-기능-추가" class="headerlink" title="7. 각 패키지에 기능 추가"></a>7. 각 패키지에 기능 추가</h2><p>필요한 모듈은 설치가 되었기 때문에 이제 각 패키지에서 기능이 동작되도록 구현하자.</p>
+<h3 id="log-core-수정"><a href="#log-core-수정" class="headerlink" title="log-core 수정"></a>log-core 수정</h3><p><code>log-core.js</code>를 수정하자.</p>
+<p><strong>log-core.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; red &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;chalk&#x27;</span>)<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">core</span> () &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">red</span>(<span class="hljs-string">&#x27;❤  Running Core !!!!!&#x27;</span>))<br>&#125;<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = core<br></code></pre></td></tr></table></figure>
+
+<p><code>log-core</code>에서는 <code>chalk</code>를 사용하여 <code>console.log</code>를 출력해 주는 코드를 작성하였다.</p>
+<h3 id="log-cli-수정"><a href="#log-cli-수정" class="headerlink" title="log-cli 수정"></a>log-cli 수정</h3><p><code>log-cli.js</code>와 <code>log-cli/package.json</code>을 수정하자 </p>
+<p><strong>log-cli.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-meta">#!/usr/bin/env node</span><br><br><span class="hljs-keyword">const</span> &#123; program &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;commander&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">LogCore</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;log-core&#x27;</span>)<br><br><span class="hljs-comment">// action</span><br>program.<span class="hljs-title function_">action</span>(<span class="hljs-function"><span class="hljs-params">cmd</span> =&gt;</span> <span class="hljs-title class_">LogCore</span>())<br><br>program.<span class="hljs-title function_">parse</span>(process.<span class="hljs-property">argv</span>)<br></code></pre></td></tr></table></figure>
+
+<p><strong>log-cli&#x2F;package.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;log-cli&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1.0.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;log-cli-example&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;author&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your name&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;license&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MIT&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;bin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;log-cli&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lib/log-cli.js&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;files&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;lib&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;commander&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^6.0.0&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+
+<p><code>log-cli.js</code>에서는 <code>commander</code>와 <code>log-core</code>를 추가하고 <code>commander</code>를 통해 command를 입력받으면 <code>log-core</code>를 수행되게 되어있다.</p>
+<p><code>package.json</code>에서는 기본적으로 추가되어있던 <code>main</code>속성 대신 <code>bin</code> 속성을 추가하여 CLI가 가능하게 수정한다.</p>
+<h2 id="8-로컬에서-CLI-테스트-수행"><a href="#8-로컬에서-CLI-테스트-수행" class="headerlink" title="8. 로컬에서 CLI 테스트 수행"></a>8. 로컬에서 CLI 테스트 수행</h2><p>기능까지 완성이 되었으니 로컬에서 만든 모듈들을 실행해보자.</p>
+<p>최초 실행은 <code>log-cli</code>를 실행하는 것이기 때문에 <code>log-cli</code>를 설치 후 실행해 보자. 여기서는 <code>npm link</code>를 통하여 global로 <code>symbolic link</code>를 생성하였다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm <span class="hljs-built_in">link</span> packages/log-cli<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">log-cli<br></code></pre></td></tr></table></figure>
+
+<p><code>log-cli</code>를 입력하면 결과가 출력되는 것을 확인할 수 있다.</p>
+<h2 id="9-패키지-내-참조-및-설치"><a href="#9-패키지-내-참조-및-설치" class="headerlink" title="9. 패키지 내 참조 및 설치"></a>9. 패키지 내 참조 및 설치</h2><p>위처럼 로컬에서 실행하면 정상적으로 동작된다. 로컬에서는 <code>log-cli</code>와 <code>log-core</code> 연관 관계를 인지하고 있기 때문이다. 그렇기 때문에 실제로 패키지를 배포 후 배포된 패키지를 설치하여 실행한다면 아래와 같은 오류가 출력될 것이다.</p>
+<p><img src="/2020/08/27/mono-repo-lerna-example/error-capture.png" alt="run-error"></p>
+<p>이 오류는 <code>log-cli</code>에서 <code>log-core</code>를 삽입하였는데 실제로 <code>log-cli</code>에는 <code>log-core</code>가 종속되지 않았기 때문에 발생한다. 이를 해결하기 위해서는 <code>lerna add</code>를 통해서 <code>log-cli</code>에 <code>log-core</code>를 설치해 해줘야 한다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna add log-core --scope=log-cli<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="10-Git-Commit과-Push"><a href="#10-Git-Commit과-Push" class="headerlink" title="10. Git Commit과 Push"></a>10. Git Commit과 Push</h2><p>이제 모든 변경 사항을 연동된 Git Remote Repository에 반영하자. 그 전에 불필요한 리소스들이 반영되지 않도록 Root 경로에 <strong><code>.gitignore</code></strong> 작성하는 것을 잊지 말자.</p>
+<p>아래는 <code>.gitignore</code> 예시이다.</p>
+<p><strong>.gitignore</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">.idea<br>node_modules<br>*.lock<br>*lock.json<br></code></pre></td></tr></table></figure>
+
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">git add .<br>git commit -m <span class="hljs-string">&quot;deploy&quot;</span> <br>git push -u origin master<br></code></pre></td></tr></table></figure>
+
+<h2 id="11-패키지-배포"><a href="#11-패키지-배포" class="headerlink" title="11. 패키지 배포"></a>11. 패키지 배포</h2><p>이제 패키지 배포 이전의 모든 작업이 끝이 났다. 실제로 지금까지 만든 <code>log-cli</code>와 <code>log-core</code>를 <code>NPM Repository</code>에 배포해 보자. NPM Repository에 대해서는 <a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a>을 참고하자.</p>
+<p>NPM 설정이 준비되었다면 <code>lerna publish</code>를 통해서 모든 패키지를 배포하자.</p>
+<div class="alert danger no-icon"><p>NPM Repository에 배포하기 전 <strong>log-cli와 log-core의 package.json에서 <code>name</code> 속성을 변경</strong>하자. 해당 명칭은 이미 배포된 다른 모듈과 충돌이 나므로 변경해야 한다. </p>
+</div>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna publish<br></code></pre></td></tr></table></figure>
+
+<p>위 명령어를 입력하면 <code>log-cli</code>와 <code>log-core</code>가 동시에 NPM Repository로 배포된 것을 확인할 수 있다.</p>
+<p>위 예제는 <a target="_blank" rel="noopener" href="https://github.com/kdydesign/lerna-example">lerna-example</a>에서 다운받거나 확인할 수 있다.</p>
+<p><img src="/2020/08/27/mono-repo-lerna-example/lerna-publish-example.png" alt="lerna-publish-example"></p>
+<div class="alert danger no-icon"><p>NPM Repository에 배포된 패키지는 <strong>72시간</strong>이 지나면 직접 지울 수 없어서 불필요하다면 즉시 삭제하기 바란다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm unpublish log-core -f<br>npm unpublish log-cli -f<br></code></pre></td></tr></table></figure>
+
+<p><code>log-cli</code>에서 <code>log-core</code>가 종속되어있기 때문에 <code>log-cli</code>먼저 삭제해야 한다.</p>
+</div>
+
+
+<h2 id="12-릴리즈-패키지-설치-및-실행"><a href="#12-릴리즈-패키지-설치-및-실행" class="headerlink" title="12. 릴리즈 패키지 설치 및 실행"></a>12. 릴리즈 패키지 설치 및 실행</h2><p>이제 실제로 배포된 패키지를 설치하여 사용해 보자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g log-cli // or PACKAGE_NAME<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="릴리즈-노트-생성"><a href="#릴리즈-노트-생성" class="headerlink" title="릴리즈 노트 생성"></a>릴리즈 노트 생성</h2><p>lerna에서 독립 모드(Independent)로 사용하게 되면 릴리즈 노트가 걸릴 것이다. 릴리즈 노트는 보통 <code>CHANGELOG.md</code>로 남게 되는데 이를 위해서는 <code>lerna.json</code>을 아래와 같이 설정해 주면 기본적인 <code>CHANGELOG</code>를 사용할 수 있다.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;independent&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;npmClient&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;yarn&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;useWorkspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;packages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;publish&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;conventionalCommits&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>lerna의 <code>publish</code> 명령어를 실행하면 <code>conventiaonalCommit</code>이 실행되도록 <code>conventionalCommits</code> 옵션을 지정해 주었다. <a target="_blank" rel="noopener" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional commits</a>는 이곳에서 참고하자.</p>
+<p><code>conventionalCommits</code> 옵션을 지정하면 <code>semver</code>에 따른 버전이 결정되고 <code>commit message</code>의 기록에 따라 <code>CHANGELOG.md</code>가 각 패키지 별로 생성된다.<br>기본적인 옵션 이외에 <a target="_blank" rel="noopener" href="https://github.com/lerna/lerna-changelog">lerna-changelog</a>를 사용하면 더 적합한 릴리즈 노트를 작성할 수 있다.</p>
+<hr>
+<p>여기까지 해서 <a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a>부터 예제를 통하여 <code>Lerna</code>와 <code>Mono-Repo</code>에 대해 알아보았다.</p>
+<p>여기서 집고 넘어갈 것은 <code>Lerna</code>는 단순히 <code>Mono-Repo</code>를 구축하는 데 도움을 주는 도구에 불과하다. 귀찮고 오래 걸리겠지만 <code>Mono-Repo</code>의 구조에서 수동으로 생성, 배포, 설치 모두 할 수 있는 것이다. <code>Mono-Repo</code>의 구조로 간다면 패키지의 관리와 배포가 쉬워지니 반영해 볼 기회가 있다면 적극적으로 추천한다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/git/" rel="tag">git</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna/" rel="tag">lerna</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-example/" rel="tag">lerna example</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-tutorial/" rel="tag">lerna tutorial</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mono-repo/" rel="tag">mono-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/multi-repo/" rel="tag">multi-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/poly-repo/" rel="tag">poly-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/repository/" rel="tag">repository</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/28/npm-tutorial/"
+                    data-tooltip="빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                    aria-label="PREVIOUS: 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/mono-repo-lerna/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                    aria-label="NEXT: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/28/npm-tutorial/"
+                    data-tooltip="빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                    aria-label="PREVIOUS: 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/mono-repo-lerna/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                    aria-label="NEXT: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/';
+              
+            this.page.identifier = 'mono-repo-lerna-example';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

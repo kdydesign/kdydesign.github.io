@@ -1,0 +1,834 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Javascript 모듈시스템과 모듈번들러의 이해 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2023/10/08/module-system-bundler/"/>
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n\n22년도에 vite에 관련된 세미나를 진행할 때 vite를 설명하기 전에 Module System과 Bundler를 먼저 설명하였다. 이유는 vite 역시 번들러에 속하며, 번들러가 왜 계속 발전해 오고 있는지 설명하고 vite에 대한 이해를 돕기 위해서이다. 처음 JavaScript 모듈 시스템과 번들러를 설명하고 이어 vite를 설명하려하였지만 이를 두 파트로 나누어 포스팅하려고 한다.\n이 포스트에서는 JavaScript 모듈 방식인 CommonJS 와 AMD, UMD, ESM에 대해 설명하고, Module Bundler에 대해 살펴보려고 한다.\nModule System\nModule System은 HTML에 JavaScript 원본 소스를 제공하여 순차적으로 로드하는 방식\n\n과거 웹 서비스라 하면 정보를 제공하는 데 그쳤기 때문에 지금처럼 복잡하지도 않았으며 규모 역시 크지도 않았다. 웹 서비스를 구성하는 HTML이나 JavaScript 파일의 크기도 상대적으로 작았기 때문에 서비스를 유지하는 데 큰 무리가 없었다. 하지만 점차 웹 서비스의 규모가 커지고 V8 엔진의 등장으로 다방면으로 JavaScript 활용도도 증가하면서  JavaScript 파일도 많아졌다. 파일의 구조가 복잡해지고 거대해지면서 순차적으로 로드하는 방식은 각 모듈 간 scope가 구분되지 않기 때문에 다른 파일을 오염시키거나 충돌이 일어나는 경우가 발생했다. 또한 외부 라이브러리가 증가하면서 애플리케이션에 사용하는 모듈의 개수도 증가하게 되었다. \n이렇게 규모와 개발되는 파일의 개수, 그리고 모듈이 증가함으로 인해 모듈화에 대한 필요성이 부각되면서 CommonJS와 AMD 가 등장하게 되었다.\n순차적 모듈의 예시\n&lt;html&gt;\t&lt;script src=&quot;src/A.js&quot;&gt;&lt;/script&gt;\t&lt;script src=&quot;src/B.js&quot;&gt;&lt;/script&gt;\t&lt;script src=&quot;src/C.js&quot;&gt;&lt;/script&gt;\t&lt;script src=&quot;src/D.js&quot;&gt;&lt;/script&gt;&lt;/html&gt;\n\nCJS (CommonJS)\nJavaScript를 브라우저에서뿐만 아니라 범용 언어 사용을 목적으로 둔 워킹 그룹\n\n동기적 방식을 사용하고 모든 종속성이 로컬 디스크에 존재하여 바로 사용할 수 있는 환경을 전제로 한다. 과거에 모듈 시스템은 반드시 필요했기 때문에 Node.js는 Common JS 방식의 명세를 채택하고 NPM과 함께 큰 성장을 하였다. 우리가 흔하게 쓰는 방식으로 대표적으로 require를 말할 수 있다.\n동기적 방식은 브라우저에서 필요로 하는 모듈이 모두 다운로드 할 때까지 기다려야 하는 단점과 같은 비동기적 로드를 고려하지 않은 설계로 인해 브라우저에서의 사용에는 한계가 있기 때문에 Node.js의 서버 사이드 환경에서 용이하다.\nCJS 방식의 예\n//importing const doSomething = require(&#x27;./doSomething.js&#x27;)//exportingmodule.exports = function doSomething (n) &#123;  // do something &#125;\n\nAMD (Asynchronous Module Definition)\nJavaScript를 비동기적으로 사용하기 위해 CommonJS와 독립한 별도의 그룹\n\nCJS와 다르게 비동기적으로 모듈을 호출하며, 브라우저에서의 모듈 실행을 우선으로 한다. 비동기적 방식으로 CJS보다 나은 성능을 보였으며, 브라우저&#x2F;서버사이드 모두 호환되는 방식이지만 CJS보다 직관적이지 않은 단점이 있다.\nAMD 방식의 예\ndefine([  &#x27;package/lib_1&#x27;,  &#x27;package/lib_2&#x27;], function (pack_1, pack_2) &#123;     function foo () &#123;       pack_1.log(&#x27;Package 1&#x27;)     &#125;     function bar () &#123;       pack_2.log(&#x27;Package 2&#x27;)     &#125;     return &#123; foo, bar &#125;&#125;)\n\nrequire([  &#x27;my_package&#x27;], function (my_pack) &#123;     my_pack.foo()&#125;)\n\nUMD (Universal Module Definition)\nCJS와 AMD 모두 호환되면서 범용적으로 여러 모듈을 구성하는 디자인 패턴\n\nCJS와 AMD가 서로 호환되지 않는 문제가 발생하면서 이를 해결하기 위해 나온 패턴으로 브라우저와 서버 사이드 모두 호환된다. 우리가 흔히 아는 Webpack, Rollup과 같은 번들러들은 ES6 방식으로 모듈 로드에 실패하였을 때 대체 모듈로 사용한다.\nUMD 방식의 예\n(function (root, factory) &#123;  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) &#123;    // AMD    define([ &#x27;jquery&#x27;, &#x27;underscore&#x27; ], factory)  &#125; else if (typeof exports === &#x27;object&#x27;) &#123;    // CJS    module.exports = factory(require(&#x27;jquery&#x27;), require(&#x27;underscore&#x27;))  &#125; else &#123;    // global    // root === window    root.Requester = factory(root.$, root._)  &#125;&#125;(this, function ($, _) &#123;  var Requester = &#123;  // ...  &#125;  return Requester&#125;))\n\nESM (ECMAScript Module)\nES6의 등장으로 JavaScript의 표준 모듈 시스템으로 명세\n\nES6 등장 이후 표준 모듈 시스템을 구현하고자 하는 JavaScript의 제안이며, 권장 사항이다. 많은 최신 브라우저에서 동작하며, CJS의 단순한 구문과 AMD의 비동기적 방식을 모두 갖춘 모듈 시스템이다. \nHTML type을 module로 지정하여 하나의 독립된 모듈로 사용할 수 있으며, 레거시 브라우저에서는 ES6 문법을 지원하지 않기 때문에 Babel과 같은 트랜스파일러(Transpiler)가 등장하였다.\nESM 방식의 예\nimport &#123; foo, bar &#125; from &#x27;./myLib&#x27;export default function () &#123;&#125;\n\n&lt;script type=&quot;module&quot;&gt;  import &#123;func1&#125; from &#x27;my-lib&#x27;;  func1();&lt;/script&gt;\n\n\nModule Bundler\n분리된 코드와 관련된 모든 모듈 종속성을 최소한의 파일로 병합하는 도구\n\nSPA(Single Page Application)와 같은 Front-End에서 다양한 기술의 등장으로 웹 애플리케이션도 복잡도가 향상되었으며, 코드양도 증가하였다. 또한 많은 종속성 모듈에 대해 중복된 코드들이 증가하면서 이에 따라 효율성을 높이기 위한 도구로 번들러가 나오기 시작했다. 번들러는 애플리케이션에 필요한 모든 리소스들을 모듈 단위로 나누어 묶거나 난독화, Tree Shaking, CSS 전처리기 또는 최신 ESMAScript를 레거시 브라우저가 읽을 수 있도록 변환도 지원한다.\n\n번들러에는 우리가 흔히 알고 사용하고 있는 Webpack, Rollup을 포함하여 Vite에서 기반으로 사용하고 있는 esbuild와 이외에도  snowpack, swc, parcel, browserify 등 많은 번들러가 출시되고 사용되고 있다.\n\n이미지\n\n몇가지 대표적인 번들러를 비교해보자.\n\n\n\n\nEntry Potint\nDev-Server\nHMR\nTree Shaking\nTranspile\n\n\n\nwebpack\nJavascript 파일이며, html은 플러그인을 사용\nwebpack-dev-server\nwebpack-dev-server\nES6 모듈만 지원, 별도의 설정 필요\nbabel-loader 등 로더 사용 및 구성\n\n\nRollup\nJavascript 파일이며, html은 플러그인을 사용\nrollup-plugin-serve\nrollup-plugin-hotreload\n코드를 정적으로 분석하며, 기존 도구와 모듈을 기반으로 빌드 가능\n플러그인 지정\n\n\nParcel\nhtml 파일을 진입점으로 하며, html 파일 분석 후 Javascript 번들링\n내장 dev-server\n내장 HMR 모듈\nES6, CommonJS 모두 지원\n설정없이 자동 진행\n\n\n웹 애플리케이션의 발전과 번들러의 관계애플리케이션의 기술 발전과 처리되어야 하는 Javascript 모듈의 개수가 늘어남에 따라 번들링의 성능도 향상이 되어야 하며, 캐싱 및 최적화 작업으로 인하여 개선된 성능이지만 대규모 종속성 클롤링으로 인한 개발 서버의 속도가 저하된다. 또한 종속된 모듈이 많을수록 개발 서버의 가동 시간과 HMR(Hot Module Replacement)의 시간이 증가하며, 다양한 프레임워크가 출시되면서 이를 지원하기 위해 번들러의 설정이 복잡해지고 있다.\n결과적으로는 개발 생산성은 번들러로 인해 과거보다 증가하였지만, 웹 기술과 다양한 프레임워크의 등장, 그리고 증가하는 모듈과 애플리케이션의 규모에 따라 결국 다시 개발 생산성은 저하되는 아이러니한 상황이 발생한다.\n실제로 필자가 진행한 프로젝트도 규모가 매우 큰 편인데 Webpack을 기반으로 사용기 때문에 최초 개발 서버 구동 시 3분 정도의 시간이 소요되며, HMR은 1분 안쪽, 빌드 시간은 5~6분으로 걸린다. 이 시간을 일 단위로 누적한다면 꽤 많은 시간을 비효율적으로 사용하고 있다. 그렇기에 vite를 사용하고자 세미나를 하고 마이그레이션 작업과 이 포스팅을 하고 있다.\n이러한 문제점을 해결하기 위해 빠른 속도를 자랑하는 esbuild를 기반으로 한 vite가 출시되었다.\n\nVite를 알기 전 먼저 JavaScript의 모듈 시스템과 번들러를 알아보았고 왜 Vite와 같은 빠른 번들러가 나오는지 알아보았다. 다음 포스팅에서는 Vite에 대해 포스팅해 보도록 하겠다.","dateCreated":"2023-10-08T16:09:43+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2023-10-08T16:09:43+00:00","description":"\n\n이 포스트에서는 Module System이라는 개념이 왜 필요하게 되었고 되었고 JavaScript 모듈 방식인 CommonJS 와 AMD, UMD, ESM 에 대해 설명하고, Module Bundler에 대해 살펴보려고 한다.\n","headline":"Javascript 모듈시스템과 모듈번들러의 이해","image":["module-system-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2023/10/08/module-system-bundler/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2023/10/08/module-system-bundler/","keywords":"javascript, module system, module bundler, webpack, rollup, parcel, commonjs, amd, umd, cjs, vite, esbuild","thumbnailUrl":"module-system-cover.png"}</script>
+    <meta name="description" content="이 포스트에서는 Module System이라는 개념이 왜 필요하게 되었고 되었고 JavaScript 모듈 방식인 CommonJS 와 AMD, UMD, ESM 에 대해 설명하고, Module Bundler에 대해 살펴보려고 한다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Javascript 모듈시스템과 모듈번들러의 이해">
+<meta property="og:url" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이 포스트에서는 Module System이라는 개념이 왜 필요하게 되었고 되었고 JavaScript 모듈 방식인 CommonJS 와 AMD, UMD, ESM 에 대해 설명하고, Module Bundler에 대해 살펴보려고 한다.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/module-system-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/bundle-diagram.png">
+<meta property="article:published_time" content="2023-10-08T16:09:43.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.789Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="module system">
+<meta property="article:tag" content="module bundler">
+<meta property="article:tag" content="webpack">
+<meta property="article:tag" content="rollup">
+<meta property="article:tag" content="parcel">
+<meta property="article:tag" content="commonjs">
+<meta property="article:tag" content="amd">
+<meta property="article:tag" content="umd">
+<meta property="article:tag" content="cjs">
+<meta property="article:tag" content="vite">
+<meta property="article:tag" content="esbuild">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/module-system-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/module-system-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2023/10/08/module-system-bundler/module-system-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Javascript 모듈시스템과 모듈번들러의 이해
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2023-10-08T16:09:43+00:00">
+	
+		    2023-10-08
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/commonjs/">commonjs</a>, <a class="category-link" href="/categories/javascript/commonjs/amd/">amd</a>, <a class="category-link" href="/categories/javascript/commonjs/amd/umd/">umd</a>, <a class="category-link" href="/categories/javascript/commonjs/amd/umd/node-js/">node.js</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+
+<!-- excerpt -->
+
+<p><img src="/2023/10/08/module-system-bundler/module-system-cover.png" alt="module-system-cover"></p>
+<p>22년도에 vite에 관련된 세미나를 진행할 때 vite를 설명하기 전에 Module System과 Bundler를 먼저 설명하였다. 이유는 vite 역시 번들러에 속하며, 번들러가 왜 계속 발전해 오고 있는지 설명하고 vite에 대한 이해를 돕기 위해서이다. 처음 JavaScript 모듈 시스템과 번들러를 설명하고 이어 vite를 설명하려하였지만 이를 두 파트로 나누어 포스팅하려고 한다.</p>
+<p>이 포스트에서는 JavaScript 모듈 방식인 <code>CommonJS</code> 와 <code>AMD</code>, <code>UMD</code>, <code>ESM</code>에 대해 설명하고, Module Bundler에 대해 살펴보려고 한다.</p>
+<h1 id="Module-System"><a href="#Module-System" class="headerlink" title="Module System"></a>Module System</h1><blockquote>
+<p>Module System은 HTML에 JavaScript 원본 소스를 제공하여 순차적으로 로드하는 방식</p>
+</blockquote>
+<p>과거 웹 서비스라 하면 정보를 제공하는 데 그쳤기 때문에 지금처럼 복잡하지도 않았으며 규모 역시 크지도 않았다. 웹 서비스를 구성하는 HTML이나 JavaScript 파일의 크기도 상대적으로 작았기 때문에 서비스를 유지하는 데 큰 무리가 없었다. 하지만 점차 웹 서비스의 규모가 커지고 V8 엔진의 등장으로 다방면으로 JavaScript 활용도도 증가하면서  JavaScript 파일도 많아졌다. <strong>파일의 구조가 복잡해지고 거대해지면서 순차적으로 로드하는 방식은 각 모듈 간 scope가 구분되지 않기 때문에 다른 파일을 오염시키거나 충돌이 일어나는 경우가 발생</strong>했다. 또한 외부 라이브러리가 증가하면서 애플리케이션에 사용하는 모듈의 개수도 증가하게 되었다. </p>
+<p>이렇게 규모와 개발되는 파일의 개수, 그리고 모듈이 증가함으로 인해 모듈화에 대한 필요성이 부각되면서 <code>CommonJS</code>와 <code>AMD</code> 가 등장하게 되었다.</p>
+<p><strong>순차적 모듈의 예시</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">&lt;html&gt;<br>	<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/A.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br>	<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/B.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br>	<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/C.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br>	<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/D.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br>&lt;/html&gt;<br></code></pre></td></tr></table></figure>
+
+<h2 id="CJS-CommonJS"><a href="#CJS-CommonJS" class="headerlink" title="CJS (CommonJS)"></a>CJS (CommonJS)</h2><blockquote>
+<p>JavaScript를 브라우저에서뿐만 아니라 범용 언어 사용을 목적으로 둔 워킹 그룹</p>
+</blockquote>
+<p>동기적 방식을 사용하고 모든 종속성이 로컬 디스크에 존재하여 바로 사용할 수 있는 환경을 전제로 한다. 과거에 모듈 시스템은 반드시 필요했기 때문에 Node.js는 Common JS 방식의 명세를 채택하고 NPM과 함께 큰 성장을 하였다. 우리가 흔하게 쓰는 방식으로 대표적으로 <code>require</code>를 말할 수 있다.</p>
+<p>동기적 방식은 브라우저에서 필요로 하는 모듈이 모두 다운로드 할 때까지 기다려야 하는 단점과 같은 비동기적 로드를 고려하지 않은 설계로 인해 브라우저에서의 사용에는 한계가 있기 때문에 Node.js의 서버 사이드 환경에서 용이하다.</p>
+<p><strong>CJS 방식의 예</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">//importing </span><br><span class="hljs-keyword">const</span> doSomething = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./doSomething.js&#x27;</span>)<br><br><span class="hljs-comment">//exporting</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-keyword">function</span> <span class="hljs-title function_">doSomething</span> (n) &#123;<br>  <span class="hljs-comment">// do something </span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="AMD-Asynchronous-Module-Definition"><a href="#AMD-Asynchronous-Module-Definition" class="headerlink" title="AMD (Asynchronous Module Definition)"></a>AMD (Asynchronous Module Definition)</h2><blockquote>
+<p>JavaScript를 비동기적으로 사용하기 위해 CommonJS와 독립한 별도의 그룹</p>
+</blockquote>
+<p>CJS와 다르게 <strong>비동기적으로 모듈을 호출</strong>하며, 브라우저에서의 모듈 실행을 우선으로 한다. 비동기적 방식으로 CJS보다 나은 성능을 보였으며, 브라우저&#x2F;서버사이드 모두 호환되는 방식이지만 CJS보다 직관적이지 않은 단점이 있다.</p>
+<p><strong>AMD 방식의 예</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-title function_">define</span>([<br>  <span class="hljs-string">&#x27;package/lib_1&#x27;</span>,<br>  <span class="hljs-string">&#x27;package/lib_2&#x27;</span><br>], <span class="hljs-keyword">function</span> (<span class="hljs-params">pack_1, pack_2</span>) &#123;<br>     <span class="hljs-keyword">function</span> <span class="hljs-title function_">foo</span> () &#123;<br>       pack_1.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Package 1&#x27;</span>)<br>     &#125;<br><br>     <span class="hljs-keyword">function</span> <span class="hljs-title function_">bar</span> () &#123;<br>       pack_2.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Package 2&#x27;</span>)<br>     &#125;<br><br>     <span class="hljs-keyword">return</span> &#123; foo, bar &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-built_in">require</span>([<br>  <span class="hljs-string">&#x27;my_package&#x27;</span><br>], <span class="hljs-keyword">function</span> (<span class="hljs-params">my_pack</span>) &#123;<br>     my_pack.<span class="hljs-title function_">foo</span>()<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h2 id="UMD-Universal-Module-Definition"><a href="#UMD-Universal-Module-Definition" class="headerlink" title="UMD (Universal Module Definition)"></a>UMD (Universal Module Definition)</h2><blockquote>
+<p>CJS와 AMD 모두 호환되면서 범용적으로 여러 모듈을 구성하는 디자인 패턴</p>
+</blockquote>
+<p>CJS와 AMD가 서로 호환되지 않는 문제가 발생하면서 이를 해결하기 위해 나온 패턴으로 <strong>브라우저와 서버 사이드 모두 호환</strong>된다. 우리가 흔히 아는 Webpack, Rollup과 같은 번들러들은 ES6 방식으로 모듈 로드에 실패하였을 때 대체 모듈로 사용한다.</p>
+<p><strong>UMD 방식의 예</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">(<span class="hljs-keyword">function</span> (<span class="hljs-params">root, factory</span>) &#123;<br>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">&#x27;function&#x27;</span> &amp;&amp; define.<span class="hljs-property">amd</span>) &#123;<br>    <span class="hljs-comment">// AMD</span><br>    <span class="hljs-title function_">define</span>([ <span class="hljs-string">&#x27;jquery&#x27;</span>, <span class="hljs-string">&#x27;underscore&#x27;</span> ], factory)<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">exports</span> === <span class="hljs-string">&#x27;object&#x27;</span>) &#123;<br>    <span class="hljs-comment">// CJS</span><br>    <span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-title function_">factory</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;jquery&#x27;</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;underscore&#x27;</span>))<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// global</span><br>    <span class="hljs-comment">// root === window</span><br>    root.<span class="hljs-property">Requester</span> = <span class="hljs-title function_">factory</span>(root.<span class="hljs-property">$</span>, root.<span class="hljs-property">_</span>)<br>  &#125;<br>&#125;(<span class="hljs-variable language_">this</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">$, _</span>) &#123;<br>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">Requester</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  &#125;<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Requester</span><br>&#125;))<br></code></pre></td></tr></table></figure>
+
+<h2 id="ESM-ECMAScript-Module"><a href="#ESM-ECMAScript-Module" class="headerlink" title="ESM (ECMAScript Module)"></a>ESM (ECMAScript Module)</h2><blockquote>
+<p>ES6의 등장으로 JavaScript의 표준 모듈 시스템으로 명세</p>
+</blockquote>
+<p>ES6 등장 이후 표준 모듈 시스템을 구현하고자 하는 JavaScript의 제안이며, 권장 사항이다. <strong>많은 최신 브라우저에서 동작하며, CJS의 단순한 구문과 AMD의 비동기적 방식을 모두 갖춘 모듈 시스템</strong>이다. </p>
+<p>HTML type을 module로 지정하여 하나의 독립된 모듈로 사용할 수 있으며, 레거시 브라우저에서는 ES6 문법을 지원하지 않기 때문에 Babel과 같은 트랜스파일러(Transpiler)가 등장하였다.</p>
+<p><strong>ESM 방식의 예</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123; foo, bar &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./myLib&#x27;</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">&lt;script type=<span class="hljs-string">&quot;module&quot;</span>&gt;<br>  <span class="hljs-keyword">import</span> &#123;func1&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;my-lib&#x27;</span>;<br><br>  <span class="hljs-title function_">func1</span>();<br>&lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="Module-Bundler"><a href="#Module-Bundler" class="headerlink" title="Module Bundler"></a>Module Bundler</h1><blockquote>
+<p>분리된 코드와 관련된 모든 모듈 종속성을 최소한의 파일로 병합하는 도구</p>
+</blockquote>
+<p>SPA(Single Page Application)와 같은 Front-End에서 다양한 기술의 등장으로 웹 애플리케이션도 복잡도가 향상되었으며, 코드양도 증가하였다. 또한 많은 종속성 모듈에 대해 중복된 코드들이 증가하면서 이에 따라 효율성을 높이기 위한 도구로 번들러가 나오기 시작했다. 번들러는 애플리케이션에 필요한 모든 리소스들을 모듈 단위로 나누어 묶거나 난독화, Tree Shaking, CSS 전처리기 또는 최신 ESMAScript를 레거시 브라우저가 읽을 수 있도록 변환도 지원한다.</p>
+<p><img src="/2023/10/08/module-system-bundler/bundle-diagram.png" alt="bundler"></p>
+<p>번들러에는 우리가 흔히 알고 사용하고 있는 Webpack, Rollup을 포함하여 Vite에서 기반으로 사용하고 있는 esbuild와 이외에도  snowpack, swc, parcel, browserify 등 많은 번들러가 출시되고 사용되고 있다.</p>
+<ul>
+<li>이미지</li>
+</ul>
+<p>몇가지 대표적인 번들러를 비교해보자.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Entry Potint</th>
+<th>Dev-Server</th>
+<th>HMR</th>
+<th>Tree Shaking</th>
+<th>Transpile</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webpack</td>
+<td>Javascript 파일이며, html은 플러그인을 사용</td>
+<td>webpack-dev-server</td>
+<td>webpack-dev-server</td>
+<td>ES6 모듈만 지원, 별도의 설정 필요</td>
+<td>babel-loader 등 로더 사용 및 구성</td>
+</tr>
+<tr>
+<td>Rollup</td>
+<td>Javascript 파일이며, html은 플러그인을 사용</td>
+<td>rollup-plugin-serve</td>
+<td>rollup-plugin-hotreload</td>
+<td>코드를 정적으로 분석하며, 기존 도구와 모듈을 기반으로 빌드 가능</td>
+<td>플러그인 지정</td>
+</tr>
+<tr>
+<td>Parcel</td>
+<td>html 파일을 진입점으로 하며, html 파일 분석 후 Javascript 번들링</td>
+<td>내장 dev-server</td>
+<td>내장 HMR 모듈</td>
+<td>ES6, CommonJS 모두 지원</td>
+<td>설정없이 자동 진행</td>
+</tr>
+</tbody></table>
+<h2 id="웹-애플리케이션의-발전과-번들러의-관계"><a href="#웹-애플리케이션의-발전과-번들러의-관계" class="headerlink" title="웹 애플리케이션의 발전과 번들러의 관계"></a>웹 애플리케이션의 발전과 번들러의 관계</h2><p>애플리케이션의 기술 발전과 처리되어야 하는 Javascript 모듈의 개수가 늘어남에 따라 번들링의 성능도 향상이 되어야 하며, 캐싱 및 최적화 작업으로 인하여 개선된 성능이지만 대규모 종속성 클롤링으로 인한 개발 서버의 속도가 저하된다. 또한 종속된 모듈이 많을수록 개발 서버의 가동 시간과 HMR(Hot Module Replacement)의 시간이 증가하며, 다양한 프레임워크가 출시되면서 이를 지원하기 위해 번들러의 설정이 복잡해지고 있다.</p>
+<p>결과적으로는 개발 생산성은 번들러로 인해 과거보다 증가하였지만, 웹 기술과 다양한 프레임워크의 등장, 그리고 증가하는 모듈과 애플리케이션의 규모에 따라 결국 다시 개발 생산성은 저하되는 아이러니한 상황이 발생한다.</p>
+<p>실제로 필자가 진행한 프로젝트도 규모가 매우 큰 편인데 Webpack을 기반으로 사용기 때문에 최초 개발 서버 구동 시 3분 정도의 시간이 소요되며, HMR은 1분 안쪽, 빌드 시간은 5~6분으로 걸린다. 이 시간을 일 단위로 누적한다면 꽤 많은 시간을 비효율적으로 사용하고 있다. 그렇기에 vite를 사용하고자 세미나를 하고 마이그레이션 작업과 이 포스팅을 하고 있다.</p>
+<p>이러한 문제점을 해결하기 위해 빠른 속도를 자랑하는 <code>esbuild</code>를 기반으로 한 <strong>vite</strong>가 출시되었다.</p>
+<hr>
+<p>Vite를 알기 전 먼저 JavaScript의 모듈 시스템과 번들러를 알아보았고 왜 Vite와 같은 빠른 번들러가 나오는지 알아보았다. 다음 포스팅에서는 Vite에 대해 포스팅해 보도록 하겠다.</p>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/amd/" rel="tag">amd</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/cjs/" rel="tag">cjs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/commonjs/" rel="tag">commonjs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/esbuild/" rel="tag">esbuild</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/module-bundler/" rel="tag">module bundler</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/module-system/" rel="tag">module system</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/parcel/" rel="tag">parcel</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/rollup/" rel="tag">rollup</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/umd/" rel="tag">umd</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vite/" rel="tag">vite</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/webpack/" rel="tag">webpack</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/11/24/vite-tutorial/"
+                    data-tooltip="차세대 번들러 Vite! 개념은 알고 넘어가자!"
+                    aria-label="PREVIOUS: 차세대 번들러 Vite! 개념은 알고 넘어가자!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/28/electron-rce/"
+                    data-tooltip="[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                    aria-label="NEXT: [Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/11/24/vite-tutorial/"
+                    data-tooltip="차세대 번들러 Vite! 개념은 알고 넘어가자!"
+                    aria-label="PREVIOUS: 차세대 번들러 Vite! 개념은 알고 넘어가자!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/28/electron-rce/"
+                    data-tooltip="[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                    aria-label="NEXT: [Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/10/08/module-system-bundler/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2023/10/08/module-system-bundler/';
+              
+            this.page.identifier = 'javascript-module';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

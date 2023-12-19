@@ -1,0 +1,973 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Webpack 완전정복하기!! - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2017/11/04/webpack-tutorial/"/>
+    
+        <meta name="keywords" content="javascript,nodejs,webpack,gulp,javascript build tool,webpack build,webpack 설치,웹팩 설치,webpack tutorial,webpack 강좌,webpack 튜토리얼,webpack 배우기,webpack 사용법">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n지금까지 우리는 Webpack 개념잡기 포스트에서 webpack에 대한 기본 개념을 먼저 살펴보았다. 왜 webpack이 많이 사용되는지와 Gulp와의 차이점을 알았다면 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자. 이 포스트에 올린 예제들은 webpack 공식 사이트들의 예제를 포함하고 있다.\nWebpack 설치 및 Buildwebpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보는 당신은 npm이 무엇인지 모른다면 빠르게 배우는 Node.js와 NPM 설치부터 개념잡기 포스트를 참고하자. 자! 이제 설치를 해보자. 먼저 적당한 경로에 Webpack_Project라는 이름의 프로젝트 폴더를 생성하고 해당 폴더에서 명령 프롬프트를 실행하여 webpack을 설치하자.\nnpm\nnpm init -ynpm install webpack webpack-cli -D\n\nyarn\nyarn init -yyarn add webpack webpack-cli --dev\n\n먼저 npm init -y를 통해 package.json을 생성하고 npm install webpack webpack-cli webpack-dev-server --save-dev명령을 통해 webpack을 설치하면서 동시에 package.json에 적용하였다. 실제로 webpack의 설치는 이것으로 끝이다. 우리는 항상 설치가 정상적으로 됐는지 확인은 버전으로 확인을 한다. 확인해보자.\nWebpack 4에서는 webpack과 webpack-cli를 같이 설치해줘야한다.\n\n\nwebpack -v\n\n버전이 출력된다면 정상적으로 설치가 완료된 것이다.\nCLI를 사용한 Build가장 기초적인 방법으로 webpack cli명령어를 통해 javascript를 build 해 보자. 테스트에 필요한 파일은 index.js와 index.html이다. webpack 4에서는 기본 경로가 src로 되어 있기 때문에 이전과는 다르게 src경로가 존재해야한다. \nsrc디렉토리를 하나 생성하고 하위에 index.js와 index.html을 생성하자. \nsrc&#x2F;index.js\nfunction component() &#123;  const element = document.createElement(&#x27;div&#x27;)  element.innerHTML = &#x27;Hello Webpack!!&#x27;  return element&#125;document.body.appendChild(component())\n\n\nsrc&#x2F;index.html\n&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;  &lt;meta charset=&quot;UTF-8&quot;&gt;  &lt;title&gt;Title&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;../dist/bundle.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n\n코드는 간단하다. Hello Webpack!!이라는 문구를 출력할 뿐이다. 그런데 html에서는 조금 다르다. 먼저 .js파일을 불러오는 것은 이해가 되지만 우리가 만든 파일은 index.js인데 왠 ../dist/bundle.js라는 파일을 호출하였을까. 일단 궁금증은 접어두고 webpack을 통해 build를 해보자.\nwebpack --output dist/bundle.js --mode=development\n\n여기서 bundle.js가 나왔다. 대강 이해가 가는가? 우리는 위에 있는 cli를 통해 index.js를 ../dist/bundle.js로 build 한 것이다. 그렇기 때문에 index.html에서는 처음에는 존재하지는 않지만, build 후에 생성 될 ../dist/bundle.js를 호출한 것이다. 비록 지금은 코드나 그 프로젝트 구조가 복잡하지 않기 때문에 별 느낌이 없을지 모르겠지만 이 포스트를 끝까지 읽는다면 어느 정도 감이 올 것이다.\nconfig를 사용한 Buildcli를 통한 build는 단순한 구조의 파일을 build 하기에는 편하지만 실제로 우리가 어떤 프로젝트에 임하면 그 프로젝트는 절.대.로 간단한 구조로 되어 있지 않다. build 시에 더욱 부가적인 요소들을 요구하며 이 요소들을 통하여 build를 하게 된다. 이렇게 복잡한 build의 경우 webpack에서는 어떤 특정한 설정 파일에 build에 필요한 요소들을 나열하고 해당 설정 파일을 통해 build를 진행하게끔 지원한다.\n먼저 Webpack_Project 경로에 webpack.config.js라는 javascript 설정 파일을 만들고 간단한 설정부터 진행하자.\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;&#125;\n\n이렇게 작성된 설정 파일은 webpack 명령어를 통해 실행할 수 있다. (물론 실행 시에는 해당 디렉토리 경로에서 실행하자.)\nwebpack --mode=development\n\n결과는 webpack cli명령어를 통하여 build 한 내용과 동일하지만 bundle.js의 생성 위치가 다르다. 하나씩 살펴보자. \n\npath - 파일의 경로를 다루고 변경하는 유틸리티\noutput - build 결과를 저장할 경로\nentry - build의 대상이 될 파일\n\n\n\n처음 우리가 webpack cli를 통해 build 할 때는 build 될 대상과 build 된 파일을 명시해줬지만 여기서는 그저 webpack 이라는 단순한 명령어를 사용하였다. 그 이유는 우리가 webpack의 설정을 정의한 webpack.config.js를 생성하였고 이 파일은 webpack 명령어의 기본 파일이기 때문이다. 만약 우리가 설정파일이 webpack.config.js가 아닌 webpack.build.js와 같은 다른 파일로 정의를 하였다면 아래와 같은 명령어를 통해 실행 할 수 있다.\nwebpack --config webpack.build.js\n\nLoader 사용하기우리는 이전 포스트인 Webpack 개념잡기에서 webpack은 크게 Entry, Output, Loader, Plug-In 이 4가지로 나눌 수 있다. 라고 하였다. 이미 앞서 webpack을 설치하고 build 해 보면서 entry와 output이 무엇인지 대강 감을 잡았으니 이제 파일을 사전 처리하여 정적인 리소스들을 javascript와 같이 하나의 bundle로 만들 수 있는 Loader를 알아보자.\nstyle-loader, css-Loaderstyle-loader와 css-loader는 같이 사용되며 style-loader는 &lt;style&gt;태그를 삽입하여 CSS를 추가해주는 역할을 한다. 모든 설치는 npm을 통해 설치를 진행한다.\nnpm\nnpm install style-loader css-loader -D\n\nyarn\nyarn add style-loader css-loader --dev\n\n설치가 완료되었으면 webpack.config.js에 style-loader와 css-loader를 정의하자.\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  module: &#123;    rules: [      &#123;        test: /\\.css$/,        use: [          &#x27;style-loader&#x27;,          &#x27;css-loader&#x27;        ]      &#125;    ]  &#125;&#125;\n\nloader는 module에 추가해주며, 정규식(test)을 통해 loader가 인식될 파일을 잡아준다. 그리고 어떤(use) loader를 사용하는지 정의해 주면 된다. 이제 style.css파일을 추가하고 index.js파일을 수정하자.\nstyle.css\n.hello &#123;  color: red;&#125;\n\n\nindex.js\nimport &#x27;./style.css&#x27;function component() &#123;  const element = document.createElement(&#x27;div&#x27;)  element.innerHTML = &#x27;Hello Webpack!!&#x27;  element.classList.add(&#x27;hello&#x27;)  return element&#125;document.body.appendChild(component())\n\n우선 추가된 코드는 hello클래스와 이 클래스를 element에 추가하는 코드이다. 코드는 어렵지 않다. 그런데 왜 style.css를 index.html에 &lt;link&gt; 태그나 &lt;style&gt;태그를 통해 삽입하지 않고 index.js에 삽입을 하였을까? 이유는 처음에 설명한 style-loader의 역할 때문이다. 이렇게 index.js에 style.css를 명시하고 이 index.js를 build하게 되면 loader를 통해 style.css의 클래스는 &lt;script&gt;태그로 CSS가 추가되도록 되어 있다.\n위 코드를 build하여 실행하고 결과를 확인해 보도록 하자.\nfile-loaderfile-loader를 사용하면 시스템에 존재하는 파일. 즉 이미지나 폰트와 같은 자산들을 하나로 통합할 수 있다. 사용 방식은 위에서 설명한 css-loader와 style-loader와 동일하다. file-loader를 먼저 설치하고 webpkac.config.js를 열어 loader를 추가하자.\nnpm\nnpm install file-loader -D\n\nyarn\nyarn add file-loader --dev\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  module: &#123;    rules: [      &#123;        test: /\\.(png|svg|jpe?g|gif)$/,        loader: &#x27;file-loader&#x27;      &#125;    ]  &#125;&#125;\n\n여기서 loader를 보면 css-loader와 style-loader에서 사용한 user:[]가 사용되지 않고 loader로 사용되었다. 둘 다 적용이 가능한 옵션이며, use:[]경우 여러 loader를 지정할 때 사용되며 loader는 단일로 사용이 된다. 또한 각 loader는 각각의 특성에 따라 옵션을 지정할 있으며 아래와 같이 정의 할 수 있다.\nexample\nmodule: &#123;  rules: [    &#123;      test: /\\.(png|svg|jpe?g|gif)$/,      loader:&#x27;file-loader&#x27;,      options: &#123;        name: &#x27;[hash].[ext]&#x27;      &#125;    &#125;  ]&#125;\n\n이어서 가자. file-loader를 정의 하였으니 Webpack_Project안에 asset폴더를 하나 만들고 image.png파일과 같은 이미지 파일을 넣어놓자. 이렇게 넣어 놓은 이미지 파일을 index.js에서 불러 올 것이다.\nindex.js\nimport &#x27;./style.css&#x27;import Icon from &#x27;./asset/image.png&#x27;function component() &#123;  const element = document.createElement(&#x27;div&#x27;)    element.innerHTML = &#x27;Hello Webpack!!&#x27;  element.classList.add(&#x27;hello&#x27;)  var myIcon = new Image()    myIcon.src = Icon  element.appendChild(myIcon)  return element&#125;document.body.appendChild(component())\n\n이제 다시 build 하고 확인해 보자.\n해당 예제는 이미지로 진행하였지만 폰트 역시 동일하다. 다른게 있다면 폰트의 확장자를 통해 걸러내는 정규식이 다를 뿐이다.\nexample\nmodule: &#123;  rules: [    &#123;      test: /\\.(woff|woff2|eot|ttf|otf)$/,      loader:&#x27;file-loader&#x27;    &#125;  ]&#125;\n\nurl-loaderfile-loader를 사용해 보았다면 한 번쯤 생각해 볼 것이다. 웹을 표한하는데 있어서 리소스를 가장 많이 잡아먹는 것 중 하나가 이 이미지 파일들인데 이 파일을 더 효율적으로 관리 할 수 없을지 말이다. webpack에서는 이 단계 이후에 진행될 논리적 단계는 이미지를 축소하고 최적화하는 것이다. 라고 말한다. url-loader는 이 이미지 로딩 프로세스를 향상 시킬 수 있는 하나의 방법이며, 특정 파일을 base64로 인코딩된 URL를 로드해주는 역할을 한다.\nurl-loader를 설치하고 webpack.config.js를 열어 url-loader를 추가해 주자.\nnpm\nnpm install url-loader -D\n\nyarn\nyarn add url-loader --dev\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  module: &#123;    rules: [      &#123;        test: /\\.(png|svg|jpe?g|gif)$/,        loader: &#x27;url-loader&#x27;,        options: &#123;          limit: 10000        &#125;      &#125;    ]  &#125;&#125;\n\nurl-loader는 file-loader와 같이 작동한다. 그렇기에 정규식 역시 동일하지만 다른 점은 limit이라는 옵션을 준 것이다. options에 limit는 파일의 크기를 말하는데 현재 예제에서 10KB 미만은 url-loader로 처리가 되고 그 이상의 파일은 file-loder와 같이 처리가 된다.\n다시 build를 하고 dist폴더를 확인해 보자. 해당 이미지 파일이 존재하지 않는 것을 확인할 수 있다. 만약 파일이 존재한다면 파일의 용량을 확인해 보고 그 용량 이상의 값을 limit에 적용해보다. 그리고 브라우저를 열어 실제로 파일이 base64로 인코딩이 되었는지 확인해 보자.\n\n지금까지 Loader를 알아 보았는데 여기서 언급한 Loader이외에도 xml-loader, babel-loader, i18n-loader 등과 같이 효율적인 Loader들이 무수히 존재한다. 해당 Loader들은 Webpack - Loader에서 확인해 보자.\nPlug-Inwebpack은 풍부한 Plug-In이 있으며 webpack 자체의 대부분의 기능은 이 Plug-In을 사용한다. Plug-In 을 통해 우리가 할 수 있는 일들은 build 된 bundle 파일을 동적으로 특정 html 페이지에 추가 할 수 있으며 build 시에 javscript, css, html 등의 파일을 난독화 및 압축을 진행할 수 있다. 이 외에도 많은 기능을 지원하며 필수 적으로 사용한다 해도 무방하다. 그럼 몇 가지 Plug-In을 살펴보겠다.\nhtml-webpack-plugin엔트리 포인트 중 하나의 모듈의 이름을 변경하거나 새로운 것을 추가하는 경우 생성된 번들은 빌드에서 이름이 변경되지만 index.html에 script는 여전히 이전의 이름을 참조한다. 그렇게 때문에 우리는 주기적으로 번들링 된 파일을 index.html에 삽입을 시켜야하는 번거로움이 있다. 이런 불편함을 html-webpack-plugin이 해결해 준다. html-webpack-plugin은 정의되어있는 기본 template을 기준으로 번들링 시에 새로운 html 파일을 생성해 준다. 이때 파일을 생성할 때 번들링된 javascript 파일을 삽입해준다. \nhtml-webpack-plugin을 설치하고 webpack.config.js에 추가해 주자.\nnpm\nnpm install html-webpack-plugin -D\n\nyarn\nyarn add html-webpack-plugin --dev\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: path.resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;)  ]&#125;\n\ncommonChunkcommonChunk Plug-In은 여러 개의 엔트리 포인트 사이에서 공유되는 공통 모듈로 구성된 파일(Chunk)을 별도의 엔트리로 분리함으로써 종속성을 관리 할 수 있다. 예를 들면 어떤 프로젝트에서 jquery를 사용하고 jquery를 필요로 하는 모든 모듈에 jquery를 참조한다고 했을 때 이후 build를 하게 되면 jquery 모듈이 중복되는데 이렇게 common하게 사용되는 모듈을 여러 모듈이 참조를 한다고 하더라도 commonChunk를 사용하여 build 시에 하나의 별도의 vendor 모듈로 분리 할 수 있다.\ncommonChunk는 webpack의 내장 모듈이기 때문에 별도의 설치는 필요하지 않다. 대신에 webpack을 참조해야 한다.\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const webpack = require(&#x27;source/_posts/webpack&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;),    new webpack.optimize.CommonsChunkPlugin(&#123;      name: &#x27;common&#x27;    &#125;)  ]&#125;\n\n\nclean-webpack-plugin우리는 webpack.config.js에 build 시 output을 통해 어디로 가는지 지정을 해줬다. clean-webpack-plugin은 이 output 디렉토리를 build를 할때마다 삭제를 해주는 Plug-In이다.\nnpm\nnpm install clean-webpack-plugin -D\n\nyarn\nyarn add clean-webpack-plugin --dev\n\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const webpack = require(&#x27;webpack&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)const CleanWebpackPlugin = require(&#x27;clean-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new CleanWebpackPlugin([&#x27;dist&#x27;]),    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;),    new webpack.optimize.CommonsChunkPlugin(&#123;      name: &#x27;common&#x27;    &#125;)  ]&#125;\n\nuglifyjavascript 소스를 보게 되면 xxx.min.js 라는 파일과 그 안의 코드는 알아볼 수 없는 형태로 되어있는 것을 봤을 것이다. 이는 난독화와 압축을 진행했기 때문인데 javascript를 build 할 때 다른 중요한 부분은 난독화와 압축이다. 이 프로세스를 걸침으로 인해 내부 코드의 내용을 쉽게 파악하지 못하게 함과 파일의 용량을 줄일 수 있다. 압축하는 방법이야 여러 가지가 있지만 uglify는 간단하게 난독화와 압축을 진행할 수 있는 Plug-In이다.\nnpm\nnpm install uglifyjs-webpack-plugin -D\n\nyarn\nyarn add uglifyjs-webpack-plugin --dev\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const webpack = require(&#x27;webpack&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)const UglifyWebpackPlugin = require(&#x27;uglifyjs-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;),    new webpack.optimize.CommonsChunkPlugin(&#123;      name: &#x27;common&#x27;    &#125;),    new UglifyWebpackPlugin()  ]&#125;\n\n\nproviderwebpack.ProvidePlugin을 통해 등록된 모듈을 자유 변수로 사용이 가능하다.\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const webpack = require(&#x27;./webpack&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)const UglifyWebpackPlugin = require(&#x27;uglifyjs-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;),    new webpack.optimize.CommonsChunkPlugin(&#123;      name: &#x27;common&#x27;    &#125;),    new UglifyWebpackPlugin(),    new webpack.ProvidePlugin(&#123;      $: &#x27;jquery&#x27;,      jQuery: &#x27;jquery&#x27;,      _: &#x27;underscore&#x27;    &#125;)  ]&#125;\n\n\nmodule A\n$(&#x27;&lt;div&gt;&#x27;)jQuery(&#x27;&lt;div&gt;&#x27;)const array = _.map([1, 2, 3], function(num)&#123;  return num * 3;&#125;)\n\n\nLoader에 이어 Plug-in을 알아보았다. 이밖에 Plug-in은 Webpack Plugin-in을 참고하자.\nDevServer &amp;&amp; HMRDevServer는 webpack의 주요 기능 중 하나이다. 실제로 우리는 자산들을 bundling 후에도 테스트가 필요하다. 또한 자산의 추가, 수정, 삭제에 따라 반영 작업이 필요한데 webpack의 DevServer를 이용한다면 매우 편리하게 개발에 임할 수 있다. DevServer는 말 그대로 개발 서버이며 이와 관련된 또 하나의 webpack 주요 기능인 HMR(Hot Module Replacement)가 있다. 이 핫 모듈 교체(한국어 풀이)는 특정 모듈이 변경되더라도 새로고침 할 필요없이 런타임에 모든 종류의 모듈을 업데이트해 주는 기능이다. 이 기능을 사용하기 위해서는 DevServer의 설정을 추가하고 webpack에 내장된 HMR 플러그 인을 사용하는 것 뿐이다. 그렇기에 DevServer와 같이 설명하려 한다. HMR의 자세한 내용은 Webpack HMR을 참고하자.\n살을 덧붙여 요약을 하자면.\n\nwebpack-dev-server는 빠른 실시간 리로드 기능을 갖춘 개발 서버\nwebpack-dev-serve는 디스크에 저장되지 않는 메모리 컴파일을 사용하기 때문에 컴파일 속도가 빨라짐\nwebpack.config.js에도 devServer 옵션을 통해 옵션을 지정하여 사용이 가능\n\n\n\nwebpack-dev-server의 간략한 프로세스는 이렇다.\n\n서버 실행 시 소스 파일들을 번들링하여 메모리에 저장\n소스 파일을 감시하고 있다가 소스 파일이 변경되면 변경된 모듈만 새로 번들링\n변경된 모듈 정보를 브라우저에 전송\n브라우저는 변경을 인지하고 새로고침되어 변경사항이 반영된 페이지를 로드\n\n\n\n\n이제 webpack-dev-server를 설치하고 설정을 적용해보자.\nnpm\nnpm install webpack-dev-server -D\n\nyarn\nyarn add webpack-dev-server --dev\n\n\nwebpack.config.js\nconst &#123; resolve &#125; = require(&#x27;path&#x27;)const webpack = require(&#x27;webpack&#x27;)const HtmlWebpackPlugin = require(&#x27;html-webpack-plugin&#x27;)const UglifyWebpackPlugin = require(&#x27;uglifyjs-webpack-plugin&#x27;)module.exports = &#123;  entry: &#x27;./src/index.js&#x27;,  output: &#123;    filename: &#x27;bundle.js&#x27;,    path: resolve(__dirname, &#x27;dist&#x27;)  &#125;,  plugins: [    new HtmlWebpackPlugin(&#123;      favicon: &#x27;./static/asset/favicon.ico&#x27;,      template: &#x27;./static/index.html&#x27;,      chunks: [&#x27;css&#x27;, &#x27;index&#x27;, &#x27;app&#x27;, &#x27;system&#x27;, &#x27;monitor&#x27;]    &#125;),    new webpack.optimize.CommonsChunkPlugin(&#123;      name: &#x27;common&#x27;    &#125;),    new UglifyWebpackPlugin(),    new webpack.ProvidePlugin(&#123;      $: &#x27;jquery&#x27;,      jQuery: &#x27;jquery&#x27;,      _: &#x27;underscore&#x27;    &#125;)  ],  devServer: &#123;    host: &#x27;127.0.0.1&#x27;,    contentBase: path.join(__dirname, &#x27;dist&#x27;),    compress: true,    hot: true,    inline: true,    port: 9000,    open: true  &#125;&#125;\n\n\ndevServer의 설정을 보면 감이 올 것으로 생각된다. 간단한 설명으로 넘어가겠다.\n\n\n\noption\ndescription\nCLI 사용\n\n\n\nhost\n사용될 호스트 지정\nwebpack-dev-server –host 127.0.0.1\n\n\ncontentBase\n콘텐츠를 제공할 경로지정(정적파일을 제공하려는 경우에만 필요)\nwebpack-dev-server –content-base &#x2F;path&#x2F;to&#x2F;content&#x2F;dir\n\n\ncompress\n모든 항목에 대해 gzip압축 사용\nwebpack-dev-server –compress\n\n\nhot\nwebpack의 HMR 기능 활성화\n-\n\n\ninline\ninline 모드 활성화\nwebpack-dev-server –inline&#x3D;true\n\n\nport\n접속 포트 설정\nwebpack-dev-server –port 9000\n\n\nopen\ndev server 구동 후 브라우저 열기\nwebpack-dev-server –open\n\n\nwebpack-dev-server의 구동은 CLI로 실행을 하고 이 CLI를 npm script에 등록하여 할 수 있다.\nwebpack-dev-server --config webpack.config.js --mode=development\n\nopen 옵션으로 인해 서버가 구동 후 브라우저가 열리는 것을 볼 수 있다. 여기서 F12를 통해 개발자 콘솔을 열고 모듈을 변경, 수정하면서 console 창을 확인해 보자. 당신은 지금 HMR이라는 훌륭한 기능을 보고 있는 것이다.\n\n여기까지 해서 webpack의 핵심적인 사용법을 알아보았다. webpack에 대한 디테일한 가이드는 webpack guides를 참고하면서 하나씩 따라 해보자. \nwebpack은 초기 설정이 까다롭게 느껴질 수 있다. 당연한 것이다. webpack 자체의 configulation과 Loader, plug-in 제각기 옵션이 존재하기 때문이다. 하지만 초기 설정만 끝난다면 webpack이 왜 떠오르고 많이 사용하는지 몸소 느낄 것이다. 현재 내가 진행하고 있는 프로젝트에도 webpack을 도입하기로 하였기에 Test하고 Prototype을 만들고 실제로 프로젝트에 적용해 보면서 매번 정말 훌륭하다고 느껴진다. Web Front-End의 Bundling tool을 고민하는 당신에게 적극적으로 추천한다.\n\n더 알아보기Webpack 개념잡기불꽃 튀게 빠른 번들러 Parcel 개념잡기!빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?\n","dateCreated":"2017-11-04T20:08:50+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2017-11-04T20:08:50+00:00","description":"\n지금까지 우리는 webpack에 대한 개념을 먼저 살펴보았다. 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자. 왜 webpack이 많이 사용되는지와 Gulp와의 차이점을 알았다면 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자.webpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보는 당신은 npm이 무엇인지 모른다면 빠르게 배우는 Node.js와 NPM 설치부터 개념잡기 포스트를 참고하자. 자! 이제 설치를 해보자. 먼저 적당한 경로에 Webpack_Project라는 이름의 프로젝트 폴더를 생성하고 해당 폴더에서 명령 프롬프트를 실행하여 webpack을 설치하자. \n","headline":"Webpack 완전정복하기!!","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2017/11/04/webpack-tutorial/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2017/11/04/webpack-tutorial/","keywords":"javascript, nodejs, webpack, build tool, gulp","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="지금까지 우리는 webpack에 대한 개념을 먼저 살펴보았다. 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자. 왜 webpack이 많이 사용되는지와 Gulp와의 차이점을 알았다면 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자.webpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Webpack 완전정복하기!!">
+<meta property="og:url" content="https://kdydesign.github.io/2017/11/04/webpack-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="지금까지 우리는 webpack에 대한 개념을 먼저 살펴보았다. 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자. 왜 webpack이 많이 사용되는지와 Gulp와의 차이점을 알았다면 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자.webpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2017/11/04/webpack-tutorial/cover.png">
+<meta property="article:published_time" content="2017-11-04T20:08:50.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.849Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="webpack">
+<meta property="article:tag" content="build tool">
+<meta property="article:tag" content="gulp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2017/11/04/webpack-tutorial/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2017/11/04/webpack-tutorial/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2017/11/04/webpack-tutorial/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Webpack 완전정복하기!!
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-11-04T20:08:50+00:00">
+	
+		    2017-11-04
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/build-tool/">build tool</a>, <a class="category-link" href="/categories/javascript/nodejs/build-tool/webpack/">webpack</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2017/11/04/webpack-tutorial/cover.png" alt="cover"></p>
+<p>지금까지 우리는 <a href="https://kdydesign.github.io/2017/07/27/webpack/">Webpack 개념잡기</a> 포스트에서 webpack에 대한 기본 개념을 먼저 살펴보았다. 왜 webpack이 많이 사용되는지와 <code>Gulp</code>와의 차이점을 알았다면 이제 실제로 webpack을 설치해보고 사용해 보면서 하나하나 짚어나가 보자. <strong>이 포스트에 올린 예제들은 <a target="_blank" rel="noopener" href="https://webpack.js.org/">webpack 공식 사이트</a>들의 예제를 포함하고 있다.</strong></p>
+<h1 id="Webpack-설치-및-Build"><a href="#Webpack-설치-및-Build" class="headerlink" title="Webpack 설치 및 Build"></a>Webpack 설치 및 Build</h1><p>webpack은 npm으로 쉽게 설치할 수 있다. 만약 이 포스트를 보는 당신은 npm이 무엇인지 모른다면 <a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a> 포스트를 참고하자. 자! 이제 설치를 해보자. 먼저 적당한 경로에 <code>Webpack_Project</code>라는 이름의 프로젝트 폴더를 생성하고 해당 폴더에서 명령 프롬프트를 실행하여 <code>webpack</code>을 설치하자.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm init -y<br>npm install webpack webpack-cli -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn init -y<br>yarn add webpack webpack-cli --dev<br></code></pre></td></tr></table></figure>
+
+<p>먼저 <code>npm init -y</code>를 통해 package.json을 생성하고 <code>npm install webpack webpack-cli webpack-dev-server --save-dev</code>명령을 통해 webpack을 설치하면서 동시에 package.json에 적용하였다. 실제로 webpack의 설치는 이것으로 끝이다. 우리는 항상 설치가 정상적으로 됐는지 확인은 버전으로 확인을 한다. 확인해보자.</p>
+<div class="alert info no-icon"><p>Webpack 4에서는 <code>webpack</code>과 <code>webpack-cli</code>를 같이 설치해줘야한다.</p>
+</div>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">webpack -v<br></code></pre></td></tr></table></figure>
+
+<p>버전이 출력된다면 정상적으로 설치가 완료된 것이다.</p>
+<h2 id="CLI를-사용한-Build"><a href="#CLI를-사용한-Build" class="headerlink" title="CLI를 사용한 Build"></a>CLI를 사용한 Build</h2><p>가장 기초적인 방법으로 <code>webpack cli</code>명령어를 통해 javascript를 build 해 보자. 테스트에 필요한 파일은 <code>index.js</code>와 <code>index.html</code>이다. webpack 4에서는 기본 경로가 <code>src</code>로 되어 있기 때문에 이전과는 다르게 <code>src</code>경로가 존재해야한다. </p>
+<p><code>src</code>디렉토리를 하나 생성하고 하위에 <code>index.js</code>와 <code>index.html</code>을 생성하자. </p>
+<p><strong>src&#x2F;index.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">component</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> element = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;div&#x27;</span>)<br><br>  element.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">&#x27;Hello Webpack!!&#x27;</span><br><br>  <span class="hljs-keyword">return</span> element<br>&#125;<br><br><span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(<span class="hljs-title function_">component</span>())<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>src&#x2F;index.html</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;en&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Title<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../dist/bundle.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br><br></code></pre></td></tr></table></figure>
+
+<p>코드는 간단하다. <code>Hello Webpack!!</code>이라는 문구를 출력할 뿐이다. 그런데 html에서는 조금 다르다. 먼저 .js파일을 불러오는 것은 이해가 되지만 우리가 만든 파일은 <code>index.js</code>인데 왠 <code>../dist/bundle.js</code>라는 파일을 호출하였을까. 일단 궁금증은 접어두고 webpack을 통해 build를 해보자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">webpack --output dist/bundle.js --mode=development<br></code></pre></td></tr></table></figure>
+
+<p>여기서 <code>bundle.js</code>가 나왔다. 대강 이해가 가는가? 우리는 위에 있는 cli를 통해 <code>index.js</code>를 <code>../dist/bundle.js</code>로 build 한 것이다. 그렇기 때문에 <code>index.html</code>에서는 처음에는 존재하지는 않지만, build 후에 생성 될 <code>../dist/bundle.js</code>를 호출한 것이다. 비록 지금은 코드나 그 프로젝트 구조가 복잡하지 않기 때문에 별 느낌이 없을지 모르겠지만 이 포스트를 끝까지 읽는다면 어느 정도 감이 올 것이다.</p>
+<h2 id="config를-사용한-Build"><a href="#config를-사용한-Build" class="headerlink" title="config를 사용한 Build"></a>config를 사용한 Build</h2><p>cli를 통한 build는 단순한 구조의 파일을 build 하기에는 편하지만 실제로 우리가 어떤 프로젝트에 임하면 그 프로젝트는 <code>절.대.로</code> 간단한 구조로 되어 있지 않다. build 시에 더욱 부가적인 요소들을 요구하며 이 요소들을 통하여 build를 하게 된다. 이렇게 복잡한 build의 경우 webpack에서는 어떤 특정한 설정 파일에 build에 필요한 요소들을 나열하고 해당 설정 파일을 통해 build를 진행하게끔 지원한다.</p>
+<p>먼저 <code>Webpack_Project</code> 경로에 <code>webpack.config.js</code>라는 javascript 설정 파일을 만들고 간단한 설정부터 진행하자.</p>
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>이렇게 작성된 설정 파일은 webpack 명령어를 통해 실행할 수 있다. (물론 실행 시에는 해당 디렉토리 경로에서 실행하자.)</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">webpack --mode=development<br></code></pre></td></tr></table></figure>
+
+<p>결과는 <code>webpack cli</code>명령어를 통하여 build 한 내용과 동일하지만 <code>bundle.js</code>의 생성 위치가 다르다. 하나씩 살펴보자. </p>
+<div class="alert info no-icon"><ul>
+<li><strong>path</strong> - 파일의 경로를 다루고 변경하는 유틸리티</li>
+<li><strong>output</strong> - build 결과를 저장할 경로</li>
+<li><strong>entry</strong> - build의 대상이 될 파일</li>
+</ul>
+</div>
+
+<p>처음 우리가 webpack cli를 통해 build 할 때는 build 될 대상과 build 된 파일을 명시해줬지만 여기서는 그저 webpack 이라는 단순한 명령어를 사용하였다. 그 이유는 우리가 webpack의 설정을 정의한 <code>webpack.config.js</code>를 생성하였고 이 파일은 webpack 명령어의 기본 파일이기 때문이다. 만약 우리가 설정파일이 <code>webpack.config.js</code>가 아닌 <code>webpack.build.js</code>와 같은 다른 파일로 정의를 하였다면 아래와 같은 명령어를 통해 실행 할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">webpack --config webpack.build.js<br></code></pre></td></tr></table></figure>
+
+<h1 id="Loader-사용하기"><a href="#Loader-사용하기" class="headerlink" title="Loader 사용하기"></a>Loader 사용하기</h1><p>우리는 이전 포스트인 <a href="https://kdydesign.github.io/2017/07/27/webpack/">Webpack 개념잡기</a>에서 <code>webpack은 크게 Entry, Output, Loader, Plug-In 이 4가지로 나눌 수 있다.</code> 라고 하였다. 이미 앞서 webpack을 설치하고 build 해 보면서 <code>entry</code>와 <code>output</code>이 무엇인지 대강 감을 잡았으니 이제 파일을 사전 처리하여 정적인 리소스들을 javascript와 같이 하나의 bundle로 만들 수 있는 <code>Loader</code>를 알아보자.</p>
+<h2 id="style-loader-css-Loader"><a href="#style-loader-css-Loader" class="headerlink" title="style-loader, css-Loader"></a>style-loader, css-Loader</h2><p><code>style-loader</code>와 <code>css-loader</code>는 같이 사용되며 <code>style-loader</code>는 <code>&lt;style&gt;</code>태그를 삽입하여 CSS를 추가해주는 역할을 한다. 모든 설치는 npm을 통해 설치를 진행한다.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install style-loader css-loader -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add style-loader css-loader --dev<br></code></pre></td></tr></table></figure>
+
+<p>설치가 완료되었으면 <code>webpack.config.js</code>에 <code>style-loader</code>와 <code>css-loader</code>를 정의하자.</p>
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.css$/</span>,<br>        <span class="hljs-attr">use</span>: [<br>          <span class="hljs-string">&#x27;style-loader&#x27;</span>,<br>          <span class="hljs-string">&#x27;css-loader&#x27;</span><br>        ]<br>      &#125;<br>    ]<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>loader는 <code>module</code>에 추가해주며, 정규식(test)을 통해 loader가 인식될 파일을 잡아준다. 그리고 어떤(use) loader를 사용하는지 정의해 주면 된다. 이제 <code>style.css</code>파일을 추가하고 <code>index.js</code>파일을 수정하자.</p>
+<p><strong>style.css</strong></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.hello</span> &#123;<br>  <span class="hljs-attribute">color</span>: red;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>index.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./style.css&#x27;</span><br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">component</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> element = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;div&#x27;</span>)<br><br>  element.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">&#x27;Hello Webpack!!&#x27;</span><br>  element.<span class="hljs-property">classList</span>.<span class="hljs-title function_">add</span>(<span class="hljs-string">&#x27;hello&#x27;</span>)<br><br>  <span class="hljs-keyword">return</span> element<br>&#125;<br><br><span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(<span class="hljs-title function_">component</span>())<br></code></pre></td></tr></table></figure>
+
+<p>우선 추가된 코드는 <code>hello</code>클래스와 이 클래스를 element에 추가하는 코드이다. 코드는 어렵지 않다. 그런데 왜 <code>style.css</code>를 <code>index.html</code>에 <code>&lt;link&gt;</code> 태그나 <code>&lt;style&gt;</code>태그를 통해 삽입하지 않고 <code>index.js</code>에 삽입을 하였을까? 이유는 처음에 설명한 style-loader의 역할 때문이다. 이렇게 <code>index.js</code>에 <code>style.css</code>를 명시하고 이 <code>index.js</code>를 build하게 되면 <code>loader</code>를 통해 <code>style.css</code>의 클래스는 <code>&lt;script&gt;</code>태그로 CSS가 추가되도록 되어 있다.</p>
+<p>위 코드를 build하여 실행하고 결과를 확인해 보도록 하자.</p>
+<h2 id="file-loader"><a href="#file-loader" class="headerlink" title="file-loader"></a>file-loader</h2><p><code>file-loader</code>를 사용하면 시스템에 존재하는 파일. 즉 이미지나 폰트와 같은 자산들을 하나로 통합할 수 있다. 사용 방식은 위에서 설명한 css-loader와 style-loader와 동일하다. <code>file-loader</code>를 먼저 설치하고 <code>webpkac.config.js</code>를 열어 loader를 추가하자.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install file-loader -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add file-loader --dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(png|svg|jpe?g|gif)$/</span>,<br>        <span class="hljs-attr">loader</span>: <span class="hljs-string">&#x27;file-loader&#x27;</span><br>      &#125;<br>    ]<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>여기서 loader를 보면 <code>css-loader</code>와 <code>style-loader</code>에서 사용한 <code>user:[]</code>가 사용되지 않고 <code>loader</code>로 사용되었다. 둘 다 적용이 가능한 옵션이며, <code>use:[]</code>경우 여러 <code>loader</code>를 지정할 때 사용되며 <code>loader</code>는 단일로 사용이 된다. 또한 각 <code>loader</code>는 각각의 특성에 따라 옵션을 지정할 있으며 아래와 같이 정의 할 수 있다.</p>
+<p><strong>example</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">module</span>: &#123;<br>  <span class="hljs-attr">rules</span>: [<br>    &#123;<br>      <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(png|svg|jpe?g|gif)$/</span>,<br>      <span class="hljs-attr">loader</span>:<span class="hljs-string">&#x27;file-loader&#x27;</span>,<br>      <span class="hljs-attr">options</span>: &#123;<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;[hash].[ext]&#x27;</span><br>      &#125;<br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>이어서 가자. file-loader를 정의 하였으니 <code>Webpack_Project</code>안에 <code>asset</code>폴더를 하나 만들고 <code>image.png</code>파일과 같은 이미지 파일을 넣어놓자. 이렇게 넣어 놓은 이미지 파일을 <code>index.js</code>에서 불러 올 것이다.</p>
+<p><strong>index.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./style.css&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">Icon</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./asset/image.png&#x27;</span><br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">component</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> element = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;div&#x27;</span>)<br>  <br>  element.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">&#x27;Hello Webpack!!&#x27;</span><br>  element.<span class="hljs-property">classList</span>.<span class="hljs-title function_">add</span>(<span class="hljs-string">&#x27;hello&#x27;</span>)<br><br>  <span class="hljs-keyword">var</span> myIcon = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Image</span>()<br>  <br>  myIcon.<span class="hljs-property">src</span> = <span class="hljs-title class_">Icon</span><br>  element.<span class="hljs-title function_">appendChild</span>(myIcon)<br><br>  <span class="hljs-keyword">return</span> element<br>&#125;<br><br><span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(<span class="hljs-title function_">component</span>())<br></code></pre></td></tr></table></figure>
+
+<p>이제 다시 build 하고 확인해 보자.</p>
+<p>해당 예제는 이미지로 진행하였지만 폰트 역시 동일하다. 다른게 있다면 폰트의 확장자를 통해 걸러내는 정규식이 다를 뿐이다.</p>
+<p><strong>example</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">module</span>: &#123;<br>  <span class="hljs-attr">rules</span>: [<br>    &#123;<br>      <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(woff|woff2|eot|ttf|otf)$/</span>,<br>      <span class="hljs-attr">loader</span>:<span class="hljs-string">&#x27;file-loader&#x27;</span><br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="url-loader"><a href="#url-loader" class="headerlink" title="url-loader"></a>url-loader</h2><p><code>file-loader</code>를 사용해 보았다면 한 번쯤 생각해 볼 것이다. 웹을 표한하는데 있어서 리소스를 가장 많이 잡아먹는 것 중 하나가 이 이미지 파일들인데 이 파일을 더 효율적으로 관리 할 수 없을지 말이다. webpack에서는 이 단계 이후에 진행될 논리적 단계는 <code>이미지를 축소하고 최적화하는 것이다.</code> 라고 말한다. <code>url-loader</code>는 이 이미지 로딩 프로세스를 향상 시킬 수 있는 하나의 방법이며, 특정 파일을 <code>base64</code>로 인코딩된 URL를 로드해주는 역할을 한다.</p>
+<p><code>url-loader</code>를 설치하고 <code>webpack.config.js</code>를 열어 <code>url-loader</code>를 추가해 주자.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install url-loader -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add url-loader --dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(png|svg|jpe?g|gif)$/</span>,<br>        <span class="hljs-attr">loader</span>: <span class="hljs-string">&#x27;url-loader&#x27;</span>,<br>        <span class="hljs-attr">options</span>: &#123;<br>          <span class="hljs-attr">limit</span>: <span class="hljs-number">10000</span><br>        &#125;<br>      &#125;<br>    ]<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>url-loader</code>는 <code>file-loader</code>와 같이 작동한다. 그렇기에 정규식 역시 동일하지만 다른 점은 <code>limit</code>이라는 옵션을 준 것이다. <code>options</code>에 <code>limit</code>는 파일의 크기를 말하는데 현재 예제에서 10KB 미만은 <code>url-loader</code>로 처리가 되고 그 이상의 파일은 <code>file-loder</code>와 같이 처리가 된다.</p>
+<p>다시 build를 하고 <code>dist</code>폴더를 확인해 보자. 해당 이미지 파일이 존재하지 않는 것을 확인할 수 있다. 만약 파일이 존재한다면 파일의 용량을 확인해 보고 그 용량 이상의 값을 <code>limit</code>에 적용해보다. 그리고 브라우저를 열어 실제로 파일이 <code>base64</code>로 인코딩이 되었는지 확인해 보자.</p>
+<hr>
+<p>지금까지 <code>Loader</code>를 알아 보았는데 여기서 언급한 <code>Loader</code>이외에도 <code>xml-loader</code>, <code>babel-loader</code>, <code>i18n-loader</code> 등과 같이 효율적인 <code>Loader</code>들이 무수히 존재한다. 해당 <code>Loader</code>들은 <a target="_blank" rel="noopener" href="https://webpack.js.org/loaders/">Webpack - Loader</a>에서 확인해 보자.</p>
+<h1 id="Plug-In"><a href="#Plug-In" class="headerlink" title="Plug-In"></a>Plug-In</h1><p>webpack은 풍부한 Plug-In이 있으며 webpack 자체의 대부분의 기능은 이 Plug-In을 사용한다. Plug-In 을 통해 우리가 할 수 있는 일들은 build 된 bundle 파일을 동적으로 특정 html 페이지에 추가 할 수 있으며 build 시에 javscript, css, html 등의 파일을 난독화 및 압축을 진행할 수 있다. 이 외에도 많은 기능을 지원하며 필수 적으로 사용한다 해도 무방하다. 그럼 몇 가지 Plug-In을 살펴보겠다.</p>
+<h2 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a>html-webpack-plugin</h2><p>엔트리 포인트 중 하나의 모듈의 이름을 변경하거나 새로운 것을 추가하는 경우 생성된 번들은 빌드에서 이름이 변경되지만 <code>index.html</code>에 script는 여전히 이전의 이름을 참조한다. 그렇게 때문에 우리는 주기적으로 번들링 된 파일을 <code>index.html</code>에 삽입을 시켜야하는 번거로움이 있다. 이런 불편함을 <code>html-webpack-plugin</code>이 해결해 준다. <code>html-webpack-plugin</code>은 정의되어있는 기본 template을 기준으로 번들링 시에 새로운 html 파일을 생성해 준다. 이때 파일을 생성할 때 번들링된 javascript 파일을 삽입해준다. </p>
+<p><code>html-webpack-plugin</code>을 설치하고 <code>webpack.config.js</code>에 추가해 주자.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install html-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add html-webpack-plugin --dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;)<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="commonChunk"><a href="#commonChunk" class="headerlink" title="commonChunk"></a>commonChunk</h2><p><code>commonChunk</code> Plug-In은 여러 개의 엔트리 포인트 사이에서 공유되는 공통 모듈로 구성된 파일(Chunk)을 별도의 엔트리로 분리함으로써 종속성을 관리 할 수 있다. 예를 들면 어떤 프로젝트에서 jquery를 사용하고 jquery를 필요로 하는 모든 모듈에 jquery를 참조한다고 했을 때 이후 build를 하게 되면 jquery 모듈이 중복되는데 이렇게 common하게 사용되는 모듈을 여러 모듈이 참조를 한다고 하더라도 <code>commonChunk</code>를 사용하여 build 시에 하나의 별도의 vendor 모듈로 분리 할 수 있다.</p>
+<p><code>commonChunk</code>는 webpack의 내장 모듈이기 때문에 별도의 설치는 필요하지 않다. 대신에 webpack을 참조해야 한다.</p>
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;source/_posts/webpack&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-property">optimize</span>.<span class="hljs-title class_">CommonsChunkPlugin</span>(&#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;common&#x27;</span><br>    &#125;)<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="clean-webpack-plugin"><a href="#clean-webpack-plugin" class="headerlink" title="clean-webpack-plugin"></a>clean-webpack-plugin</h2><p>우리는 <code>webpack.config.js</code>에 build 시 output을 통해 어디로 가는지 지정을 해줬다. <code>clean-webpack-plugin</code>은 이 output 디렉토리를 build를 할때마다 삭제를 해주는 Plug-In이다.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install clean-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add clean-webpack-plugin --dev<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;webpack&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">CleanWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;clean-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">CleanWebpackPlugin</span>([<span class="hljs-string">&#x27;dist&#x27;</span>]),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-property">optimize</span>.<span class="hljs-title class_">CommonsChunkPlugin</span>(&#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;common&#x27;</span><br>    &#125;)<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="uglify"><a href="#uglify" class="headerlink" title="uglify"></a>uglify</h2><p>javascript 소스를 보게 되면 <code>xxx.min.js</code> 라는 파일과 그 안의 코드는 알아볼 수 없는 형태로 되어있는 것을 봤을 것이다. 이는 난독화와 압축을 진행했기 때문인데 javascript를 build 할 때 다른 중요한 부분은 난독화와 압축이다. 이 프로세스를 걸침으로 인해 내부 코드의 내용을 쉽게 파악하지 못하게 함과 파일의 용량을 줄일 수 있다. 압축하는 방법이야 여러 가지가 있지만 <code>uglify</code>는 간단하게 난독화와 압축을 진행할 수 있는 Plug-In이다.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install uglifyjs-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add uglifyjs-webpack-plugin --dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;webpack&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">UglifyWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;uglifyjs-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-property">optimize</span>.<span class="hljs-title class_">CommonsChunkPlugin</span>(&#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;common&#x27;</span><br>    &#125;),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">UglifyWebpackPlugin</span>()<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="provider"><a href="#provider" class="headerlink" title="provider"></a>provider</h2><p><code>webpack.ProvidePlugin</code>을 통해 등록된 모듈을 자유 변수로 사용이 가능하다.</p>
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./webpack&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">UglifyWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;uglifyjs-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-property">optimize</span>.<span class="hljs-title class_">CommonsChunkPlugin</span>(&#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;common&#x27;</span><br>    &#125;),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">UglifyWebpackPlugin</span>(),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-title class_">ProvidePlugin</span>(&#123;<br>      <span class="hljs-attr">$</span>: <span class="hljs-string">&#x27;jquery&#x27;</span>,<br>      <span class="hljs-attr">jQuery</span>: <span class="hljs-string">&#x27;jquery&#x27;</span>,<br>      <span class="hljs-attr">_</span>: <span class="hljs-string">&#x27;underscore&#x27;</span><br>    &#125;)<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>module A</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">$(<span class="hljs-string">&#x27;&lt;div&gt;&#x27;</span>)<br><span class="hljs-title function_">jQuery</span>(<span class="hljs-string">&#x27;&lt;div&gt;&#x27;</span>)<br><br><span class="hljs-keyword">const</span> array = _.<span class="hljs-title function_">map</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], <span class="hljs-keyword">function</span>(<span class="hljs-params">num</span>)&#123;<br>  <span class="hljs-keyword">return</span> num * <span class="hljs-number">3</span>;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p><code>Loader</code>에 이어 <code>Plug-in</code>을 알아보았다. 이밖에 <code>Plug-in</code>은 <a target="_blank" rel="noopener" href="https://webpack.js.org/plugins/">Webpack Plugin-in</a>을 참고하자.</p>
+<h1 id="DevServer-HMR"><a href="#DevServer-HMR" class="headerlink" title="DevServer &amp;&amp; HMR"></a>DevServer &amp;&amp; HMR</h1><p><code>DevServer</code>는 webpack의 주요 기능 중 하나이다. 실제로 우리는 자산들을 bundling 후에도 테스트가 필요하다. 또한 자산의 추가, 수정, 삭제에 따라 반영 작업이 필요한데 webpack의 DevServer를 이용한다면 매우 편리하게 개발에 임할 수 있다. DevServer는 말 그대로 개발 서버이며 이와 관련된 또 하나의 webpack 주요 기능인 <code>HMR(Hot Module Replacement)</code>가 있다. 이 <code>핫 모듈 교체(한국어 풀이)</code>는 특정 모듈이 변경되더라도 새로고침 할 필요없이 런타임에 모든 종류의 모듈을 업데이트해 주는 기능이다. 이 기능을 사용하기 위해서는 DevServer의 설정을 추가하고 webpack에 내장된 HMR 플러그 인을 사용하는 것 뿐이다. 그렇기에 DevServer와 같이 설명하려 한다. HMR의 자세한 내용은 <a target="_blank" rel="noopener" href="https://webpack.js.org/guides/hot-module-replacement/">Webpack HMR</a>을 참고하자.</p>
+<p>살을 덧붙여 요약을 하자면.</p>
+<div class="alert info no-icon"><ul>
+<li><strong>webpack-dev-server</strong>는 빠른 실시간 리로드 기능을 갖춘 개발 서버</li>
+<li><strong>webpack-dev-serve</strong>는 디스크에 저장되지 않는 메모리 컴파일을 사용하기 때문에 컴파일 속도가 빨라짐</li>
+<li><strong>webpack.config.js</strong>에도 devServer 옵션을 통해 옵션을 지정하여 사용이 가능</li>
+</ul>
+</div>
+
+<p><code>webpack-dev-server</code>의 간략한 프로세스는 이렇다.</p>
+<div class="alert info no-icon"><ol>
+<li>서버 실행 시 소스 파일들을 번들링하여 메모리에 저장</li>
+<li>소스 파일을 감시하고 있다가 소스 파일이 변경되면 변경된 모듈만 새로 번들링</li>
+<li>변경된 모듈 정보를 브라우저에 전송</li>
+<li>브라우저는 변경을 인지하고 새로고침되어 변경사항이 반영된 페이지를 로드</li>
+</ol>
+</div>
+
+
+<p>이제 <code>webpack-dev-server</code>를 설치하고 설정을 적용해보자.</p>
+<p><strong>npm</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install webpack-dev-server -D<br></code></pre></td></tr></table></figure>
+
+<p><strong>yarn</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">yarn add webpack-dev-server --dev<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>webpack.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; resolve &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;webpack&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">UglifyWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;uglifyjs-webpack-plugin&#x27;</span>)<br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.js&#x27;</span>,<br>    <span class="hljs-attr">path</span>: <span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>)<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">favicon</span>: <span class="hljs-string">&#x27;./static/asset/favicon.ico&#x27;</span>,<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./static/index.html&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;css&#x27;</span>, <span class="hljs-string">&#x27;index&#x27;</span>, <span class="hljs-string">&#x27;app&#x27;</span>, <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-string">&#x27;monitor&#x27;</span>]<br>    &#125;),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-property">optimize</span>.<span class="hljs-title class_">CommonsChunkPlugin</span>(&#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;common&#x27;</span><br>    &#125;),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">UglifyWebpackPlugin</span>(),<br>    <span class="hljs-keyword">new</span> webpack.<span class="hljs-title class_">ProvidePlugin</span>(&#123;<br>      <span class="hljs-attr">$</span>: <span class="hljs-string">&#x27;jquery&#x27;</span>,<br>      <span class="hljs-attr">jQuery</span>: <span class="hljs-string">&#x27;jquery&#x27;</span>,<br>      <span class="hljs-attr">_</span>: <span class="hljs-string">&#x27;underscore&#x27;</span><br>    &#125;)<br>  ],<br>  <span class="hljs-attr">devServer</span>: &#123;<br>    <span class="hljs-attr">host</span>: <span class="hljs-string">&#x27;127.0.0.1&#x27;</span>,<br>    <span class="hljs-attr">contentBase</span>: path.<span class="hljs-title function_">join</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>),<br>    <span class="hljs-attr">compress</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">hot</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">inline</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">port</span>: <span class="hljs-number">9000</span>,<br>    <span class="hljs-attr">open</span>: <span class="hljs-literal">true</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<p>devServer의 설정을 보면 감이 올 것으로 생각된다. 간단한 설명으로 넘어가겠다.</p>
+<table>
+<thead>
+<tr>
+<th>option</th>
+<th>description</th>
+<th>CLI 사용</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>host</td>
+<td>사용될 호스트 지정</td>
+<td>webpack-dev-server –host 127.0.0.1</td>
+</tr>
+<tr>
+<td>contentBase</td>
+<td>콘텐츠를 제공할 경로지정(정적파일을 제공하려는 경우에만 필요)</td>
+<td>webpack-dev-server –content-base &#x2F;path&#x2F;to&#x2F;content&#x2F;dir</td>
+</tr>
+<tr>
+<td>compress</td>
+<td>모든 항목에 대해 gzip압축 사용</td>
+<td>webpack-dev-server –compress</td>
+</tr>
+<tr>
+<td>hot</td>
+<td>webpack의 HMR 기능 활성화</td>
+<td>-</td>
+</tr>
+<tr>
+<td>inline</td>
+<td>inline 모드 활성화</td>
+<td>webpack-dev-server –inline&#x3D;true</td>
+</tr>
+<tr>
+<td>port</td>
+<td>접속 포트 설정</td>
+<td>webpack-dev-server –port 9000</td>
+</tr>
+<tr>
+<td>open</td>
+<td>dev server 구동 후 브라우저 열기</td>
+<td>webpack-dev-server –open</td>
+</tr>
+</tbody></table>
+<p><code>webpack-dev-server</code>의 구동은 CLI로 실행을 하고 이 CLI를 npm script에 등록하여 할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">webpack-dev-server --config webpack.config.js --mode=development<br></code></pre></td></tr></table></figure>
+
+<p>open 옵션으로 인해 서버가 구동 후 브라우저가 열리는 것을 볼 수 있다. 여기서 F12를 통해 개발자 콘솔을 열고 모듈을 변경, 수정하면서 console 창을 확인해 보자. 당신은 지금 <code>HMR</code>이라는 훌륭한 기능을 보고 있는 것이다.</p>
+<hr>
+<p>여기까지 해서 webpack의 핵심적인 사용법을 알아보았다. webpack에 대한 디테일한 가이드는 <a target="_blank" rel="noopener" href="https://webpack.js.org/guides/">webpack guides</a>를 참고하면서 하나씩 따라 해보자. </p>
+<p>webpack은 초기 설정이 까다롭게 느껴질 수 있다. 당연한 것이다. webpack 자체의 configulation과 Loader, plug-in 제각기 옵션이 존재하기 때문이다. 하지만 초기 설정만 끝난다면 webpack이 왜 떠오르고 많이 사용하는지 몸소 느낄 것이다. 현재 내가 진행하고 있는 프로젝트에도 webpack을 도입하기로 하였기에 Test하고 Prototype을 만들고 실제로 프로젝트에 적용해 보면서 매번 정말 훌륭하다고 느껴진다. Web Front-End의 Bundling tool을 고민하는 당신에게 적극적으로 추천한다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2017/07/27/webpack/">Webpack 개념잡기</a><br><a href="https://kdydesign.github.io/2020/09/23/parcel-intro/">불꽃 튀게 빠른 번들러 Parcel 개념잡기!</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/build-tool/" rel="tag">build tool</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/gulp/" rel="tag">gulp</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/webpack/" rel="tag">webpack</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/11/15/vuejs-tutorial/"
+                    data-tooltip="[Vue.JS] 빠르게 배우는 Vue.js"
+                    aria-label="PREVIOUS: [Vue.JS] 빠르게 배우는 Vue.js"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/07/27/webpack/"
+                    data-tooltip="Webpack 개념잡기"
+                    aria-label="NEXT: Webpack 개념잡기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/11/15/vuejs-tutorial/"
+                    data-tooltip="[Vue.JS] 빠르게 배우는 Vue.js"
+                    aria-label="PREVIOUS: [Vue.JS] 빠르게 배우는 Vue.js"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/07/27/webpack/"
+                    data-tooltip="Webpack 개념잡기"
+                    aria-label="NEXT: Webpack 개념잡기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2017/11/04/webpack-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2017/11/04/webpack-tutorial/';
+              
+            this.page.identifier = 'webpacktutorial';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

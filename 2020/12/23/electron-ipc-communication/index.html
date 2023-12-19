@@ -1,0 +1,875 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"/>
+    
+        <meta name="keywords" content="javascript,electron,electron tutorial,electron.js,electronjs,electron 설치,electron 튜토리얼,electron tutorial,electron 앱,electron 배우기,electron 웹 앱 만들기,electron 앱 만들기,데스크톱 앱 만들기,electron app,데스크탑 어플리케이션,electron 개발,javascript electron,node js electron,electron ipc">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nElectron의 IPC 개념은 Electron에서 자주 사용되는 기술이다.\nipcMain과 ipcRenderer를 사용하여 Main 프로세스와 Renderer 프로세스 간에 통신을 할 수 있기 때문이다.\n이런 개념을 빗대어 보자면 웹 기술에서 Back-End와 Front-End 간 통신을 하기 위해서 그에 맞는 특정 모듈과 기술이 필요하다. Electron에서도 이러한 개념을 담당하는 것이 IPC 모듈이다. 다른 예로 Vue를 다뤄본 사람이라면 Event Bus 개념이나 Props 개념을 알고 있을 텐데 이때 @event(&#39;eventName&#39;)으로 이벤트를 수신하고 $emit(&#39;eventName&#39;)으로 이벤트를 송신하는 것을 볼 수 있는데 이와 비슷한 개념으로 볼 수 있다.\nElectron 공식 문서의 용어 정리 부분을 보면 IPC에 대하여 이렇게 기록하고 있다.\n\n IPC는 프로세스 간 통신을 의미한다. \nElectron은 IPC를 사용하여 Main 프로세스와 Renderer 프로세스 간에 직력화 된 JSON 메시지는 동기적 또는 비동기적으로 통신한다.\n- - -\n\n통신이란 의미는 글로만 봐서는 파악하기 힘들다.\n이번 포스트에서는 이 IPC 모듈에 관한 내용을 알아보고 실제로 간단한 앱을 만들면서 파악해보도록 하자.\n\nIPC 모듈IPC는 위에서 설명했듯이 프로세스 간 통신을 의미한다. 여기서 프로세스란 Main 프로세스와 Renderer 프로세스를 의미한다.\n예를 들어 Main 프로세스는 서버로 생각하고 Renderer 프로세스는 브라우저라고 생각한다면 서버와 브라우저 간 통신을 하기 위한 규약이 필요하다. 이를 Electron에서는 IPC가 처리하고 있다.\nIPC는 on을 통해 메시지 또는 이벤트를 수신하고 send를 통해 메시지 또는 이벤트를 전달한다. 이 점을 기억하도록 하자.\n\nipcMain에서 on을 통한 이벤트 수신\nipcMain.on(&#x27;CHANNEL_NAME&#x27;, (evt, payload) =&gt; &#123; &#125;)\n\n\nipcRenderer에서 send을 통한 이벤트 송신\nipcRenderer.send(&#x27;CHANNEL_NAME&#x27;, &#x27;message&#x27;)\n\n여기서 Main 프로세스와 Renderer 프로세스의 정의만 잠깐 짚고 넘어가자.\nMain ProcessorMain 프로세스는 일반적으로 우리가 Electron으로 개발할 때 생성하는 main.js로 볼 수 있다.이는 Electron 앱의 진입점이기도 하며, 앱의 Life Cycle을 관리한다. 뿐만 아니라 애플리케이션에서 사용되는 메뉴, Dock, 트레이와 같은 네이티브 요소를 관리하며 Main 프로세스는 앱에서 각각의 새로운 Renderer 프로세스를 생성한다.\nChromium에서 이러한 개념을 Browser 프로세스라 하며, Electron에서는 Renderer 프로세스와 혼동을 피하고자 Main 프로세스라 명명한다. 즉, Main 프로세스는 Electron 시스템 내 동작하는 애플리케이션을 제어하는 프로세스로 볼 수 있다.\n현재 Electron 11.x 버전에서는 아래와 같은 Main 프로세스 모듈이 존재한다.\n\n\napp\nautoUpdater\nBrowserView\ncontentTracing\ndialog\nglobalShortcut\ninAppPurchase\nipcMain\nMenu\nMenuItem\nnet\nnetLog\nnativeTheme\nNotification\npowerMonitor\npowerSaveBlocker\nprotocol\nscreen\nsession\nsystemPreferences\nTouchBar\nTray\nwebContents\nwebFrameMain\n\n\nRenderer ProcessorRenderer 프로세스는 Electron 앱의 Chromium 기반의 브라우저 창을 관리하는 모듈이다.\nMain 프로세스와 달리 Renderer 프로세스는 여러 개가 존재할 수 있으며, Main 프로세스와는 1:N의 관계를 맺는다.\n현재 Electron 11.x 버전에서는 아래와 같은 Main 프로세스 모듈이 존재한다.\n\n\ndesktopCapturer\nipcRenderer\nremote\nwebFrame\n\n\n\n이제 다시 돌아와서 IPC에 대해 알아보자.\n위에서 설명했듯이 IPC는 ipcMain과 ipcRenderer 모듈 두 가지로 구분된다.\nipcMainipcMan 모듈은 Renderer 프로세스(웹 페이지)가 보내는 메시지 또는 이벤트를 동기적 혹은 비동기적으로 처리한다. 즉, 웹 페이지를 처리하는 프로세스인 Renderer 프로세스가 보내는 메시지를 Main 프로세스는 수신하여 처리하게 된다.\n아래에서 ipcRenderer를 보면 알겠지만 보통 ipcMain에서는 IPC 통신을 할 때 수신만 할 수 있다.위에서 이벤트 수신은 on이며 송신은 send라 하였지만, ipcMain에서는 on으로 송신을 하며 send가 아닌 reply로 회신하는 것이다.\n아래 예제를 보자.\nipcMain에서 on을 통한 이벤트 수신\nconst &#123; ipcMain &#125; = require(&#x27;electron&#x27;)// ipcMain에서의 이벤트 수신ipcMain.on(&#x27;CHANNEL_NAME&#x27;, (evt, payload) =&gt; &#123;  console.log(payload)    evt.reply(&#x27;IPC_RENDERER_CHANNEL_NAME&#x27;, &#x27;message&#x27;)&#125;)\n\n위 예제에서 CHANNEL_NAME은 메시지를 송신할 이름을 말하며 channel이라고 한다. 어느 ipcRenderer 프로세스에서 CHANNEL_NAME으로 메시지를 수신하였고 ipMain 프로세스는 ‘CHANNEL_NAME’로 송신하였다. 그리고 다시 reply를 통하여 송신 후 다시 응답하였다.\n이 응답의 channel 이름은 IPC_RENDERER_CHANNEL_NAME이다. 이렇게 응답을 하였기에 어느 ipcRenderer 프로세서는 on을 통하여 IPC_RENDERER_CHANNEL_NAME 채널로 수신할 것이다.\n기능 측면에서 send의 개념도 가능하다. 하지만 ipcMain 프로세스는 ipcRenderer와 같은 send 메소드를 가지고 있진 않다. send를 하기 위해서는 webContents.send를 이용해야 한다.\nwebContents.send를 이용한 send 방식\nconst &#123; app, BrowserWindow &#125; = require(&#x27;electron&#x27;)app.whenReady().then(() =&gt; &#123;  const win = new BrowserWindow(&#123;     // options   &#125;)    win.webContents.send(&#x27;IPC_RENDERER_CHANNEL_NAME&#x27;, &#x27;message&#x27;)&#125;)\n\nipcMain이 될 수 있는 main.js에서 IPC_RENDERER_CHANNEL_NAME 채널명으로 수신하고 있다. 이는 어느 ipcRenderer에서 IPC_RENDERER_CHANNEL_NAME 채널명으로 송신을 받고 이후의 처리를 할 수 있을 것이다.\n이렇게 되면 ipcMain에서도 ipcRenderer와 동일하게 메시지를 송신할 수 있다.\nipcRendereripcRenderer 모듈은 Renderer 프로세스(웹 페이지)에서 Main 프로세스로 동기 또는 비동기 메시지를 보낼 수 있다. Main 프로세스에서 webContents.send 로 메시지를 보냈다면 수신 역시 가능하다.\n보통 웹 페이지 딴에서 HTTP 통신을 통해 받아온 데이터를 보내거나 Main 프로세스를 호출할 경우 사용되며, send를 통해 송신하고 on을 통해 수신한다.\nipcRenderer에서 send을 통한 이벤트 송신\nconst &#123; ipcRenderer &#125; = require(&#x27;electron&#x27;)const payload = &#x27;message&#x27;// ipcRenderer에서의 이벤트 송신ipcRenderer.send(&#x27;CHANNEL_NAME&#x27;, payload)\n\n지금까지 IPC 통신 방법 중 수신이 가능한 on과 송신이 가능한 send에 대해서 설명만 했지만, 이외에도 IPC와 관련된 API들은 많다. 이것에 대해서는 Electron API 문서 - ipcMain와 Electron API 문서 - ipcRenderer를 참고하도록 하자.\n예제 만들기이제 실제로 예제를 만들면서 ipcMain과 ipcRenderer 모듈이 어떻게 동작하는지 알아보도록 하자.\n예제의 동작은 최초 Electron이 구동되면 WenContent.send를 통해서 Renderer 프로세스(웹 페이지)에 정보를 보낼 것이다. 이후 웹 페이지에서는 값을 입력하고 버튼을 클릭하면 입력된 값을 다시 Main 프로세스로 전달할 것이다. 이렇게 전달받은 값은 다시 변형하여 Renderer 프로세스로 전달하는 과정을 만들 것이다.\n환경 구축가장 빠른 방법. electron-quick-start boilerplate를 통해서 구축하자.\ngit clone https://github.com/electron/electron-quick-startcd electron-quick-startnpm installnpm run start\n\n코드 수정먼저 index.html을 열어 아래와 같이 수정하자.\nindex.html\n&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;  &lt;meta charset=&quot;UTF-8&quot;&gt;  &lt;title&gt;Hello World!&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;script src=&quot;./renderer.js&quot;&gt;&lt;/script&gt;&lt;div&gt;  &lt;input     id=&quot;text-input&quot;     type=&quot;text&quot;  &gt;  &lt;button id=&quot;btn&quot;&gt;Click&lt;/button&gt;&lt;/div&gt;&lt;div&gt;  &lt;span&gt;computed input value =&gt; &lt;/span&gt;  &lt;span     id=&quot;text-box&quot;     style=&quot;color: red&quot;  &gt;&lt;/span&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;\n\n간단하게 input과 button 그리고 텍스트를 출력할 수 있는 영역을 두었다.\n그다음 renderer.js를 수정하자.\nrenderer.js\nconst &#123; ipcRenderer &#125; = require(&#x27;electron&#x27;)window.onload = () =&gt; &#123;  const btnEl = document.getElementById(&#x27;btn&#x27;)  btnEl.addEventListener(&#x27;click&#x27;, (evt) =&gt; &#123;    const inputValue = document.getElementById(&#x27;text-input&#x27;).value    // onInputValue 이벤트 송신    ipcRenderer.send(&#x27;onInputValue&#x27;, inputValue)  &#125;)  // replyInputValue에 대한 응답 수신  ipcRenderer.on(&#x27;replyInputValue&#x27;, (evt, payload) =&gt; &#123;    document.getElementById(&#x27;text-box&#x27;).textContent = payload  &#125;)  // onWebcontentsValue에 대한 이벤트 수신  ipcRenderer.on(&#x27;onWebcontentsValue&#x27;, (evt, payload) =&gt; &#123;    document.getElementById(&#x27;text-box&#x27;).textContent = payload  &#125;)&#125;\n\n최초 페이지가 로드되면 onWebcontentsValue를 통해서 텍스트를 설정할 것이다. 이후 input에 값을 입력하고 버튼을 클릭하면 해당 값이 onInputValue를 통해서 Main 프로세스로 송신될 것이다. 이렇게 송신된 이벤트는 Main 프로세스에서 값을 가공하여 replyInputValue를 통해 응답할 것이고 Renderer 프로세스에서는 이를 받아 텍스트를 출력할 것이다.\n이제 Main 프로세스에서 송신과 수신을 지정하자.\nmain.js\nconst &#123; app, BrowserWindow, ipcMain &#125; = require(&#x27;electron&#x27;)const path = require(&#x27;path&#x27;)function createWindow () &#123;  const mainWindow = new BrowserWindow(&#123;    width: 800,    height: 600,    webPreferences: &#123;      preload: path.join(__dirname, &#x27;preload.js&#x27;),      nodeIntegration: true    &#125;  &#125;)  mainWindow.loadFile(&#x27;index.html&#x27;)  // 웹 페이지 로드 완료  mainWindow.webContents.on(&#x27;did-finish-load&#x27;, (evt) =&gt; &#123;    // onWebcontentsValue 이벤트 송신    mainWindow.webContents.send(&#x27;onWebcontentsValue&#x27;, &#x27;on load...&#x27;)  &#125;)&#125;app.whenReady().then(() =&gt; &#123;  createWindow()  app.on(&#x27;activate&#x27;, function () &#123;    if (BrowserWindow.getAllWindows().length === 0) createWindow()  &#125;)  // onInputValue 이벤트 수신  ipcMain.on(&#x27;onInputValue&#x27;, (evt, payload) =&gt; &#123;    console.log(&#x27;on ipcMain event:: &#x27;, payload)    const computedPayload = payload + &#x27;(computed)&#x27;    // replyInputValue 송신 또는 응답    evt.reply(&#x27;replyInputValue&#x27;, computedPayload)  &#125;)&#125;)app.on(&#x27;window-all-closed&#x27;, function () &#123;  if (process.platform !== &#x27;darwin&#x27;) app.quit()&#125;)\n\n위와 같이 수정 후 아래 코드를 보자.\nmainWindow.webContents.on(&#x27;did-finish-load&#x27;, (evt) =&gt; &#123;  // onWebcontentsValue 이벤트 송신  mainWindow.webContents.send(&#x27;onWebcontentsValue&#x27;, &#x27;on load...&#x27;)&#125;)\n\n\n이 코드는 Renderer 프로세스에서 웹 페이지가 완료 후에 호출되는 이벤트이다. 이때 Main 프로세스에서는 webcontents.send를 통해서 최초에 ipc 통신을 하는 것이다.이와 같이 Main 프로세스에서도 reply가 아닌 send를 통해서 ipc 통신 시 송신이 가능하다.\n위 코드에서 BrowserWindow객체를 생성 시 nodeIntegration: true를 지정한 이유는 renderer.js에서 require를 통해 electron 모듈을 호출하기 위해서이다.\n실행main.js를 수정하였으므로 npm run start를 통해 다시 구동해보자.\n\nwebcontent.send를 통해서 최초에 값을 전달 했기 때문에 on load가 출력되는 것을 볼 수 있다.\n이제 input 박스에 값을 입력하고 버튼을 클릭해 보자.\n\n예제에서는 test를 입력하고 버튼을 클릭하니 결과값은 test(computed)로 출력되었다. 이는 Main 프로세스에서 수신받은 payload를 가공하여 다시 송신하였기 때문이다.\n수신받은 payload를 가공하여 응답\n// onInputValue 이벤트 수신  ipcMain.on(&#x27;onInputValue&#x27;, (evt, payload) =&gt; &#123;    console.log(&#x27;on ipcMain event:: &#x27;, payload)    const computedPayload = payload + &#x27;(computed)&#x27;    // replyInputValue 송신 또는 응답    evt.reply(&#x27;replyInputValue&#x27;, computedPayload)  &#125;)\n\n여기서 console.log를 남겼기 때문에 콘솔을 확인해보자.\n\n콘솔 로그를 보면 입력된 값이 그대로 출력되는 것을 확인할 수 있다.\n\n이렇게 Electron에서 IPC 통신에 대해서 개념과 예제를 통해서 알아보았다.\n정리를 하면 IPC는 Electron에서 프로세스 간의 통신 방법을 말하며, 모듈에는 icpMain과 Renderer 프로세스가가 있다. 서로 간의 이벤트 수신은 on이며, 송신은 send이다. 이외에 webContents.send가 있다.\nIPC 통신은 프로세스 간 통신 방법이기에 많이 사용된다. 하지만 중요한 건 Electron은 웹 애플리에션에서 하나의 애플리케이션에 REST API가 같이 있는 격이다. 파일별 분리. API의 설계. 등 구조적으로 잘 관리가 되지 않으면 복잡해질 수 있다.정리가 되지 않고 구조적이지 않으면 이후에 수만은 IPC 모듈에서 수신 및 송신의 코드 추적이 어려워진다.\n\n더 알아보기Performant NPM - PNPM[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정Electron 개념부터 데스크탑 앱 만들기)빠르게 배우는 Node.js와 NPM 설치부터 개념잡기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?\n","dateCreated":"2020-12-23T13:11:25+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-12-23T13:11:25+00:00","description":"\nElectron의 IPC 모듈과 IPC 통신의 개념을 파악하고 IPC 모듈을 사용하여 어떻게 통신을 하는지 알아보자. IPC 모듈에는 ipcMain과 ipcRenderer 프로세스 두 가지가 있다. ipcMain은 electron 메인 프로세스로 백엔드로 볼 수 있으며, ipcRenderer는 electron의 renderer 프로세스로 프론트엔드로 볼 수 있다.\n","headline":"[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기","image":["electron-ipc-communication-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/12/23/electron-ipc-communication/","keywords":"javascript, nodejs, npm, electron, electron.js, electron 배우기, electron 튜토리얼, electron tutorial, electron framework, electron 설치, electron ipc 통신, electron ipcMain, electron ipcRenderer","thumbnailUrl":"electron-ipc-communication-cover.png"}</script>
+    <meta name="description" content="Electron의 IPC 모듈과 IPC 통신의 개념을 파악하고 IPC 모듈을 사용하여 어떻게 통신을 하는지 알아보자. IPC 모듈에는 ipcMain과 ipcRenderer 프로세스 두 가지가 있다. ipcMain은 electron 메인 프로세스로 백엔드로 볼 수 있으며, ipcRenderer는 electron의 renderer 프로세스로 프론트엔드로 볼">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기">
+<meta property="og:url" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Electron의 IPC 모듈과 IPC 통신의 개념을 파악하고 IPC 모듈을 사용하여 어떻게 통신을 하는지 알아보자. IPC 모듈에는 ipcMain과 ipcRenderer 프로세스 두 가지가 있다. ipcMain은 electron 메인 프로세스로 백엔드로 볼 수 있으며, ipcRenderer는 electron의 renderer 프로세스로 프론트엔드로 볼">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-ipc-communication-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/ipc-process.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-run.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-input-run.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/computed-ondata.png">
+<meta property="article:published_time" content="2020-12-23T13:11:25.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.757Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="npm">
+<meta property="article:tag" content="electron">
+<meta property="article:tag" content="electron.js">
+<meta property="article:tag" content="electron 배우기">
+<meta property="article:tag" content="electron 튜토리얼">
+<meta property="article:tag" content="electron tutorial">
+<meta property="article:tag" content="electron framework">
+<meta property="article:tag" content="electron 설치">
+<meta property="article:tag" content="electron ipc 통신">
+<meta property="article:tag" content="electron ipcMain">
+<meta property="article:tag" content="electron ipcRenderer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-ipc-communication-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-ipc-communication-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/electron-ipc-communication-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-23T13:11:25+00:00">
+	
+		    2020-12-23
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/npm/">npm</a>, <a class="category-link" href="/categories/javascript/nodejs/npm/electron/">electron</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/12/23/electron-ipc-communication/electron-ipc-communication-cover.png" alt="cover"></p>
+<p>Electron의 IPC 개념은 Electron에서 자주 사용되는 기술이다.</p>
+<p><code>ipcMain</code>과 <code>ipcRenderer</code>를 사용하여 <code>Main 프로세스</code>와 <code>Renderer 프로세스</code> 간에 통신을 할 수 있기 때문이다.</p>
+<p>이런 개념을 빗대어 보자면 웹 기술에서 Back-End와 Front-End 간 통신을 하기 위해서 그에 맞는 특정 모듈과 기술이 필요하다. Electron에서도 이러한 개념을 담당하는 것이 <code>IPC</code> 모듈이다. 다른 예로 Vue를 다뤄본 사람이라면 <code>Event Bus</code> 개념이나 <code>Props</code> 개념을 알고 있을 텐데 이때 <code>@event(&#39;eventName&#39;)</code>으로 이벤트를 수신하고 <code>$emit(&#39;eventName&#39;)</code>으로 이벤트를 송신하는 것을 볼 수 있는데 이와 비슷한 개념으로 볼 수 있다.</p>
+<p>Electron 공식 문서의 용어 정리 부분을 보면 <code>IPC</code>에 대하여 이렇게 기록하고 있다.</p>
+<hr>
+<p style="text-align: center;font-weight: bold"> IPC는 프로세스 간 통신을 의미한다. </p>
+<p style="text-align: center;font-weight: bold">Electron은 IPC를 사용하여 Main 프로세스와 Renderer 프로세스 간에 직력화 된 JSON 메시지는 동기적 또는 비동기적으로 통신한다.</p>
+- - -
+
+<p>통신이란 의미는 글로만 봐서는 파악하기 힘들다.</p>
+<p>이번 포스트에서는 이 IPC 모듈에 관한 내용을 알아보고 실제로 간단한 앱을 만들면서 파악해보도록 하자.</p>
+<hr>
+<h2 id="IPC-모듈"><a href="#IPC-모듈" class="headerlink" title="IPC 모듈"></a>IPC 모듈</h2><p><code>IPC</code>는 위에서 설명했듯이 프로세스 간 통신을 의미한다. 여기서 프로세스란 <code>Main 프로세스</code>와 <code>Renderer 프로세스</code>를 의미한다.</p>
+<p>예를 들어 Main 프로세스는 서버로 생각하고 Renderer 프로세스는 브라우저라고 생각한다면 서버와 브라우저 간 통신을 하기 위한 규약이 필요하다. 이를 Electron에서는 <code>IPC</code>가 처리하고 있다.</p>
+<p>IPC는 <code>on</code>을 통해 메시지 또는 이벤트를 수신하고 <code>send</code>를 통해 메시지 또는 이벤트를 전달한다. 이 점을 기억하도록 하자.</p>
+<p><img src="/2020/12/23/electron-ipc-communication/ipc-process.png" alt="electron-ipc-process"></p>
+<p><strong>ipcMain에서 <code>on</code>을 통한 이벤트 수신</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">ipcMain.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;CHANNEL_NAME&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123; &#125;)<br></code></pre></td></tr></table></figure>
+
+
+<p><strong>ipcRenderer에서 <code>send</code>을 통한 이벤트 송신</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">ipcRenderer.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;CHANNEL_NAME&#x27;</span>, <span class="hljs-string">&#x27;message&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>여기서 <code>Main 프로세스</code>와 <code>Renderer 프로세스</code>의 정의만 잠깐 짚고 넘어가자.</p>
+<h3 id="Main-Processor"><a href="#Main-Processor" class="headerlink" title="Main Processor"></a>Main Processor</h3><p><code>Main 프로세스</code>는 일반적으로 우리가 Electron으로 개발할 때 생성하는 <code>main.js</code>로 볼 수 있다.<br><strong>이는 Electron 앱의 진입점이기도 하며, 앱의 Life Cycle을 관리</strong>한다. 뿐만 아니라 애플리케이션에서 사용되는 메뉴, Dock, 트레이와 같은 네이티브 요소를 관리하며 Main 프로세스는 앱에서 각각의 새로운 Renderer 프로세스를 생성한다.</p>
+<p>Chromium에서 이러한 개념을 Browser 프로세스라 하며, Electron에서는 <strong>Renderer 프로세스와 혼동을 피하고자 Main 프로세스</strong>라 명명한다. 즉, Main 프로세스는 Electron 시스템 내 동작하는 애플리케이션을 제어하는 프로세스로 볼 수 있다.</p>
+<p>현재 Electron 11.x 버전에서는 아래와 같은 Main 프로세스 모듈이 존재한다.</p>
+<blockquote>
+<ul>
+<li>app</li>
+<li>autoUpdater</li>
+<li>BrowserView</li>
+<li>contentTracing</li>
+<li>dialog</li>
+<li>globalShortcut</li>
+<li>inAppPurchase</li>
+<li><strong>ipcMain</strong></li>
+<li>Menu</li>
+<li>MenuItem</li>
+<li>net</li>
+<li>netLog</li>
+<li>nativeTheme</li>
+<li>Notification</li>
+<li>powerMonitor</li>
+<li>powerSaveBlocker</li>
+<li>protocol</li>
+<li>screen</li>
+<li>session</li>
+<li>systemPreferences</li>
+<li>TouchBar</li>
+<li>Tray</li>
+<li>webContents</li>
+<li>webFrameMain</li>
+</ul>
+</blockquote>
+<h3 id="Renderer-Processor"><a href="#Renderer-Processor" class="headerlink" title="Renderer Processor"></a>Renderer Processor</h3><p><code>Renderer 프로세스</code>는 Electron 앱의 Chromium 기반의 브라우저 창을 관리하는 모듈이다.</p>
+<p><strong>Main 프로세스와 달리 Renderer 프로세스는 여러 개가 존재할 수 있으며, Main 프로세스와는 1:N의 관계를 맺는다.</strong></p>
+<p>현재 Electron 11.x 버전에서는 아래와 같은 Main 프로세스 모듈이 존재한다.</p>
+<blockquote>
+<ul>
+<li>desktopCapturer</li>
+<li><strong>ipcRenderer</strong></li>
+<li>remote</li>
+<li>webFrame</li>
+</ul>
+</blockquote>
+<hr>
+<p>이제 다시 돌아와서 <code>IPC</code>에 대해 알아보자.</p>
+<p>위에서 설명했듯이 <code>IPC</code>는 <code>ipcMain</code>과 <code>ipcRenderer</code> 모듈 두 가지로 구분된다.</p>
+<h2 id="ipcMain"><a href="#ipcMain" class="headerlink" title="ipcMain"></a>ipcMain</h2><p><code>ipcMan</code> 모듈은 Renderer 프로세스(웹 페이지)가 보내는 메시지 또는 이벤트를 동기적 혹은 비동기적으로 처리한다. 즉, 웹 페이지를 처리하는 프로세스인 Renderer 프로세스가 보내는 메시지를 Main 프로세스는 수신하여 처리하게 된다.</p>
+<p>아래에서 <code>ipcRenderer</code>를 보면 알겠지만 보통 <strong>ipcMain에서는 IPC 통신을 할 때 수신만 할 수 있다.</strong><br>위에서 이벤트 수신은 <code>on</code>이며 송신은 <code>send</code>라 하였지만, ipcMain에서는 <code>on</code>으로 송신을 하며 <code>send</code>가 아닌 <code>reply</code>로 회신하는 것이다.</p>
+<p>아래 예제를 보자.</p>
+<p><strong>ipcMain에서 <code>on</code>을 통한 이벤트 수신</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; ipcMain &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br><span class="hljs-comment">// ipcMain에서의 이벤트 수신</span><br>ipcMain.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;CHANNEL_NAME&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(payload)<br>  <br>  evt.<span class="hljs-title function_">reply</span>(<span class="hljs-string">&#x27;IPC_RENDERER_CHANNEL_NAME&#x27;</span>, <span class="hljs-string">&#x27;message&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>위 예제에서 <code>CHANNEL_NAME</code>은 메시지를 송신할 이름을 말하며 <code>channel</code>이라고 한다. 어느 ipcRenderer 프로세스에서 <code>CHANNEL_NAME</code>으로 메시지를 수신하였고 ipMain 프로세스는 ‘CHANNEL_NAME’로 송신하였다. 그리고 다시 <code>reply</code>를 통하여 송신 후 다시 응답하였다.</p>
+<p>이 응답의 <code>channel</code> 이름은 <code>IPC_RENDERER_CHANNEL_NAME</code>이다. 이렇게 응답을 하였기에 어느 ipcRenderer 프로세서는 <code>on</code>을 통하여 <code>IPC_RENDERER_CHANNEL_NAME</code> 채널로 수신할 것이다.</p>
+<p>기능 측면에서 <code>send</code>의 개념도 가능하다. 하지만 ipcMain 프로세스는 ipcRenderer와 같은 <code>send</code> 메소드를 가지고 있진 않다. <code>send</code>를 하기 위해서는 <a target="_blank" rel="noopener" href="https://www.electronjs.org/docs/api/web-contents#contentssendchannel-args">webContents.send</a>를 이용해야 한다.</p>
+<p><strong>webContents.send를 이용한 send 방식</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; app, <span class="hljs-title class_">BrowserWindow</span> &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br>app.<span class="hljs-title function_">whenReady</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> win = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BrowserWindow</span>(&#123; <br>    <span class="hljs-comment">// options </span><br>  &#125;)<br>  <br>  win.<span class="hljs-property">webContents</span>.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;IPC_RENDERER_CHANNEL_NAME&#x27;</span>, <span class="hljs-string">&#x27;message&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>ipcMain이 될 수 있는 <code>main.js</code>에서 <code>IPC_RENDERER_CHANNEL_NAME</code> 채널명으로 수신하고 있다. 이는 어느 ipcRenderer에서 <code>IPC_RENDERER_CHANNEL_NAME</code> 채널명으로 송신을 받고 이후의 처리를 할 수 있을 것이다.</p>
+<p>이렇게 되면 ipcMain에서도 ipcRenderer와 동일하게 메시지를 송신할 수 있다.</p>
+<h2 id="ipcRenderer"><a href="#ipcRenderer" class="headerlink" title="ipcRenderer"></a>ipcRenderer</h2><p><code>ipcRenderer</code> 모듈은 Renderer 프로세스(웹 페이지)에서 Main 프로세스로 동기 또는 비동기 메시지를 보낼 수 있다. Main 프로세스에서 webContents.send 로 메시지를 보냈다면 수신 역시 가능하다.</p>
+<p>보통 웹 페이지 딴에서 HTTP 통신을 통해 받아온 데이터를 보내거나 Main 프로세스를 호출할 경우 사용되며, <code>send</code>를 통해 송신하고 <code>on</code>을 통해 수신한다.</p>
+<p><strong>ipcRenderer에서 <code>send</code>을 통한 이벤트 송신</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; ipcRenderer &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br><span class="hljs-keyword">const</span> payload = <span class="hljs-string">&#x27;message&#x27;</span><br><br><span class="hljs-comment">// ipcRenderer에서의 이벤트 송신</span><br>ipcRenderer.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;CHANNEL_NAME&#x27;</span>, payload)<br></code></pre></td></tr></table></figure>
+
+<p>지금까지 IPC 통신 방법 중 수신이 가능한 <code>on</code>과 송신이 가능한 <code>send</code>에 대해서 설명만 했지만, 이외에도 IPC와 관련된 API들은 많다. 이것에 대해서는 <a target="_blank" rel="noopener" href="https://www.electronjs.org/docs/api/ipc-main">Electron API 문서 - ipcMain</a>와 <a target="_blank" rel="noopener" href="https://www.electronjs.org/docs/api/ipc-renderer">Electron API 문서 - ipcRenderer</a>를 참고하도록 하자.</p>
+<h2 id="예제-만들기"><a href="#예제-만들기" class="headerlink" title="예제 만들기"></a>예제 만들기</h2><p>이제 실제로 예제를 만들면서 <code>ipcMain</code>과 <code>ipcRenderer</code> 모듈이 어떻게 동작하는지 알아보도록 하자.</p>
+<p>예제의 동작은 최초 Electron이 구동되면 <code>WenContent.send</code>를 통해서 Renderer 프로세스(웹 페이지)에 정보를 보낼 것이다. 이후 웹 페이지에서는 값을 입력하고 버튼을 클릭하면 입력된 값을 다시 Main 프로세스로 전달할 것이다. 이렇게 전달받은 값은 다시 변형하여 Renderer 프로세스로 전달하는 과정을 만들 것이다.</p>
+<h3 id="환경-구축"><a href="#환경-구축" class="headerlink" title="환경 구축"></a>환경 구축</h3><p>가장 빠른 방법. <code>electron-quick-start</code> boilerplate를 통해서 구축하자.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git clone https://github.com/electron/electron-quick-start<br><br>cd electron-quick-start<br>npm install<br>npm run start<br></code></pre></td></tr></table></figure>
+
+<h3 id="코드-수정"><a href="#코드-수정" class="headerlink" title="코드 수정"></a>코드 수정</h3><p>먼저 <code>index.html</code>을 열어 아래와 같이 수정하자.</p>
+<p><strong>index.html</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./renderer.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span><br><span class="hljs-tag">     <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;text-input&quot;</span></span><br><span class="hljs-tag">     <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span></span><br><span class="hljs-tag">  &gt;</span><br><br>  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;btn&quot;</span>&gt;</span>Click<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>computed input value =&gt; <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">span</span></span><br><span class="hljs-tag">     <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;text-box&quot;</span></span><br><span class="hljs-tag">     <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;color: red&quot;</span></span><br><span class="hljs-tag">  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>간단하게 input과 button 그리고 텍스트를 출력할 수 있는 영역을 두었다.</p>
+<p>그다음 <code>renderer.js</code>를 수정하자.</p>
+<p><strong>renderer.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; ipcRenderer &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br><span class="hljs-variable language_">window</span>.<span class="hljs-property">onload</span> = <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> btnEl = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;btn&#x27;</span>)<br><br>  btnEl.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> inputValue = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;text-input&#x27;</span>).<span class="hljs-property">value</span><br><br>    <span class="hljs-comment">// onInputValue 이벤트 송신</span><br>    ipcRenderer.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;onInputValue&#x27;</span>, inputValue)<br>  &#125;)<br><br>  <span class="hljs-comment">// replyInputValue에 대한 응답 수신</span><br>  ipcRenderer.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;replyInputValue&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;text-box&#x27;</span>).<span class="hljs-property">textContent</span> = payload<br>  &#125;)<br><br>  <span class="hljs-comment">// onWebcontentsValue에 대한 이벤트 수신</span><br>  ipcRenderer.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;onWebcontentsValue&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;text-box&#x27;</span>).<span class="hljs-property">textContent</span> = payload<br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>최초 페이지가 로드되면 <code>onWebcontentsValue</code>를 통해서 텍스트를 설정할 것이다. 이후 input에 값을 입력하고 버튼을 클릭하면 해당 값이 <code>onInputValue</code>를 통해서 Main 프로세스로 송신될 것이다. 이렇게 송신된 이벤트는 Main 프로세스에서 값을 가공하여 <code>replyInputValue</code>를 통해 응답할 것이고 Renderer 프로세스에서는 이를 받아 텍스트를 출력할 것이다.</p>
+<p>이제 Main 프로세스에서 송신과 수신을 지정하자.</p>
+<p><strong>main.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; app, <span class="hljs-title class_">BrowserWindow</span>, ipcMain &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">createWindow</span> () &#123;<br>  <span class="hljs-keyword">const</span> mainWindow = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BrowserWindow</span>(&#123;<br>    <span class="hljs-attr">width</span>: <span class="hljs-number">800</span>,<br>    <span class="hljs-attr">height</span>: <span class="hljs-number">600</span>,<br>    <span class="hljs-attr">webPreferences</span>: &#123;<br>      <span class="hljs-attr">preload</span>: path.<span class="hljs-title function_">join</span>(__dirname, <span class="hljs-string">&#x27;preload.js&#x27;</span>),<br>      <span class="hljs-attr">nodeIntegration</span>: <span class="hljs-literal">true</span><br>    &#125;<br>  &#125;)<br><br>  mainWindow.<span class="hljs-title function_">loadFile</span>(<span class="hljs-string">&#x27;index.html&#x27;</span>)<br><br>  <span class="hljs-comment">// 웹 페이지 로드 완료</span><br>  mainWindow.<span class="hljs-property">webContents</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;did-finish-load&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// onWebcontentsValue 이벤트 송신</span><br>    mainWindow.<span class="hljs-property">webContents</span>.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;onWebcontentsValue&#x27;</span>, <span class="hljs-string">&#x27;on load...&#x27;</span>)<br>  &#125;)<br>&#125;<br><br>app.<span class="hljs-title function_">whenReady</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-title function_">createWindow</span>()<br><br>  app.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;activate&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-title class_">BrowserWindow</span>.<span class="hljs-title function_">getAllWindows</span>().<span class="hljs-property">length</span> === <span class="hljs-number">0</span>) <span class="hljs-title function_">createWindow</span>()<br>  &#125;)<br><br>  <span class="hljs-comment">// onInputValue 이벤트 수신</span><br>  ipcMain.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;onInputValue&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;on ipcMain event:: &#x27;</span>, payload)<br><br>    <span class="hljs-keyword">const</span> computedPayload = payload + <span class="hljs-string">&#x27;(computed)&#x27;</span><br><br>    <span class="hljs-comment">// replyInputValue 송신 또는 응답</span><br>    evt.<span class="hljs-title function_">reply</span>(<span class="hljs-string">&#x27;replyInputValue&#x27;</span>, computedPayload)<br>  &#125;)<br>&#125;)<br><br>app.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;window-all-closed&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">if</span> (process.<span class="hljs-property">platform</span> !== <span class="hljs-string">&#x27;darwin&#x27;</span>) app.<span class="hljs-title function_">quit</span>()<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>위와 같이 수정 후 아래 코드를 보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript">mainWindow.<span class="hljs-property">webContents</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;did-finish-load&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">// onWebcontentsValue 이벤트 송신</span><br>  mainWindow.<span class="hljs-property">webContents</span>.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;onWebcontentsValue&#x27;</span>, <span class="hljs-string">&#x27;on load...&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+
+<p>이 코드는 Renderer 프로세스에서 웹 페이지가 완료 후에 호출되는 이벤트이다. 이때 Main 프로세스에서는 <code>webcontents.send</code>를 통해서 최초에 ipc 통신을 하는 것이다.<br>이와 같이 Main 프로세스에서도 <code>reply</code>가 아닌 <code>send</code>를 통해서 ipc 통신 시 송신이 가능하다.</p>
+<p>위 코드에서 <code>BrowserWindow</code>객체를 생성 시 <code>nodeIntegration: true</code>를 지정한 이유는 <code>renderer.js</code>에서 <code>require</code>를 통해 electron 모듈을 호출하기 위해서이다.</p>
+<h3 id="실행"><a href="#실행" class="headerlink" title="실행"></a>실행</h3><p><code>main.js</code>를 수정하였으므로 <code>npm run start</code>를 통해 다시 구동해보자.</p>
+<p><img src="/2020/12/23/electron-ipc-communication/electron-run.png" alt="electron-run"></p>
+<p><code>webcontent.send</code>를 통해서 최초에 값을 전달 했기 때문에 <code>on load</code>가 출력되는 것을 볼 수 있다.</p>
+<p>이제 input 박스에 값을 입력하고 버튼을 클릭해 보자.</p>
+<p><img src="/2020/12/23/electron-ipc-communication/electron-input-run.png" alt="electron-input-run"></p>
+<p>예제에서는 <code>test</code>를 입력하고 버튼을 클릭하니 결과값은 <code>test(computed)</code>로 출력되었다. 이는 Main 프로세스에서 수신받은 payload를 가공하여 다시 송신하였기 때문이다.</p>
+<p><strong>수신받은 payload를 가공하여 응답</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// onInputValue 이벤트 수신</span><br>  ipcMain.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;onInputValue&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, payload</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;on ipcMain event:: &#x27;</span>, payload)<br><br>    <span class="hljs-keyword">const</span> computedPayload = payload + <span class="hljs-string">&#x27;(computed)&#x27;</span><br><br>    <span class="hljs-comment">// replyInputValue 송신 또는 응답</span><br>    evt.<span class="hljs-title function_">reply</span>(<span class="hljs-string">&#x27;replyInputValue&#x27;</span>, computedPayload)<br>  &#125;)<br></code></pre></td></tr></table></figure>
+
+<p>여기서 console.log를 남겼기 때문에 콘솔을 확인해보자.</p>
+<p><img src="/2020/12/23/electron-ipc-communication/computed-ondata.png" alt="computed-data"></p>
+<p>콘솔 로그를 보면 입력된 값이 그대로 출력되는 것을 확인할 수 있다.</p>
+<hr>
+<p>이렇게 Electron에서 <code>IPC</code> 통신에 대해서 개념과 예제를 통해서 알아보았다.</p>
+<p>정리를 하면 <code>IPC</code>는 Electron에서 프로세스 간의 통신 방법을 말하며, 모듈에는 <code>icpMain</code>과 <code>Renderer 프로세스가</code>가 있다. 서로 간의 이벤트 수신은 <code>on</code>이며, 송신은 <code>send</code>이다. 이외에 <code>webContents.send</code>가 있다.</p>
+<p>IPC 통신은 프로세스 간 통신 방법이기에 많이 사용된다. 하지만 중요한 건 Electron은 웹 애플리에션에서 하나의 애플리케이션에 REST API가 같이 있는 격이다. 파일별 분리. API의 설계. 등 구조적으로 잘 관리가 되지 않으면 복잡해질 수 있다.<br>정리가 되지 않고 구조적이지 않으면 이후에 수만은 IPC 모듈에서 수신 및 송신의 코드 추적이 어려워진다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2023/09/28/electron-rce/">[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정</a><br><a href="https://kdydesign.github.io/2019/04/15/electron-tutorial/">Electron 개념부터 데스크탑 앱 만들기</a>)<br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/electron/" rel="tag">electron</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-framework/" rel="tag">electron framework</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-ipc-%ED%86%B5%EC%8B%A0/" rel="tag">electron ipc 통신</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-ipcMain/" rel="tag">electron ipcMain</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-ipcRenderer/" rel="tag">electron ipcRenderer</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-tutorial/" rel="tag">electron tutorial</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-%EB%B0%B0%EC%9A%B0%EA%B8%B0/" rel="tag">electron 배우기</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-%EC%84%A4%EC%B9%98/" rel="tag">electron 설치</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC/" rel="tag">electron 튜토리얼</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-js/" rel="tag">electron.js</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/npm/" rel="tag">npm</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/01/14/vue-eventbus-vs-vuex/"
+                    data-tooltip="[Vue.JS] Vuex VS Event Bus"
+                    aria-label="PREVIOUS: [Vue.JS] Vuex VS Event Bus"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/03/intellij-pair-programming/"
+                    data-tooltip="IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                    aria-label="NEXT: IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/01/14/vue-eventbus-vs-vuex/"
+                    data-tooltip="[Vue.JS] Vuex VS Event Bus"
+                    aria-label="PREVIOUS: [Vue.JS] Vuex VS Event Bus"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/03/intellij-pair-programming/"
+                    data-tooltip="IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                    aria-label="NEXT: IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/12/23/electron-ipc-communication/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/12/23/electron-ipc-communication/';
+              
+            this.page.identifier = 'electron-ipc-communication';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

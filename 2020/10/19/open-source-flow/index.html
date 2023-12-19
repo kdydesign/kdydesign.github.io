@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>오픈 소스(Open-Source) 구조와 모듈 파악하기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/10/19/open-source-flow/"/>
+    
+        <meta name="keywords" content="nodejs,javascript,webpack,open-source,eslint,yarn,npm,babel,commitlint,standard-version,package.json,git,github,jest,husky,오픈 소스(Open-Source) 만들기,오픈 소스(Open-Source) 구조,open-source structure,license,circleci,ci">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n이번 포스트에서는 오픈 소스(Open-Source)를 만들기 위한 구조와 오픈 소스(Open-Source) 개발에 필요한 모듈을 정의해보려 한다.\n개발자라면 한 번쯤은 오픈 소스(Open-Source)를 만들어 공유나 배포를 해보았을 것이다. 본인들이 사용하는 각종 모듈과 기술들이 있다면 그대로 사용하면 되지만 보통 오픈 소스(Open-Source)를 만들기 시작할 때 어떤 구조와 형태로 만들어야 하는지 감이 잡히질 않는다.작성자 역시 처음에 오픈 소스(Open-Source)를 만들 때 여러 번 실패를 했던 것으로 기억한다. 사실 이 오픈 소스(Open-Source) 구조를 잡는데 정확한 답은 없다. 정상적으로 기능이 동작하고 배포하고 테스트가 되면 그만이겠지만 오픈 소스(Open-Source)는 보통 개인이 진행하기도 하지만 여러 사람과 함께 진행하는 경우도 있기 때문에 이에 맞는 모듈과 구조가 필요하다.\n오픈 소스(Open-Source)를 개발하고 개발 생태계에 기여하고 싶은 개발자를 위하여 오픈 소스(Open-Source)를 만드는 방법과 필요한 모듈, 그리고 구조에 대해 얘기해보려고 한다.\n\n시작하기 앞서 오픈 소스(Open-Source)에 필요한 키워드만 먼저 살펴 보고 하나하나 집고 나가자.\nKeyword\n\ngit&#x2F;github\nREADME\ncircleci\neditorconfig\neslint\nbabel\ncommitlint\nstandard-version\nhusky\njest\nyarn&#x2F;npm\nlicense\nchangelog\ncodecov\n\n\n\n프로젝트 관리오픈 소스(Open-Source)는 말할 필요 없이 git과 github를 사용하여 관리한다. github를 사용함으로 인하여 오픈 소스(Open-Source)를 관리하고 개발자에게 제공할 수 있다.\ngithub에 대한 설명은 다른 블로그에서도 많으니 검색하여 계정이 없다면 하나 정도는 만들어두도록 하자.\nREADME.mdREADME는 오픈 소스(Open-Source)에 있어서 중요한 부분이다. 오픈 소스(Open-Source)를 만들어도 사용법을 알아야 하는데 이런 역할은 README.md가 한다. 즉, REAMD는 오픈 소스(Open-Source)의 가이드라인이나 매뉴얼로 보면 된다.\ngithub README.md 파일을 위치시키면 자동을 읽어서 첫 페이지로 출력된다. 그렇기 때문에 다른 사용자가 해당 오픈 소스(Open-Source)의 레파지토리에 접근한다면 최초로 보는 페이지이기 때문에 신중하게 작성할 필요가 있다.\nCICI는 빌드 시스템이다.\n내가 올린 오픈 소스(Open-Source)를 빌드하고 설정에 따라 테스트와 배포까지 진행 할 수 있다. github로 프로젝트를 관리하였다면 CI를 통해서 관리되는 오픈 소스(Open-Source)의 테스트 및 빌드, 배포를 자동화 할 수 있다.CI는 종류가 많지만, 필자의 경우 CircleCI 사용하고 있다. 어떤 ci를 선택해도 무관하지만 중요한 건 오픈 소스(Open-Source)를 자동으로 빌드, 테스트, 배포를 위해서 사용해야 한다. 매번 수동으로 테스트와 배포를 할 수 없진 않은가.\n이 CI를 github 내 나의 오픈 소스(Open-Source)와 연동함으로써 github REAMDE에 뱃지를 달 수 있다.\n보통 github의 오픈 소스(Open-Source)를 보게 되면 README.md에 프로젝트의 버전, 다운로드 수, 빌드 상태 등의 상태 정보를 볼 수 있는데 이것을 뱃지라 하며 각 뱃지는 특정 시스템들과 연동이 되어 출력된다.\n아래를 보면 npm version, 다운로드 수, 빌드 상태, 커버지리 및 코드 스타일 등의 뱃지를 볼 수 있다.\n\n.editorconfigeditorconfig는 설정 파일이며, 협업을 위한 하나의 도구이다.\neditorconfig를 설정함으로써 해당 오픈 소스(Open-Source) 코드의 포맷을 정의할 수 있다. 완벽한 스타일 정의를 잡기는 쉽지 않지만 어느 정도의 기준을 잡을 수 있다. \n오픈 소스(Open-Source)를 만들었는데 누군가 해당 오픈 소스(Open-Source)에 기여하기 위하여 fork를 받고 수정 후 PR(Pull Request)을 요청했는데 코드 스타일이 전혀 다르면 Merge를 시킬 수 없다.이런 기준은 .editorconfig가 지정해 준다. 이 외에 pretter를 사용해도 되기 때문에 원하는 것을 사용하기 바란다.\ne.g) .editorconfig\n# editorconfig.orgroot = true[*]indent_size = 2indent_style = spaceend_of_line = lfcharset = utf-8trim_trailing_whitespace = trueinsert_final_newline = true[*.md]trim_trailing_whitespace = false\n\neslinteslint는 개발자면 대부분 아는 모듈이다. \n협업뿐만 아니라 개인이 개발할 때도 필수요소이다. 보통 eslint 설정이 귀찮아 사용하지 않는 경우가 많은데 eslint는 문제점을 야기할 수 있는 부분들을 사전에 방지하며 코드 분석을 하기 때문에 필수로 사용하기 바란다.\nbabelbabel 역시 Front-End 개발자라면 알 것이다. 최신 버전(ES6+)의 자바스크립트 문법을 IE를 포함한 구형 브라우저에서 동작할 수 있도록 도와주는 컴파일러이다.\n오픈 소스(Open-Source)를 만든다는 것은 한정된 브라우저에 동작하게 하진 않을 것이다. 보통 브라우저와 Node.js의 버전은 정해지겠지만 IE, Chrome, Firefox, Safari 등의 브라우저에서 호환이 되도록 개발할 것이기에 Babel은 필수이다.\ncommitlintcommitlint는 협업을 위한 도구이기도 하지만 일관성 있는 commit message를 작성하기 위한 도구이다.\n개발을 하다 보면 간혹 commit 메시지 작성에 귀찮을 때가 있는데 이런 부분을 일부 제어해준다. 규칙에 맞지 않는 commit message는 허용하지 않으며 이로 인해 commit 자체를 하지 못하기 때문이다.commitlint는 commit 시 입력된 메시지가 규칙에 맞는지 검사하는 도구이기 때문에 일부 패턴이 있으며 이는 Conventional Commit 규칙을 따른다.\ncommitlint는 standard-version과 husky, CHAGNELOG과 연관이 있으며 연관성을 차근차근 알아보자.\ne.g) Conventional Commits 규칙\n&lt;type&gt;[optional scope]: &lt;description&gt;fix: 버그수정chore(depd): 디펜덴시 모듈 수정feat: 기능추가\n\nCHANGELOGCHAGNELOG는 해당 오픈 소스(Open-Source)의 릴리즈노트이다.\n오픈 소스(Open-Source)를 수정하고 commit 시 수동적으로 수정해도 되는 파일이지만 이는 매우 번거롭다. 그렇기 때문에 이 CHAGNELOG을 자동으로 생성해야 하는데 이는 위에서 설명한 commitlint와 아래에서 설명할 standard-version과 연관이 있다.commitlint를 통하여 규칙에 허용되는 commit message를 입력하면 내용을 기준으로 standard-version은 CHAGNELOG을 동적으로 생성 및 수정한다.\n생성된 CHANGELOG에는 버전과 commit message 그리고 수정된 파일 리비전이 같이 생성이 된다.\n여기서 생각해 볼 것은 만약 commit message가 엉망이라면 이로 인해서 CHAGNELOG까지 엉망이 될 것이다. 그렇기 때문에 commitlint를 사용하는 이유도 있다.\ne.g) CHANGELOG.md\nstandard-versionstandard-version은 위에서 설명한 commit 규칙인 Conventional Commit으로 구동된다.이 standard-version의 역할은 시멘틱 버저닝인 semver를 기준으로 CHANGELOG를 생성한다.\nhuskyhusky는 git hook을 손쉽게 제어할 수 있다. \n오픈 소스(Open-Source)에서 husky의 역할은 아래와 같다.\n\ngit commit message를 입력 시 commitlint를 구동\ngit commit 실행 전 eslint 실행\ngit push 실행 전 lint &amp; test 실행\n\n\n\n즉, 위에서 배운 commitlint, eslint 등을 git 명령어 실행 시 사전에 구동하는 편리한 도구이다. 그렇기 때문에 commitlint를 설명할 때 husky가 연관이 있다고 한 것이다.\njestjest는 단위 테스트 프레임워크이다.\n여기서 굳이 jest를 사용하지 않아도 된다. mocha나 jasmine과 같은 훌륭한 도구들도 많다. 만약 Mocha에 대해서 궁금하다면 JavaScript 단위 테스트 프레임워크 - Mocha를 참고하도록 하자.\n작성자가 jest를 사용하는 이유는 jest의 설정이 다소 간편한 편이고 소규모의 프로젝트에 적합하기 때문이다. 오픈 소스(Open-Source)의 구조나 규모가 클 수도 있겠지만 보통 작은 모듈의 단위이기 때문에 jest가 적합하다고 판단한다. 또한 vue나 react와 같은 프레임워크와 같이 사용하기 복잡함이 없기 때문이다.\n어느 단위 테스트 프레임워크를 사용하냐는 여러분의 몫이지만 단위 테스트는 필수로 사용하기 바란다.\ncodecovcodecov는 코드 커버리지를 그룹화, 병합, 보관할 수 있다.\n위 jest를 사용했다면 단위 테스트를 진행할 때 coverage를 생성할 수 있는데 이를 codecov와 연동하여 사용할 수 있다.\ne.g) codecov\ncodecov를 사용하여 오픈 소스(Open-Source)의 coverage를 관리할 수 있다.\nyarn&#x2F;npm둘 중 어느 것을 사용해도 무방하다. 보통 추세는 더 빠른 yarn을 사용하지만 여기서는 딱히 설명하지 않도록 하겠다.\nlicense우리의 오픈 소스(Open-Source)는 MIT로 하도록 하자. 개발 생태계에 기여를 하고 돈을 받진 안도록 하자.\n이 글을 보는 개발자들도 오픈 소스(Open-Source)를 많이 사용하고 있진 않은가? 받은 만큼 돌려주도록 하자.\n\n여기까지가 오픈 소스(Open-Source) 개발에 필요한 모듈과 설정들이다. 이제 이를 사용하여 하나의 오픈 소스(Open-Source) 프로젝트 구조를 잡아보도록 하자.\n오픈 소스(Open-Source) 만들기1. Git Repository 생성설명은 생략하겠다. GitHub에 적당한 Repository를 생성하도록 하자.\n2. 폴더 생성 및 Test 폴더 생성적당한 Repository가 생성되었다면 실제 Core 코드가 들어갈 폴더 lib를 하나 만들자. 그리고 단위 테스트를 위해 test라는 폴더도 하나 만들자.\n3. editorconfig 설정.editorconfig 파일을 생성하여 코드 스타일에 대한 규칙을 생성하자.\n.editorconfig\n# editorconfig.orgroot = true[*]indent_size = 2indent_style = spaceend_of_line = lfcharset = utf-8trim_trailing_whitespace = trueinsert_final_newline = true[*.md]trim_trailing_whitespace = false\n\n4. Node Module 설치이제 위에서 배운 모든 모듈을 설치하자.\nnpm이나 yarn을 통해서 설치해도 되지만 아래 내용을 package.json에 입력 후 npm install로 설치하도록 하자.\n여기서 필자는 오픈 소스(Open-Source) 개발에 필요한 모든 도구는 최신 버전(latest)로 설치한다. 이렇게 하면 호환성을 유지하는데 약간 귀찮은 면이 있지만, 이후 이 오픈 소스(Open-Source)를 fork를 통해서 수정하는 자가 있다면 그 개발자도 최신을 유지해야 하기 때문에 이 오픈 소스(Open-Source)는 언제나 최신일 것이다.\n&#123;  &quot;devDependencies&quot;: &#123;    &quot;@babel/core&quot;: &quot;latest&quot;,    &quot;@babel/preset-env&quot;: &quot;latest&quot;,    &quot;@commitlint/cli&quot;: &quot;latest&quot;,    &quot;@commitlint/config-conventional&quot;: &quot;latest&quot;,    &quot;babel-eslint&quot;: &quot;latest&quot;,    &quot;babel-jest&quot;: &quot;latest&quot;,    &quot;codecov&quot;: &quot;latest&quot;,    &quot;eslint&quot;: &quot;latest&quot;,    &quot;eslint-config-standard&quot;: &quot;latest&quot;,    &quot;eslint-plugin-import&quot;: &quot;latest&quot;,    &quot;eslint-plugin-jest&quot;: &quot;latest&quot;,    &quot;eslint-plugin-node&quot;: &quot;latest&quot;,    &quot;eslint-plugin-promise&quot;: &quot;latest&quot;,    &quot;eslint-plugin-standard&quot;: &quot;latest&quot;,    &quot;husky&quot;: &quot;latest&quot;,    &quot;jest&quot;: &quot;latest&quot;,    &quot;standard-version&quot;: &quot;latest&quot;  &#125;&#125;\n\n5. package.json 수정package.json을 오픈 소스(Open-Source)에 맞도록 수정하자. 보통 오픈 소스(Open-Source)가 개발되면 npm package로서 배포도 가능하므로 이를 고려하여 작성한다.\nnpm 패키지 배포는 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드를 참고하도록 하자.\npackage.json\n&#123;  &quot;name&quot;: &quot;open-source-example&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;description&quot;: &quot;&quot;,  &quot;main&quot;: &quot;lib/module.js&quot;,  // main 모듈  &quot;homepage&quot;: &quot;&quot;, // git repositry 또는 homepage  &quot;repository&quot;: &quot;&quot;, // git repository  &quot;bugs&quot;: &#123;    &quot;url&quot;: &quot;&quot;,  //github issues url    &quot;email&quot;: &quot;kdydesign@gmail.com&quot;  // mail  &#125;,  &quot;scripts&quot;: &#123;    &quot;dev&quot;: &quot;&quot;,  // 로컬 서버 실행 스크립트    &quot;lint&quot;: &quot;eslint lib test&quot;,  // eslint 실행 스크립트    &quot;test&quot;: &quot;yarn lint &amp;&amp; jest&quot;, // lint 및 test 실행 스크립트    &quot;release&quot;: &quot;yarn test &amp;&amp; standard-version &amp;&amp; git push --follow-tags &amp;&amp; npm publish&quot; // 오픈 소스(Open-Source) 배포 및 CHANGELOG 생성  &#125;,  &quot;keywords&quot;: [    &quot;open-source&quot; // npm registry 키워드  ],  &quot;contributors&quot;: [    &#123;      &quot;name&quot;: &quot;Dev.DY &lt;kdydesign@gmail.com&gt;&quot;  // author 또는 contributors(기여)    &#125;  ],  &quot;license&quot;: &quot;MIT&quot;,  &quot;publishConfig&quot;: &#123;    &quot;access&quot;: &quot;public&quot;  // npm publish 허용  &#125;,  &quot;files&quot;: [    &quot;lib&quot; // npm 패키지 배포될 경로  ],  &quot;dependencies&quot;: &#123;&#125;,  &quot;devDependencies&quot;: &#123;    &quot;@babel/core&quot;: &quot;latest&quot;,    &quot;@babel/preset-env&quot;: &quot;latest&quot;,    &quot;@commitlint/cli&quot;: &quot;latest&quot;,    &quot;@commitlint/config-conventional&quot;: &quot;latest&quot;,    &quot;babel-eslint&quot;: &quot;latest&quot;,    &quot;babel-jest&quot;: &quot;latest&quot;,    &quot;codecov&quot;: &quot;latest&quot;,    &quot;eslint&quot;: &quot;latest&quot;,    &quot;eslint-config-standard&quot;: &quot;latest&quot;,    &quot;eslint-plugin-import&quot;: &quot;latest&quot;,    &quot;eslint-plugin-jest&quot;: &quot;latest&quot;,    &quot;eslint-plugin-node&quot;: &quot;latest&quot;,    &quot;eslint-plugin-promise&quot;: &quot;latest&quot;,    &quot;eslint-plugin-standard&quot;: &quot;latest&quot;,    &quot;husky&quot;: &quot;latest&quot;,    &quot;jest&quot;: &quot;latest&quot;,    &quot;standard-version&quot;: &quot;latest&quot;  &#125;&#125;\n\n위 내용을 참고하여 작성하도록 하자.\n6. eslint 설정.eslintrc.js와 .eslintignore를 생성하여 eslint에 대한 설정을 진행하자.\n설정은 프로젝트마다 다르기 때문에 자세한 내용은 참고만 하도록 하자.\n.eslintrc.js\nmodule.exports = &#123;  root: true,  parserOptions: &#123;    parser: &#x27;babel-eslint&#x27;,    sourceType: &#x27;module&#x27;  &#125;,  env: &#123;    browser: true,    &#x27;jest/globals&#x27;: true  &#125;,  extends: [    &#x27;standard&#x27;  ],  plugins: [    &#x27;jest&#x27;  ],  rules: &#123;&#125;&#125;\n\n.eslintignore\ncoveragenode_modules\n\n7. babel 설정babel.config.js를 생성하여 babel에 대한 설정을 진행하자.\nbabel 설정 역시 프로젝트마다 다르기 때문에 내용은 참고만 하도록 하자.\nbabel.config.js\nmodule.exports = &#123;  presets: [    [      &#x27;@babel/preset-env&#x27;, &#123;        targets: &#123;          esmodules: true        &#125;      &#125;    ]  ]&#125;\n\n8.commitlint 설정commitlint.config.js를 생성하여 commitlint의 설정을 진행하자. \n기본적으로 아래와 같이 사용하며 추가할 내용이 있다면 추가해도 된다.\ncommitlint.config.js\nmodule.exports = &#123;  extends: [    &#x27;@commitlint/config-conventional&#x27;  ]&#125;\n\n9. husky 설정husky.config.js를 생성하여 husky에 대한 설정을 진행하자.\n보통 아래와 같이 필자는 사용하지만 pre-push는 생략해도 무관하다.\nhusky.config.js\nmodule.exports = &#123;  hooks: &#123;    &#x27;commit-msg&#x27;: &#x27;commitlint -E HUSKY_GIT_PARAMS&#x27;,    &#x27;pre-commit&#x27;: &#x27;yarn lint&#x27;,    &#x27;pre-push&#x27;: &#x27;yarn lint&#x27;  &#125;&#125;\n\n10. jest 설정jest.config.js를 생성하여 jest에 대한 설정을 진행하자.\ncollectCoverage를 활성화함으로써 coverage를 생성할 수 있다.\njest.config.js\nmodule.exports = &#123;  collectCoverage: true,  collectCoverageFrom: [&#x27;lib/**/*.js&#x27;], // 프로젝트 구조에 따라 다르게 설정하자.  testEnvironment: &#x27;node&#x27;&#125;\n\n11. circleCI 설정.circleci 폴더를 생성하고 config.yml을 생성하자. \n자세한 circleci 설정 및 연동 방법과 codecov 연동 방법은 구글 검색을 통해서 정보를 찾아보자. \nconfig.yml\nversion: 2jobs:  build:    docker:      - image: circleci/node    steps:      # Checkout repository      - checkout      # Restore cache      - restore_cache:          key: yarn-cache-&#123;&#123; checksum &quot;yarn.lock&quot; &#125;&#125;      # Install dependencies      - run:          name: Install Dependencies          command: NODE_ENV=dev yarn      # Keep cache      - save_cache:          key: yarn-cache-&#123;&#123; checksum &quot;yarn.lock&quot; &#125;&#125;          paths:            - &quot;node_modules&quot;      # Lint      - run:          name: Lint          command: yarn lint      # Tests      - run:          name: Tests          command: yarn jest      # Coverage      - run:          name: Coverage          command: yarn codecov\n\n12. LICENSE기여하도록하자.!\nLICENSE\nMIT LicenseCopyright (c) Dev.DYPermission is hereby granted, free of charge, to any person obtaining a copyof this software and associated documentation files (the &quot;Software&quot;), to dealin the Software without restriction, including without limitation the rightsto use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the Software, and to permit persons to whom the Software isfurnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in allcopies or substantial portions of the Software.THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS ORIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THEAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHERLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THESOFTWARE.\n\n\n위와 같이 설정하면 아래와 같은 구조를 가지게 된다. \n오픈 소스(Open-Source) 기본 구조\nCHANGELOG는 standard-version을 실행하면 생성된다.\n\n오픈 소스(Open-Source) 구조에 정답은 없다. 자신이 사용하는 모듈이 다를 수도 있고 사용을 하지 않을 수도 있다. 하지만 기본적인 골격을 잡아 놓는다면 많은 오픈 소스(Open-Source)를 개발할 때 유용하다.뿐만 아니라 설정을 해나가면서 기술에 대한 지식도 쌓아가니 일거양득으로 볼 수 있다.\n필자도 처음에는 막막하기만 했지만 여러 오픈 소스(Open-Source)를 찾아가거나 일을 하다가 새로운 구조를 보고 정리해 나아가다 보니 어느 정도 정착이 되었다.\n구조가 중요한 것은 아니지만 구조를 잡기 위한 방법들을 배우는 것은 중요한 부분을 차지한다. 해본 것과 안 해본 것의 차이는 크기 때문이다. 또한 여기에서 설정한 모듈은 때로는 불필요하게 느껴질 수 있겠지만 필수로 생각하자. \n특히 linter와 test는 필수요소이다.\n\n더 알아보기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지를 배워보자!Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.\n","dateCreated":"2020-10-19T10:24:59+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-10-19T10:24:59+00:00","description":"\n이번 포스트에서는 오픈 소스(Open-Source)를 만들기 위한 구조와 오픈 소스(Open-Source) 개발에 필요한 모듈을 정의해보려 한다. 개발자라면 한 번쯤은 오픈 소스(Open-Source)를 만들어 공유나 배포를 해보았을 것이다. 본인들이 사용하는 각종 모듈과 기술들이 있다면 그대로 사용하면 되지만 보통 오픈 소스(Open-Source)를 만들기 시작할 때 어떤 구조와 형태로 만들어야 하는지 감이 잡히질 않는다.\n","headline":"오픈 소스(Open-Source) 구조와 모듈 파악하기","image":["open-source-flow-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/10/19/open-source-flow/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/10/19/open-source-flow/","keywords":"javascript, nodejs, npm, git, github, webpack, open-source, eslint, yarn, babel, commitlint, standard-version, package.json, jest, husky, license, circleci","thumbnailUrl":"open-source-flow-cover.png"}</script>
+    <meta name="description" content="이번 포스트에서는 오픈 소스(Open-Source)를 만들기 위한 구조와 오픈 소스(Open-Source) 개발에 필요한 모듈을 정의해보려 한다. 개발자라면 한 번쯤은 오픈 소스(Open-Source)를 만들어 공유나 배포를 해보았을 것이다. 본인들이 사용하는 각종 모듈과 기술들이 있다면 그대로 사용하면 되지만 보통 오픈 소스(Open-Source)를 만">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="오픈 소스(Open-Source) 구조와 모듈 파악하기">
+<meta property="og:url" content="https://kdydesign.github.io/2020/10/19/open-source-flow/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이번 포스트에서는 오픈 소스(Open-Source)를 만들기 위한 구조와 오픈 소스(Open-Source) 개발에 필요한 모듈을 정의해보려 한다. 개발자라면 한 번쯤은 오픈 소스(Open-Source)를 만들어 공유나 배포를 해보았을 것이다. 본인들이 사용하는 각종 모듈과 기술들이 있다면 그대로 사용하면 되지만 보통 오픈 소스(Open-Source)를 만">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/open-source-flow-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/github-readme-badge.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/changelog.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/codecov-sample.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/open-source-sample-structure.png">
+<meta property="article:published_time" content="2020-10-19T10:24:59.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.801Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="npm">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="github">
+<meta property="article:tag" content="webpack">
+<meta property="article:tag" content="open-source">
+<meta property="article:tag" content="eslint">
+<meta property="article:tag" content="yarn">
+<meta property="article:tag" content="babel">
+<meta property="article:tag" content="commitlint">
+<meta property="article:tag" content="standard-version">
+<meta property="article:tag" content="package.json">
+<meta property="article:tag" content="jest">
+<meta property="article:tag" content="husky">
+<meta property="article:tag" content="license">
+<meta property="article:tag" content="circleci">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/open-source-flow-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/10/19/open-source-flow/open-source-flow-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/10/19/open-source-flow/open-source-flow-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            오픈 소스(Open-Source) 구조와 모듈 파악하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-10-19T10:24:59+00:00">
+	
+		    2020-10-19
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/open-source/">open-source</a>, <a class="category-link" href="/categories/javascript/nodejs/open-source/git/">git</a>, <a class="category-link" href="/categories/javascript/nodejs/open-source/git/github/">github</a>, <a class="category-link" href="/categories/javascript/nodejs/open-source/git/github/ci/">ci</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/10/19/open-source-flow/open-source-flow-cover.png" alt="cover"></p>
+<p>이번 포스트에서는 <strong>오픈 소스(Open-Source)를 만들기 위한 구조와 오픈 소스(Open-Source) 개발에 필요한 모듈을 정의</strong>해보려 한다.</p>
+<p>개발자라면 한 번쯤은 오픈 소스(Open-Source)를 만들어 공유나 배포를 해보았을 것이다. 본인들이 사용하는 각종 모듈과 기술들이 있다면 그대로 사용하면 되지만 보통 오픈 소스(Open-Source)를 만들기 시작할 때 어떤 구조와 형태로 만들어야 하는지 감이 잡히질 않는다.<br>작성자 역시 처음에 오픈 소스(Open-Source)를 만들 때 여러 번 실패를 했던 것으로 기억한다. 사실 이 오픈 소스(Open-Source) 구조를 잡는데 정확한 답은 없다. 정상적으로 기능이 동작하고 배포하고 테스트가 되면 그만이겠지만 오픈 소스(Open-Source)는 보통 개인이 진행하기도 하지만 여러 사람과 함께 진행하는 경우도 있기 때문에 이에 맞는 모듈과 구조가 필요하다.</p>
+<p><strong>오픈 소스(Open-Source)를 개발하고 개발 생태계에 기여</strong>하고 싶은 개발자를 위하여 오픈 소스(Open-Source)를 만드는 방법과 필요한 모듈, 그리고 구조에 대해 얘기해보려고 한다.</p>
+<hr>
+<p>시작하기 앞서 오픈 소스(Open-Source)에 필요한 <code>키워드</code>만 먼저 살펴 보고 하나하나 집고 나가자.</p>
+<div class="alert info no-icon"><p><strong>Keyword</strong></p>
+<ul>
+<li>git&#x2F;github</li>
+<li>README</li>
+<li>circleci</li>
+<li>editorconfig</li>
+<li>eslint</li>
+<li>babel</li>
+<li>commitlint</li>
+<li>standard-version</li>
+<li>husky</li>
+<li>jest</li>
+<li>yarn&#x2F;npm</li>
+<li>license</li>
+<li>changelog</li>
+<li>codecov</li>
+</ul>
+</div>
+
+<h1 id="프로젝트-관리"><a href="#프로젝트-관리" class="headerlink" title="프로젝트 관리"></a>프로젝트 관리</h1><p>오픈 소스(Open-Source)는 말할 필요 없이 <code>git</code>과 <code>github</code>를 사용하여 관리한다. github를 사용함으로 인하여 오픈 소스(Open-Source)를 관리하고 개발자에게 제공할 수 있다.</p>
+<p>github에 대한 설명은 다른 블로그에서도 많으니 검색하여 계정이 없다면 하나 정도는 만들어두도록 하자.</p>
+<h1 id="README-md"><a href="#README-md" class="headerlink" title="README.md"></a>README.md</h1><p><code>README</code>는 오픈 소스(Open-Source)에 있어서 중요한 부분이다. 오픈 소스(Open-Source)를 만들어도 사용법을 알아야 하는데 이런 역할은 <code>README.md</code>가 한다. 즉, <strong>REAMD는 오픈 소스(Open-Source)의 가이드라인이나 매뉴얼</strong>로 보면 된다.</p>
+<p>github <code>README.md</code> 파일을 위치시키면 자동을 읽어서 첫 페이지로 출력된다. 그렇기 때문에 다른 사용자가 해당 오픈 소스(Open-Source)의 레파지토리에 접근한다면 최초로 보는 페이지이기 때문에 신중하게 작성할 필요가 있다.</p>
+<h1 id="CI"><a href="#CI" class="headerlink" title="CI"></a>CI</h1><p>CI는 빌드 시스템이다.</p>
+<p>내가 올린 오픈 소스(Open-Source)를 빌드하고 설정에 따라 테스트와 배포까지 진행 할 수 있다. github로 프로젝트를 관리하였다면 <code>CI</code>를 통해서 관리되는 오픈 소스(Open-Source)의 테스트 및 빌드, 배포를 자동화 할 수 있다.<br>CI는 종류가 많지만, 필자의 경우 <a target="_blank" rel="noopener" href="https://circleci.com/">CircleCI</a> 사용하고 있다. 어떤 ci를 선택해도 무관하지만 중요한 건 <strong>오픈 소스(Open-Source)를 자동으로 빌드, 테스트, 배포</strong>를 위해서 사용해야 한다. 매번 수동으로 테스트와 배포를 할 수 없진 않은가.</p>
+<p>이 CI를 github 내 나의 오픈 소스(Open-Source)와 연동함으로써 <code>github REAMDE</code>에 뱃지를 달 수 있다.</p>
+<p>보통 github의 오픈 소스(Open-Source)를 보게 되면 <code>README.md</code>에 프로젝트의 버전, 다운로드 수, 빌드 상태 등의 상태 정보를 볼 수 있는데 이것을 뱃지라 하며 각 뱃지는 특정 시스템들과 연동이 되어 출력된다.</p>
+<p>아래를 보면 npm version, 다운로드 수, 빌드 상태, 커버지리 및 코드 스타일 등의 뱃지를 볼 수 있다.</p>
+<p><img src="/2020/10/19/open-source-flow/github-readme-badge.png" alt="github-readme-badge"></p>
+<h1 id="editorconfig"><a href="#editorconfig" class="headerlink" title=".editorconfig"></a>.editorconfig</h1><p><a target="_blank" rel="noopener" href="https://editorconfig.org/">editorconfig</a>는 설정 파일이며, 협업을 위한 하나의 도구이다.</p>
+<p><code>editorconfig</code>를 설정함으로써 해당 오픈 소스(Open-Source) 코드의 포맷을 정의할 수 있다. 완벽한 스타일 정의를 잡기는 쉽지 않지만 어느 정도의 기준을 잡을 수 있다. </p>
+<p>오픈 소스(Open-Source)를 만들었는데 누군가 해당 오픈 소스(Open-Source)에 기여하기 위하여 <code>fork</code>를 받고 수정 후 <code>PR(Pull Request)</code>을 요청했는데 코드 스타일이 전혀 다르면 Merge를 시킬 수 없다.<br>이런 기준은 <code>.editorconfig</code>가 지정해 준다. 이 외에 <code>pretter</code>를 사용해도 되기 때문에 원하는 것을 사용하기 바란다.</p>
+<p><strong>e.g) .editorconfig</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext"># editorconfig.org<br>root = true<br><br>[*]<br>indent_size = 2<br>indent_style = space<br>end_of_line = lf<br>charset = utf-8<br>trim_trailing_whitespace = true<br>insert_final_newline = true<br><br>[*.md]<br>trim_trailing_whitespace = false<br></code></pre></td></tr></table></figure>
+
+<h1 id="eslint"><a href="#eslint" class="headerlink" title="eslint"></a>eslint</h1><p><a target="_blank" rel="noopener" href="https://eslint.org/">eslint</a>는 개발자면 대부분 아는 모듈이다. </p>
+<p>협업뿐만 아니라 개인이 개발할 때도 필수요소이다. 보통 <code>eslint</code> 설정이 귀찮아 사용하지 않는 경우가 많은데 <code>eslint</code>는 문제점을 야기할 수 있는 부분들을 사전에 방지하며 코드 분석을 하기 때문에 필수로 사용하기 바란다.</p>
+<h1 id="babel"><a href="#babel" class="headerlink" title="babel"></a>babel</h1><p><a target="_blank" rel="noopener" href="https://babeljs.io/">babel</a> 역시 Front-End 개발자라면 알 것이다. 최신 버전(ES6+)의 자바스크립트 문법을 IE를 포함한 구형 브라우저에서 동작할 수 있도록 도와주는 컴파일러이다.</p>
+<p>오픈 소스(Open-Source)를 만든다는 것은 한정된 브라우저에 동작하게 하진 않을 것이다. 보통 브라우저와 Node.js의 버전은 정해지겠지만 IE, Chrome, Firefox, Safari 등의 브라우저에서 호환이 되도록 개발할 것이기에 <code>Babel</code>은 필수이다.</p>
+<h1 id="commitlint"><a href="#commitlint" class="headerlink" title="commitlint"></a>commitlint</h1><p><a target="_blank" rel="noopener" href="https://github.com/conventional-changelog/commitlint">commitlint</a>는 협업을 위한 도구이기도 하지만 <code>일관성 있는 commit message를 작성하기 위한 도구</code>이다.</p>
+<p>개발을 하다 보면 간혹 commit 메시지 작성에 귀찮을 때가 있는데 이런 부분을 일부 제어해준다. 규칙에 맞지 않는 commit message는 허용하지 않으며 이로 인해 commit 자체를 하지 못하기 때문이다.<br><code>commitlint</code>는 commit 시 입력된 메시지가 규칙에 맞는지 검사하는 도구이기 때문에 일부 패턴이 있으며 이는 <a target="_blank" rel="noopener" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commit</a> 규칙을 따른다.</p>
+<p><code>commitlint</code>는 <code>standard-version</code>과 <code>husky</code>, <code>CHAGNELOG</code>과 연관이 있으며 연관성을 차근차근 알아보자.</p>
+<p><strong>e.g) Conventional Commits 규칙</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">&lt;type&gt;[optional scope]: &lt;description&gt;<br><br>fix: 버그수정<br>chore(depd): 디펜덴시 모듈 수정<br>feat: 기능추가<br></code></pre></td></tr></table></figure>
+
+<h1 id="CHANGELOG"><a href="#CHANGELOG" class="headerlink" title="CHANGELOG"></a>CHANGELOG</h1><p><code>CHAGNELOG</code>는 해당 오픈 소스(Open-Source)의 <code>릴리즈노트</code>이다.</p>
+<p>오픈 소스(Open-Source)를 수정하고 commit 시 수동적으로 수정해도 되는 파일이지만 이는 매우 번거롭다. 그렇기 때문에 이 <code>CHAGNELOG</code>을 자동으로 생성해야 하는데 이는 위에서 설명한 <code>commitlint</code>와 아래에서 설명할 <code>standard-version</code>과 연관이 있다.<br><code>commitlint</code>를 통하여 규칙에 허용되는 commit message를 입력하면 내용을 기준으로 <code>standard-version</code>은 <code>CHAGNELOG</code>을 동적으로 생성 및 수정한다.</p>
+<p>생성된 <code>CHANGELOG</code>에는 버전과 commit message 그리고 수정된 파일 리비전이 같이 생성이 된다.</p>
+<p>여기서 생각해 볼 것은 <strong><em>만약 commit message가 엉망이라면 이로 인해서 CHAGNELOG까지 엉망이 될 것이다.</em></strong> 그렇기 때문에 <code>commitlint</code>를 사용하는 이유도 있다.</p>
+<p><strong>e.g) CHANGELOG.md</strong><br><img src="/2020/10/19/open-source-flow/changelog.png" alt="change-log"></p>
+<h1 id="standard-version"><a href="#standard-version" class="headerlink" title="standard-version"></a>standard-version</h1><p><a target="_blank" rel="noopener" href="https://github.com/conventional-changelog/standard-version">standard-version</a>은 위에서 설명한 commit 규칙인 <a target="_blank" rel="noopener" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commit</a>으로 구동된다.<br>이 <code>standard-version</code>의 역할은 시멘틱 버저닝인 <a target="_blank" rel="noopener" href="https://semver.org/">semver</a>를 기준으로 <code>CHANGELOG</code>를 생성한다.</p>
+<h1 id="husky"><a href="#husky" class="headerlink" title="husky"></a>husky</h1><p><a target="_blank" rel="noopener" href="https://github.com/typicode/husky#readme">husky</a>는 <code>git hook</code>을 손쉽게 제어할 수 있다. </p>
+<p>오픈 소스(Open-Source)에서 <code>husky</code>의 역할은 아래와 같다.</p>
+<div class="alert info no-icon"><ul>
+<li>git commit message를 입력 시 commitlint를 구동</li>
+<li>git commit 실행 전 eslint 실행</li>
+<li>git push 실행 전 lint &amp; test 실행</li>
+</ul>
+</div>
+
+<p>즉, 위에서 배운 <code>commitlint</code>, <code>eslint</code> 등을 git 명령어 실행 시 사전에 구동하는 편리한 도구이다. 그렇기 때문에 <code>commitlint</code>를 설명할 때 <code>husky</code>가 연관이 있다고 한 것이다.</p>
+<h1 id="jest"><a href="#jest" class="headerlink" title="jest"></a>jest</h1><p><a target="_blank" rel="noopener" href="https://jestjs.io/">jest</a>는 단위 테스트 프레임워크이다.</p>
+<p>여기서 굳이 jest를 사용하지 않아도 된다. <code>mocha</code>나 <code>jasmine</code>과 같은 훌륭한 도구들도 많다. 만약 Mocha에 대해서 궁금하다면 <a href="https://kdydesign.github.io/posts/Mocha.html">JavaScript 단위 테스트 프레임워크 - Mocha</a>를 참고하도록 하자.</p>
+<p>작성자가 <code>jest</code>를 사용하는 이유는 <strong>jest의 설정이 다소 간편한 편이고 소규모의 프로젝트에 적합</strong>하기 때문이다. 오픈 소스(Open-Source)의 구조나 규모가 클 수도 있겠지만 보통 작은 모듈의 단위이기 때문에 jest가 적합하다고 판단한다. 또한 <code>vue</code>나 <code>react</code>와 같은 프레임워크와 같이 사용하기 복잡함이 없기 때문이다.</p>
+<p>어느 단위 테스트 프레임워크를 사용하냐는 여러분의 몫이지만 <strong>단위 테스트는 필수로 사용하기 바란다.</strong></p>
+<h1 id="codecov"><a href="#codecov" class="headerlink" title="codecov"></a>codecov</h1><p><a target="_blank" rel="noopener" href="https://codecov.io/">codecov</a>는 코드 커버리지를 그룹화, 병합, 보관할 수 있다.</p>
+<p>위 <code>jest</code>를 사용했다면 단위 테스트를 진행할 때 <code>coverage</code>를 생성할 수 있는데 이를 <code>codecov</code>와 연동하여 사용할 수 있다.</p>
+<p><strong>e.g) codecov</strong><br><img src="/2020/10/19/open-source-flow/codecov-sample.png" alt="codecov-sample"></p>
+<p><code>codecov</code>를 사용하여 오픈 소스(Open-Source)의 <code>coverage</code>를 관리할 수 있다.</p>
+<h1 id="yarn-npm"><a href="#yarn-npm" class="headerlink" title="yarn&#x2F;npm"></a>yarn&#x2F;npm</h1><p>둘 중 어느 것을 사용해도 무방하다. 보통 추세는 더 빠른 <code>yarn</code>을 사용하지만 여기서는 딱히 설명하지 않도록 하겠다.</p>
+<h1 id="license"><a href="#license" class="headerlink" title="license"></a>license</h1><p>우리의 오픈 소스(Open-Source)는 <code>MIT</code>로 하도록 하자. 개발 생태계에 기여를 하고 돈을 받진 안도록 하자.</p>
+<p>이 글을 보는 개발자들도 오픈 소스(Open-Source)를 많이 사용하고 있진 않은가? 받은 만큼 돌려주도록 하자.</p>
+<hr>
+<p>여기까지가 오픈 소스(Open-Source) 개발에 필요한 모듈과 설정들이다. 이제 이를 사용하여 하나의 오픈 소스(Open-Source) 프로젝트 구조를 잡아보도록 하자.</p>
+<h1 id="오픈-소스-Open-Source-만들기"><a href="#오픈-소스-Open-Source-만들기" class="headerlink" title="오픈 소스(Open-Source) 만들기"></a>오픈 소스(Open-Source) 만들기</h1><h2 id="1-Git-Repository-생성"><a href="#1-Git-Repository-생성" class="headerlink" title="1. Git Repository 생성"></a>1. Git Repository 생성</h2><p>설명은 생략하겠다. GitHub에 적당한 Repository를 생성하도록 하자.</p>
+<h2 id="2-폴더-생성-및-Test-폴더-생성"><a href="#2-폴더-생성-및-Test-폴더-생성" class="headerlink" title="2. 폴더 생성 및 Test 폴더 생성"></a>2. 폴더 생성 및 Test 폴더 생성</h2><p>적당한 Repository가 생성되었다면 실제 Core 코드가 들어갈 폴더 <code>lib</code>를 하나 만들자. 그리고 단위 테스트를 위해 <code>test</code>라는 폴더도 하나 만들자.</p>
+<h2 id="3-editorconfig-설정"><a href="#3-editorconfig-설정" class="headerlink" title="3. editorconfig 설정"></a>3. editorconfig 설정</h2><p><code>.editorconfig</code> 파일을 생성하여 코드 스타일에 대한 규칙을 생성하자.</p>
+<p><strong>.editorconfig</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext"># editorconfig.org<br>root = true<br><br>[*]<br>indent_size = 2<br>indent_style = space<br>end_of_line = lf<br>charset = utf-8<br>trim_trailing_whitespace = true<br>insert_final_newline = true<br><br>[*.md]<br>trim_trailing_whitespace = false<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-Node-Module-설치"><a href="#4-Node-Module-설치" class="headerlink" title="4. Node Module 설치"></a>4. Node Module 설치</h2><p>이제 위에서 배운 모든 모듈을 설치하자.</p>
+<p><code>npm</code>이나 <code>yarn</code>을 통해서 설치해도 되지만 아래 내용을 <code>package.json</code>에 입력 후 <code>npm install</code>로 설치하도록 하자.</p>
+<p>여기서 필자는 <strong>오픈 소스(Open-Source) 개발에 필요한 모든 도구는 최신 버전(latest)로 설치한다.</strong> 이렇게 하면 호환성을 유지하는데 약간 귀찮은 면이 있지만, 이후 이 오픈 소스(Open-Source)를 fork를 통해서 수정하는 자가 있다면 그 개발자도 최신을 유지해야 하기 때문에 이 오픈 소스(Open-Source)는 언제나 최신일 것이다.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;@babel/core&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@babel/preset-env&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@commitlint/cli&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@commitlint/config-conventional&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;babel-eslint&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;babel-jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;codecov&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-config-standard&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-import&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-node&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-promise&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-standard&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;husky&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;standard-version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="5-package-json-수정"><a href="#5-package-json-수정" class="headerlink" title="5. package.json 수정"></a>5. package.json 수정</h2><p><code>package.json</code>을 오픈 소스(Open-Source)에 맞도록 수정하자. 보통 오픈 소스(Open-Source)가 개발되면 <code>npm package</code>로서 배포도 가능하므로 이를 고려하여 작성한다.</p>
+<p><code>npm 패키지 배포</code>는 <a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/#npm-node-package-manager">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a>를 참고하도록 하자.</p>
+<p><strong>package.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;open-source-example&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1.0.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;main&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lib/module.js&quot;</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">// main 모듈</span><br>  <span class="hljs-attr">&quot;homepage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// git repositry 또는 homepage</span><br>  <span class="hljs-attr">&quot;repository&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// git repository</span><br>  <span class="hljs-attr">&quot;bugs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;url&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">//github issues url</span><br>    <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;kdydesign@gmail.com&quot;</span>  <span class="hljs-comment">// mail</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;dev&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">// 로컬 서버 실행 스크립트</span><br>    <span class="hljs-attr">&quot;lint&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eslint lib test&quot;</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">// eslint 실행 스크립트</span><br>    <span class="hljs-attr">&quot;test&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;yarn lint &amp;&amp; jest&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// lint 및 test 실행 스크립트</span><br>    <span class="hljs-attr">&quot;release&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;yarn test &amp;&amp; standard-version &amp;&amp; git push --follow-tags &amp;&amp; npm publish&quot;</span> <span class="hljs-comment">// 오픈 소스(Open-Source) 배포 및 CHANGELOG 생성</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;keywords&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;open-source&quot;</span> <span class="hljs-comment">// npm registry 키워드</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;contributors&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Dev.DY &lt;kdydesign@gmail.com&gt;&quot;</span>  <span class="hljs-comment">// author 또는 contributors(기여)</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;license&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MIT&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;publishConfig&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;access&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;public&quot;</span>  <span class="hljs-comment">// npm publish 허용</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;files&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;lib&quot;</span> <span class="hljs-comment">// npm 패키지 배포될 경로</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;@babel/core&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@babel/preset-env&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@commitlint/cli&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@commitlint/config-conventional&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;babel-eslint&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;babel-jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;codecov&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-config-standard&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-import&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-node&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-promise&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;eslint-plugin-standard&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;husky&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;jest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;standard-version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;latest&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>위 내용을 참고하여 작성하도록 하자.</p>
+<h2 id="6-eslint-설정"><a href="#6-eslint-설정" class="headerlink" title="6. eslint 설정"></a>6. eslint 설정</h2><p><code>.eslintrc.js</code>와 <code>.eslintignore</code>를 생성하여 eslint에 대한 설정을 진행하자.</p>
+<p>설정은 프로젝트마다 다르기 때문에 자세한 내용은 참고만 하도록 하자.</p>
+<p><strong>.eslintrc.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">root</span>: <span class="hljs-literal">true</span>,<br>  <span class="hljs-attr">parserOptions</span>: &#123;<br>    <span class="hljs-attr">parser</span>: <span class="hljs-string">&#x27;babel-eslint&#x27;</span>,<br>    <span class="hljs-attr">sourceType</span>: <span class="hljs-string">&#x27;module&#x27;</span><br>  &#125;,<br>  <span class="hljs-attr">env</span>: &#123;<br>    <span class="hljs-attr">browser</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-string">&#x27;jest/globals&#x27;</span>: <span class="hljs-literal">true</span><br>  &#125;,<br>  <span class="hljs-attr">extends</span>: [<br>    <span class="hljs-string">&#x27;standard&#x27;</span><br>  ],<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-string">&#x27;jest&#x27;</span><br>  ],<br>  <span class="hljs-attr">rules</span>: &#123;&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>.eslintignore</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">coverage<br>node_modules<br></code></pre></td></tr></table></figure>
+
+<h2 id="7-babel-설정"><a href="#7-babel-설정" class="headerlink" title="7. babel 설정"></a>7. babel 설정</h2><p><code>babel.config.js</code>를 생성하여 babel에 대한 설정을 진행하자.</p>
+<p>babel 설정 역시 프로젝트마다 다르기 때문에 내용은 참고만 하도록 하자.</p>
+<p><strong>babel.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">presets</span>: [<br>    [<br>      <span class="hljs-string">&#x27;@babel/preset-env&#x27;</span>, &#123;<br>        <span class="hljs-attr">targets</span>: &#123;<br>          <span class="hljs-attr">esmodules</span>: <span class="hljs-literal">true</span><br>        &#125;<br>      &#125;<br>    ]<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="8-commitlint-설정"><a href="#8-commitlint-설정" class="headerlink" title="8.commitlint 설정"></a>8.commitlint 설정</h2><p><code>commitlint.config.js</code>를 생성하여 commitlint의 설정을 진행하자. </p>
+<p>기본적으로 아래와 같이 사용하며 추가할 내용이 있다면 추가해도 된다.</p>
+<p><strong>commitlint.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">extends</span>: [<br>    <span class="hljs-string">&#x27;@commitlint/config-conventional&#x27;</span><br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="9-husky-설정"><a href="#9-husky-설정" class="headerlink" title="9. husky 설정"></a>9. husky 설정</h2><p><code>husky.config.js</code>를 생성하여 husky에 대한 설정을 진행하자.</p>
+<p>보통 아래와 같이 필자는 사용하지만 <code>pre-push</code>는 생략해도 무관하다.</p>
+<p><strong>husky.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">hooks</span>: &#123;<br>    <span class="hljs-string">&#x27;commit-msg&#x27;</span>: <span class="hljs-string">&#x27;commitlint -E HUSKY_GIT_PARAMS&#x27;</span>,<br>    <span class="hljs-string">&#x27;pre-commit&#x27;</span>: <span class="hljs-string">&#x27;yarn lint&#x27;</span>,<br>    <span class="hljs-string">&#x27;pre-push&#x27;</span>: <span class="hljs-string">&#x27;yarn lint&#x27;</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="10-jest-설정"><a href="#10-jest-설정" class="headerlink" title="10. jest 설정"></a>10. jest 설정</h2><p><code>jest.config.js</code>를 생성하여 jest에 대한 설정을 진행하자.</p>
+<p><code>collectCoverage</code>를 활성화함으로써 coverage를 생성할 수 있다.</p>
+<p><strong>jest.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">collectCoverage</span>: <span class="hljs-literal">true</span>,<br>  <span class="hljs-attr">collectCoverageFrom</span>: [<span class="hljs-string">&#x27;lib/**/*.js&#x27;</span>], <span class="hljs-comment">// 프로젝트 구조에 따라 다르게 설정하자.</span><br>  <span class="hljs-attr">testEnvironment</span>: <span class="hljs-string">&#x27;node&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="11-circleCI-설정"><a href="#11-circleCI-설정" class="headerlink" title="11. circleCI 설정"></a>11. circleCI 설정</h2><p><code>.circleci</code> 폴더를 생성하고 <code>config.yml</code>을 생성하자. </p>
+<p>자세한 circleci 설정 및 연동 방법과 codecov 연동 방법은 구글 검색을 통해서 정보를 찾아보자. </p>
+<p><strong>config.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-number">2</span><br><span class="hljs-attr">jobs:</span><br>  <span class="hljs-attr">build:</span><br>    <span class="hljs-attr">docker:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">circleci/node</span><br>    <span class="hljs-attr">steps:</span><br>      <span class="hljs-comment"># Checkout repository</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span><br><br>      <span class="hljs-comment"># Restore cache</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">restore_cache:</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">yarn-cache-&#123;&#123;</span> <span class="hljs-string">checksum</span> <span class="hljs-string">&quot;yarn.lock&quot;</span> <span class="hljs-string">&#125;&#125;</span><br><br>      <span class="hljs-comment"># Install dependencies</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Install</span> <span class="hljs-string">Dependencies</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">NODE_ENV=dev</span> <span class="hljs-string">yarn</span><br><br>      <span class="hljs-comment"># Keep cache</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">save_cache:</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">yarn-cache-&#123;&#123;</span> <span class="hljs-string">checksum</span> <span class="hljs-string">&quot;yarn.lock&quot;</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">paths:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;node_modules&quot;</span><br><br>      <span class="hljs-comment"># Lint</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Lint</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">yarn</span> <span class="hljs-string">lint</span><br><br>      <span class="hljs-comment"># Tests</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Tests</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">yarn</span> <span class="hljs-string">jest</span><br><br>      <span class="hljs-comment"># Coverage</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Coverage</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">yarn</span> <span class="hljs-string">codecov</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="12-LICENSE"><a href="#12-LICENSE" class="headerlink" title="12. LICENSE"></a>12. LICENSE</h2><p>기여하도록하자.!</p>
+<p><strong>LICENSE</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">MIT License<br><br>Copyright (c) Dev.DY<br><br>Permission is hereby granted, free of charge, to any person obtaining a copy<br>of this software and associated documentation files (the &quot;Software&quot;), to deal<br>in the Software without restriction, including without limitation the rights<br>to use, copy, modify, merge, publish, distribute, sublicense, and/or sell<br>copies of the Software, and to permit persons to whom the Software is<br>furnished to do so, subject to the following conditions:<br><br>The above copyright notice and this permission notice shall be included in all<br>copies or substantial portions of the Software.<br><br>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR<br>IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,<br>FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE<br>AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER<br>LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,<br>OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE<br>SOFTWARE.<br></code></pre></td></tr></table></figure>
+
+
+<p>위와 같이 설정하면 아래와 같은 구조를 가지게 된다. </p>
+<p><strong>오픈 소스(Open-Source) 기본 구조</strong><br><img src="/2020/10/19/open-source-flow/open-source-sample-structure.png" alt="open-source-sample-structure"></p>
+<p>CHANGELOG는 <code>standard-version</code>을 실행하면 생성된다.</p>
+<hr>
+<p>오픈 소스(Open-Source) 구조에 정답은 없다. 자신이 사용하는 모듈이 다를 수도 있고 사용을 하지 않을 수도 있다. 하지만 기본적인 골격을 잡아 놓는다면 많은 오픈 소스(Open-Source)를 개발할 때 유용하다.<br>뿐만 아니라 설정을 해나가면서 기술에 대한 지식도 쌓아가니 일거양득으로 볼 수 있다.</p>
+<p>필자도 처음에는 막막하기만 했지만 여러 오픈 소스(Open-Source)를 찾아가거나 일을 하다가 새로운 구조를 보고 정리해 나아가다 보니 어느 정도 정착이 되었다.</p>
+<p>구조가 중요한 것은 아니지만 구조를 잡기 위한 방법들을 배우는 것은 중요한 부분을 차지한다. <strong>해본 것과 안 해본 것의 차이는 크기 때문이다.</strong> 또한 여기에서 설정한 모듈은 때로는 불필요하게 느껴질 수 있겠지만 필수로 생각하자. </p>
+<p>특히 <code>linter와 test는 필수요소이다.</code></p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지를 배워보자!</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/babel/" rel="tag">babel</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/circleci/" rel="tag">circleci</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/commitlint/" rel="tag">commitlint</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/eslint/" rel="tag">eslint</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/git/" rel="tag">git</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/github/" rel="tag">github</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/husky/" rel="tag">husky</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/jest/" rel="tag">jest</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/license/" rel="tag">license</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/npm/" rel="tag">npm</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/open-source/" rel="tag">open-source</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/package-json/" rel="tag">package.json</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/standard-version/" rel="tag">standard-version</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/webpack/" rel="tag">webpack</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/yarn/" rel="tag">yarn</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/13/vuejs-provide-inject/"
+                    data-tooltip="[Vue.JS] Component provide/inject 이해하기"
+                    aria-label="PREVIOUS: [Vue.JS] Component provide/inject 이해하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/06/spa-route-tutorial/"
+                    data-tooltip="Vanilla JS에서 SPA 라우팅 시스템 구현하기"
+                    aria-label="NEXT: Vanilla JS에서 SPA 라우팅 시스템 구현하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/13/vuejs-provide-inject/"
+                    data-tooltip="[Vue.JS] Component provide/inject 이해하기"
+                    aria-label="PREVIOUS: [Vue.JS] Component provide/inject 이해하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/06/spa-route-tutorial/"
+                    data-tooltip="Vanilla JS에서 SPA 라우팅 시스템 구현하기"
+                    aria-label="NEXT: Vanilla JS에서 SPA 라우팅 시스템 구현하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/10/19/open-source-flow/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/10/19/open-source-flow/';
+              
+            this.page.identifier = 'open-source-flow';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

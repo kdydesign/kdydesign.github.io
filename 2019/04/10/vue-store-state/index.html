@@ -1,0 +1,748 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Vue.JS] Vuex Store의 state를 효율적으로 초기화하기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2019/04/10/vue-store-state/"/>
+    
+        <meta name="keywords" content="javascript,nuxt.js,vue.js,vue 튜토리얼,vuejs 튜토리얼,vuejs 강좌,vuejs 설치,nuxtjs,vue 기초,store,vuex,vue.js tutorial,nuxt.js tutorial,vue 배우기,vuejs 배우기,vuex 배우기,vuex 기초,vuex state,store state 초기화,state 초기화">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nVue.js의 상태 관리 패턴인 Vuex에서 Store의 state를 초기화하는 방법에 대해 알아보자. \nVuex Store에서 state는 원본 데이터 즉, 모델의 역할을 하며 mutation에 의해 변경이 가능하다. state는 최초에 명시되어 있어야 하며, 때로는 기본값을 가지고 있다. 이러한 state를 mutation에 의해 변경을 하고 이후 어떠한 작업을 하더라도 초기화되지 않는다. 그렇기 때문에 해당 stat를 다시 사용한다면 이전 값이 남아있다. 그렇기 때문에 state의 초기화는 필수적이다. \n이번 포스트에서는 state를 초기화하는 효율적인 방법에 대해 알아보자.\nstate의 효율적인 선언과 초기화당연한 말이지만 state의 초기화는 mutation에 의해서 초기값을 지정해주면 끝이다. 물론 이러한 방법을 공유하려는 것은 아니다. 더욱 효율적이고 가독성이 좋은 코드 스타일을 설명을 하려 한다. \n먼저 아래 코드를 보자.\n// stateconst state = &#123;  userList: [],  isFlag: false,  userData: &#123;    id: void 0,    password: void 0,    name: void 0,    age: 30,    job: &#x27;programmer&#x27;  &#125;,  companyData: &#123;    name: &#x27;company&#x27;,    address: void 0,    job: void 0  &#125;&#125;// mutationsconst mutations = &#123;  initData (state) &#123;    state.userList = []    state.isFlag = false    state.userData = &#123;      id: void 0,      password: void 0,      name: void 0,      age: 30,      job: &#x27;programmer&#x27;    &#125;    state.companyData =  &#123;      name: &#x27;company&#x27;,      address: void 0,      job: void 0    &#125;  &#125;&#125;export &#123;  state,  mutations&#125;\n\n별다를 것 없는 기본적인 state이고 이 state를 초기화하는 initData이라는 mutataion이다. 이러한 방법은 가장 기본적이고 이렇게 밖에 할 수 없을 것이다. 하지만 여기서 userData와 companyData를 보자. 다른 state와는 다르게 object형태를 가지고 있다. 보통 이런 state는 단일로 설정하고 사용하는 경우가 많다. 예를 들면 아래와 같다.\n// mutationsconst mutations = &#123;  setUserData (state, payload) &#123;    state.userData.id = payload.id    state.userData.password = payload.password    state.userData.name = payload.name    state.userData.age = payload.age    state.userData.job = payload.job    // or    // state.userData = &#123;...payload&#125;  &#125;,  setCompanyData (state, payload) &#123;    state.companyData.name = payload.name    state.companyData.address = payload.address    state.companyData.job = payload.job    // or    // state.companyData = &#123;...payload&#125;  &#125;&#125;\n\n이렇게 같은 레벨의 state지만 독립적으로 별도로 사용되는 경우가 많은데 이런 경우엔 별개로 초기화해야 하는 경우가 생긴다. 초기화 시에 initData와 같은 방식으로 해도 무방하지만 userData와 companyData의 속성들이 수십 개라면 수없이 초기화 코드가 길어진다. 그렇게 되면 초기화 mutation 하나로 store의 코드 가독성이 현저히 떨어지게 된다. 특히 userData와 companyData 같은 state는 주기적으로 초기화해야 하기 때문에 효율적인 코드가 필요하다. \n이런 경우를 대비하여 userData와 companyData는 애초부터 state에 명시를 할 경우 별도의 함수로 분리해 주는 것이 좋다. \n아래 코드를 보자.\n// initialized userDataconst USER_DATA = () =&gt; &#123;  return &#123;    id: void 0,    password: void 0,    name: void 0,    age: 30,    job: &#x27;programmer&#x27;  &#125;&#125; // initialized companyDataconst COMPANY_DATA = () =&gt; &#123;  return &#123;    name: &#x27;company&#x27;,    address: void 0,    job: void 0  &#125;&#125; // stateconst state = &#123;  userList: [],  isFlag: false,  userData: USER_DATA(),  companyData: COMPANY_DATA()&#125;// mutationsconst mutations = &#123;  initData (state) &#123;    state.userList = []    state.isFlag = false    state.userData = USER_DATA()    state.companyData = COMPANY_DATA()  &#125;&#125;export &#123;  state,  mutations&#125;\n\n위 코드를 보면 userData와 companyData는 객체 상수 형태의 함수로 미리 선언을 하고 state에 해당 함수를 대입하여 초기화하고 있다. 물론 initData에서 다시 초기화 시에 이미 선언된 함수를 통해 초기화를 한다. 앞으로 userData와 companyData를 초기화할 땐 이미 정의된 함수를 쓰면 그만인 것이다. 이런 구조는 특히나 객체 안에 객체를 가진 복잡한 형태의 state를 정의하거나 초기화할 때 효율적이고 가독성도 좋아진다. 우리는 초기화 코드에 신경을 쓸 필요가 없다. 또한 특정 조건에 따른 초기화라면 이미 정의해 놓은 초기화 코드는 함수로 선언되어있기 때문에 인자를 받아 처리할 수 도 있다. \n\nstate를 초기화하는 것은 사실 중요한 부분은 아니다. 초기화하는 것에 문제가 될게 무엇인가. 하지만 대부분 vuex의 store는 모듈별로 선언하게 되고 그 안에는 무수히 많은 state, mutations, actions가 포함된다.(물론 state, mutation, action을 분리할 수도 있다.) 이런 상황에서 작은 단위 하나하나를 지나치지 않고 효율적으로 처리한다면 더 나은 Application을 개발할 수 있을 것이다.\n\n더 알아보기빠르게 배우는 Vue.jsVue-CLI 3 시작하기Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!Nuxt.js 개념부터 설치까지 빠르게 배우기Vue.JS Component 개념을 익히고 만들어보자!!Vue Component provide&#x2F;inject 이해하기Vuex VS Event Bus\n","dateCreated":"2019-04-10T01:10:14+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2019-04-10T01:10:14+00:00","description":"\nVue.js의 상태 관리 패턴인 Vuex에서 Store의 state를 초기화하는 방법에 대해 알아보자.Vuex Store에서 state는 원본 데이터 즉, 모델의 역할을 하며 mutation에 의해 변경이 가능하다. state는 최초에 명시되어 있어야 하며, 때로는 기본값을 가지고 있다. 이러한 state를 mutation에 의해 변경을 하고 이후 어떠한 작업을 하더라도 초기화되지 않는다. 그렇기 때문에 해당 stat를 다시 사용한다면 이전 값이 남아있다. 그렇기 때문에 state의 초기화는 필수적이다.이번 포스트에서는 state를 초기화하는 효율적인 방법에 대해 알아보자.\n","headline":"[Vue.JS] Vuex Store의 state를 효율적으로 초기화하기","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2019/04/10/vue-store-state/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2019/04/10/vue-store-state/","keywords":"vue.js, vuex","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="Vue.js의 상태 관리 패턴인 Vuex에서 Store의 state를 초기화하는 방법에 대해 알아보자.Vuex Store에서 state는 원본 데이터 즉, 모델의 역할을 하며 mutation에 의해 변경이 가능하다. state는 최초에 명시되어 있어야 하며, 때로는 기본값을 가지고 있다. 이러한 state를 mutation에 의해 변경을 하고 이후 어떠한">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Vue.JS] Vuex Store의 state를 효율적으로 초기화하기">
+<meta property="og:url" content="https://kdydesign.github.io/2019/04/10/vue-store-state/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Vue.js의 상태 관리 패턴인 Vuex에서 Store의 state를 초기화하는 방법에 대해 알아보자.Vuex Store에서 state는 원본 데이터 즉, 모델의 역할을 하며 mutation에 의해 변경이 가능하다. state는 최초에 명시되어 있어야 하며, 때로는 기본값을 가지고 있다. 이러한 state를 mutation에 의해 변경을 하고 이후 어떠한">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2019/04/10/vue-store-state/cover.png">
+<meta property="article:published_time" content="2019-04-10T01:10:14.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.829Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="vue.js">
+<meta property="article:tag" content="vuex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2019/04/10/vue-store-state/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2019/04/10/vue-store-state/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2019/04/10/vue-store-state/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Vue.JS] Vuex Store의 state를 효율적으로 초기화하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-04-10T01:10:14+00:00">
+	
+		    2019-04-10
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/vue-js/">vue.js</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/">nuxt.js</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vuex/">vuex</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vuex/vuex-tutorial/">vuex tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vuex/vuex-tutorial/vue-js-tutorial/">vue.js tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/nuxt-js/vuex/vuex-tutorial/vue-js-tutorial/nuxt-js-tutorial/">nuxt.js tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2019/04/10/vue-store-state/cover.png" alt="vue-tutorial"></p>
+<p>Vue.js의 상태 관리 패턴인 Vuex에서 Store의 state를 초기화하는 방법에 대해 알아보자. </p>
+<p>Vuex Store에서 state는 원본 데이터 즉, 모델의 역할을 하며 <code>mutation</code>에 의해 변경이 가능하다. state는 최초에 명시되어 있어야 하며, 때로는 기본값을 가지고 있다. 이러한 state를 mutation에 의해 변경을 하고 이후 어떠한 작업을 하더라도 초기화되지 않는다. 그렇기 때문에 해당 stat를 다시 사용한다면 이전 값이 남아있다. 그렇기 때문에 state의 초기화는 필수적이다. </p>
+<p>이번 포스트에서는 <strong>state를 초기화하는 효율적인 방법</strong>에 대해 알아보자.</p>
+<h1 id="state의-효율적인-선언과-초기화"><a href="#state의-효율적인-선언과-초기화" class="headerlink" title="state의 효율적인 선언과 초기화"></a>state의 효율적인 선언과 초기화</h1><p>당연한 말이지만 state의 초기화는 mutation에 의해서 초기값을 지정해주면 끝이다. 물론 이러한 방법을 공유하려는 것은 아니다. 더욱 효율적이고 가독성이 좋은 코드 스타일을 설명을 하려 한다. </p>
+<p>먼저 아래 코드를 보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// state</span><br><span class="hljs-keyword">const</span> state = &#123;<br>  <span class="hljs-attr">userList</span>: [],<br>  <span class="hljs-attr">isFlag</span>: <span class="hljs-literal">false</span>,<br>  <span class="hljs-attr">userData</span>: &#123;<br>    <span class="hljs-attr">id</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">password</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">age</span>: <span class="hljs-number">30</span>,<br>    <span class="hljs-attr">job</span>: <span class="hljs-string">&#x27;programmer&#x27;</span><br>  &#125;,<br>  <span class="hljs-attr">companyData</span>: &#123;<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;company&#x27;</span>,<br>    <span class="hljs-attr">address</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">job</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span><br>  &#125;<br>&#125;<br><br><span class="hljs-comment">// mutations</span><br><span class="hljs-keyword">const</span> mutations = &#123;<br>  initData (state) &#123;<br>    state.<span class="hljs-property">userList</span> = []<br>    state.<span class="hljs-property">isFlag</span> = <span class="hljs-literal">false</span><br>    state.<span class="hljs-property">userData</span> = &#123;<br>      <span class="hljs-attr">id</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>      <span class="hljs-attr">password</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>      <span class="hljs-attr">name</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>      <span class="hljs-attr">age</span>: <span class="hljs-number">30</span>,<br>      <span class="hljs-attr">job</span>: <span class="hljs-string">&#x27;programmer&#x27;</span><br>    &#125;<br>    state.<span class="hljs-property">companyData</span> =  &#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;company&#x27;</span>,<br>      <span class="hljs-attr">address</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>      <span class="hljs-attr">job</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span><br>    &#125;<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">export</span> &#123;<br>  state,<br>  mutations<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>별다를 것 없는 기본적인 state이고 이 state를 초기화하는 <code>initData</code>이라는 mutataion이다. 이러한 방법은 가장 기본적이고 이렇게 밖에 할 수 없을 것이다. 하지만 여기서 <code>userData</code>와 <code>companyData</code>를 보자. 다른 state와는 다르게 <code>object</code>형태를 가지고 있다. 보통 이런 state는 단일로 설정하고 사용하는 경우가 많다. 예를 들면 아래와 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// mutations</span><br><span class="hljs-keyword">const</span> mutations = &#123;<br>  setUserData (state, payload) &#123;<br>    state.<span class="hljs-property">userData</span>.<span class="hljs-property">id</span> = payload.<span class="hljs-property">id</span><br>    state.<span class="hljs-property">userData</span>.<span class="hljs-property">password</span> = payload.<span class="hljs-property">password</span><br>    state.<span class="hljs-property">userData</span>.<span class="hljs-property">name</span> = payload.<span class="hljs-property">name</span><br>    state.<span class="hljs-property">userData</span>.<span class="hljs-property">age</span> = payload.<span class="hljs-property">age</span><br>    state.<span class="hljs-property">userData</span>.<span class="hljs-property">job</span> = payload.<span class="hljs-property">job</span><br><br>    <span class="hljs-comment">// or</span><br>    <span class="hljs-comment">// state.userData = &#123;...payload&#125;</span><br>  &#125;,<br><br>  setCompanyData (state, payload) &#123;<br>    state.<span class="hljs-property">companyData</span>.<span class="hljs-property">name</span> = payload.<span class="hljs-property">name</span><br>    state.<span class="hljs-property">companyData</span>.<span class="hljs-property">address</span> = payload.<span class="hljs-property">address</span><br>    state.<span class="hljs-property">companyData</span>.<span class="hljs-property">job</span> = payload.<span class="hljs-property">job</span><br><br>    <span class="hljs-comment">// or</span><br>    <span class="hljs-comment">// state.companyData = &#123;...payload&#125;</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>이렇게 같은 레벨의 state지만 독립적으로 별도로 사용되는 경우가 많은데 이런 경우엔 별개로 초기화해야 하는 경우가 생긴다. 초기화 시에 <code>initData</code>와 같은 방식으로 해도 무방하지만 <code>userData</code>와 <code>companyData</code>의 속성들이 수십 개라면 수없이 초기화 코드가 길어진다. 그렇게 되면 초기화 mutation 하나로 store의 코드 가독성이 현저히 떨어지게 된다. 특히 <code>userData</code>와 <code>companyData</code> 같은 state는 주기적으로 초기화해야 하기 때문에 효율적인 코드가 필요하다. </p>
+<p>이런 경우를 대비하여 <code>userData</code>와 <code>companyData</code>는 애초부터 state에 명시를 할 경우 별도의 <strong>함수로 분리</strong>해 주는 것이 좋다. </p>
+<p>아래 코드를 보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// initialized userData</span><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">USER_DATA</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> &#123;<br>    <span class="hljs-attr">id</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">password</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">age</span>: <span class="hljs-number">30</span>,<br>    <span class="hljs-attr">job</span>: <span class="hljs-string">&#x27;programmer&#x27;</span><br>  &#125;<br>&#125; <br><br><span class="hljs-comment">// initialized companyData</span><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">COMPANY_DATA</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> &#123;<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;company&#x27;</span>,<br>    <span class="hljs-attr">address</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">job</span>: <span class="hljs-keyword">void</span> <span class="hljs-number">0</span><br>  &#125;<br>&#125; <br><br><span class="hljs-comment">// state</span><br><span class="hljs-keyword">const</span> state = &#123;<br>  <span class="hljs-attr">userList</span>: [],<br>  <span class="hljs-attr">isFlag</span>: <span class="hljs-literal">false</span>,<br>  <span class="hljs-attr">userData</span>: <span class="hljs-title function_">USER_DATA</span>(),<br>  <span class="hljs-attr">companyData</span>: <span class="hljs-title function_">COMPANY_DATA</span>()<br>&#125;<br><br><span class="hljs-comment">// mutations</span><br><span class="hljs-keyword">const</span> mutations = &#123;<br>  initData (state) &#123;<br>    state.<span class="hljs-property">userList</span> = []<br>    state.<span class="hljs-property">isFlag</span> = <span class="hljs-literal">false</span><br>    state.<span class="hljs-property">userData</span> = <span class="hljs-title function_">USER_DATA</span>()<br>    state.<span class="hljs-property">companyData</span> = <span class="hljs-title function_">COMPANY_DATA</span>()<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">export</span> &#123;<br>  state,<br>  mutations<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>위 코드를 보면 <code>userData</code>와 <code>companyData</code>는 객체 상수 형태의 함수로 미리 선언을 하고 state에 해당 함수를 대입하여 초기화하고 있다. 물론 <code>initData</code>에서 다시 초기화 시에 이미 선언된 함수를 통해 초기화를 한다. 앞으로 <code>userData</code>와 <code>companyData</code>를 초기화할 땐 이미 정의된 함수를 쓰면 그만인 것이다. 이런 구조는 특히나 객체 안에 객체를 가진 복잡한 형태의 state를 정의하거나 초기화할 때 효율적이고 가독성도 좋아진다. 우리는 초기화 코드에 신경을 쓸 필요가 없다. 또한 특정 조건에 따른 초기화라면 이미 정의해 놓은 초기화 코드는 함수로 선언되어있기 때문에 인자를 받아 처리할 수 도 있다. </p>
+<hr>
+<p>state를 초기화하는 것은 사실 중요한 부분은 아니다. 초기화하는 것에 문제가 될게 무엇인가. 하지만 대부분 vuex의 store는 모듈별로 선언하게 되고 그 안에는 무수히 많은 state, mutations, actions가 포함된다.(물론 state, mutation, action을 분리할 수도 있다.) 이런 상황에서 작은 단위 하나하나를 지나치지 않고 효율적으로 처리한다면 더 나은 Application을 개발할 수 있을 것이다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2017/11/15/vuejs-tutorial/">빠르게 배우는 Vue.js</a><br><a href="https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/">Vue-CLI 3 시작하기</a><br><a href="https://kdydesign.github.io/2019/04/10/vuejs-performance/">Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)</a><br><a href="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/">Vue.js의 Vuex Store를 바인딩하는 4가지 방법!!</a><br><a href="https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/">Nuxt.js 개념부터 설치까지 빠르게 배우기</a><br><a href="https://kdydesign.github.io/2019/04/27/vue-component/">Vue.JS Component 개념을 익히고 만들어보자!!</a><br><a href="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/">Vue Component provide&#x2F;inject 이해하기</a><br><a href="https://kdydesign.github.io/2021/01/14/vue-eventbus-vs-vuex/">Vuex VS Event Bus</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-js/" rel="tag">vue.js</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vuex/" rel="tag">vuex</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/nuxtjs-tutorial/"
+                    data-tooltip="[Nuxt.js] 개념부터 설치까지 빠르게 배우기"
+                    aria-label="PREVIOUS: [Nuxt.js] 개념부터 설치까지 빠르게 배우기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/vuejs-performance/"
+                    data-tooltip="[Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                    aria-label="NEXT: [Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/nuxtjs-tutorial/"
+                    data-tooltip="[Nuxt.js] 개념부터 설치까지 빠르게 배우기"
+                    aria-label="PREVIOUS: [Nuxt.js] 개념부터 설치까지 빠르게 배우기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/vuejs-performance/"
+                    data-tooltip="[Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                    aria-label="NEXT: [Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/10/vue-store-state/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2019/04/10/vue-store-state/';
+              
+            this.page.identifier = 'vuex-initialized-state';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

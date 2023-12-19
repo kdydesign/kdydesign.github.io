@@ -1,0 +1,818 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자. - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/11/27/lerna-changelog/"/>
+    
+        <meta name="keywords" content="javascript,lerna,mono-repo,multi-repo,poly-repo,lerna tutorial,mono-repo tutorial,multi-repo tutorial,git repository,git,lerna example,lerna sample,husky,commitlint,conventional commit,lerna-changelog,changelog">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\nMono-Repo를 생성할 수 있는 도구인 Lerna에서 CHANGELOG를 생성하는 방법에 대하여 알아보자.\nMono-Repo 구조에서는 패키지가 다르기 때문에 서로 다른 CHANGELOG를 생성해야 한다. 이를 위해서 lerna의 명령어인 lerna version을 사용하여 생성할 수 있다. 물론 이를 더 쉽게 생성해 줄 수 있는 lerna-changelog라는 훌륭한 오픈 소스가 있지만 이번 포스트에서 순수하게 lerna version을 사용하여 내 입맛대로 릴리즈 노트를 작성하는 방법에 대해 말해보려 한다.\nlerna를 사용하여 직접 Mono-Repo 구조를 생성하고 수정과 commit, 그리고 push를 통하여 Git에 반영 후 CHANGELOG를 생성하는 방법을 배워보자.\n먼저 이번 포스팅을 보기 전 Mono-Repo와 Lerna에 대한 설명은 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리와 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악 참고하도록 하자.\n예제 프로젝트 생성예를 위해 간단하게 Mono-Repo 구조를 가진 프로젝트와 패키지를 생성하고 기본적으로 필요한 모듈을 설치해보도록 하겠다. 그리고 실제 Github에 commit과 push가 필요하므로 적당한 Repository를 하나 생성해 놓도록 하자.\n먼저 lerna 사용을 위해 설치를 진행하자.\nnpm install -g lerna\n\n그리고 lerna-changelog-example 폴더를 생성한 다음 해당 경로에서 prompt를 열고 git을 먼저 연동하자. \nlerna는 기본적으로 git과 연동된 상태에서 사용할 수 있다.\n\n\ngit initgit remote add origin [REPOSITORY_URL]\n\ngit을 사용할 준비가 되었다면 .gitignore를 생성하여 commit을 제외하도록 하자.\n.gitignore\n.ideanode_modules\n\npackage.json과 lerna.json을 수정하자.\n설정들은 가장 기본적인 설정이기 때문에 별도의 설명은 하지 않겠다. Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리와 Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악 참고하도록 하자.\npackage.json\n&#123;  &quot;name&quot;: &quot;root&quot;,  &quot;private&quot;: true,  &quot;workspaces&quot;: [    &quot;packages/*&quot;  ],  &quot;devDependencies&quot;: &#123;    &quot;lerna&quot;: &quot;^3.20.2&quot;  &#125;&#125;\n\nlerna.json\n&#123;  &quot;packages&quot;: [    &quot;packages/*&quot;  ],  &quot;version&quot;: &quot;0.1.0&quot;,  &quot;useWorkspaces&quot;: true&#125;\n\n이제 두 가지 모듈을 설치할 것이다. commitlint와 husky를 설치할 것인데 conventional-commit을 위해 commitlint를 설치할 것이고, 이를 git hook에서 사용하기 위해 husky를 설치할 것이다. \n이 두 가지에 대해서는 오픈 소스(Open-Source) 구조와 모듈 파악하기에서 확인해 보도록 하자.\nnpm install @commitlint/cli @commitlint/config-conventional husky -D\n\n위 모듈을 설치하였다면 설정 파일을 생성하여 설정을 지정해주자.\nhusky.config.js\nmodule.exports = &#123;  hooks: &#123;    &#x27;commit-msg&#x27;: &#x27;commitlint -E HUSKY_GIT_PARAMS&#x27;  &#125;&#125;\n\ncommitlint.config.js\nmodule.exports = &#123;  extends: [    &#x27;@commitlint/config-conventional&#x27;  ]&#125;\n\ncommitlint와 husky를 지정해 주었기 때문에 이제 conventional-commit의 규칙대로 commit-message를 작성하지 않으면 commit을 허용할 수 없다.\n이제 가장 기본적인 설정이 완료되었으니 패키지를 생성하자.이 예제에서는 패키지 명을 template와 core로 지정하도록 하겠습니다.\nlerna create templatelerna create core\n\n위 명령어대로 생성한다면 기본적인 패키지가 생성될 것이다.\n\n여기까지 해서 아주 간단한 프로젝트를 생성하였다.\n이 상태에서 commit을 진행하고 push까지 진행 후 lerna version을 사용하면 아래와 같은 형식으로 CHANGELOG는 생성된다.\ne.g) CHANGELOG.md\n하지만 이 포스트에서 설명하고자 하는 것은 이런 기본적인 내용을 포함하고 추가로 우리가 CHANGELOG를 커스텀하게 작성하는 방법을 적으려 한다.\nCHANGELOG 커스텀사실 CHANGELOG 뿐 아니라 lerna의 Document를 살펴본다면 이외에 많은 설정이 있다. 그 설정은 다소 복잡할 수도 있고 하나의 블로그 글로는 담기 많기 때문에 여기서는 CHANGELOG에 대해서만 다뤄보자.\n최초 우리가 생성한 lerna.json을 수정하도록 하자.\nlerna.json\n&#123;  &quot;packages&quot;: [    &quot;packages/*&quot;  ],  &quot;version&quot;: &quot;0.1.0&quot;,  &quot;useWorkspaces&quot;: true,  &quot;command&quot;: &#123;    &quot;version&quot;: &#123;      &quot;conventionalCommits&quot;: true,      &quot;changelogPreset&quot;: &#123;        &quot;name&quot;: &quot;conventional-changelog-conventionalcommits&quot;,        &quot;types&quot;: [          &#123;            &quot;type&quot;: &quot;feat&quot;,            &quot;section&quot;: &quot;:rocket: New Features&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;fix&quot;,            &quot;section&quot;: &quot;:bug: Bug Fix&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;docs&quot;,            &quot;section&quot;: &quot;:memo: Documentation&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;style&quot;,            &quot;section&quot;: &quot;:sparkles: Styling&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;refactor&quot;,            &quot;section&quot;: &quot;:house: Code Refactoring&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;build&quot;,            &quot;section&quot;: &quot;:hammer: Build System&quot;,            &quot;hidden&quot;: false          &#125;,          &#123;            &quot;type&quot;: &quot;chore&quot;,            &quot;section&quot;: &quot;:mega: Other&quot;,            &quot;hidden&quot;: false          &#125;        ]      &#125;    &#125;,    &quot;publish&quot;: &#123;      &quot;conventionalCommits&quot;: true    &#125;  &#125;&#125;\n\n위 내용은 lerna의 command 명령어에 대한 설정을 지정한 것이다.\ncommand 속성에 version이라고 명시가 되어있기 때문에 이는 lerna version에 대한 명령어를 설정한 것이다. 우선 conventionalCommits: true로 인하여 conventional-commit 사용하며, 그 아래에서 changelogPreset을 통하여 CHANGELOG에 대한 사전 설정을 한다.\nchangelogPreset의 속성을 하나씩 보도록 하자.\n\nname: conventional-commit 설정에 대한 preset 이름을 지정해 준다. conventional-changelog-conventionalcommits 이외의 설정은 conventional-changelog-angular와 같은 것들이 있다. \ntype: type은 conventional-commit의 type을 말한다. type에 따라 작성되는 타이틀을 커스텀하게 작성할 수 있다. 또한 기본적으로 chore와 같은 type은 CHANGELOG에 작성되지 않는데 hidden 속성을 false로 지정해 주면 chore와 같은 type도 CHANGELOG에 작성된다.\n\n\n\n위 두 가지의 설정만으로도 그럴싸한 CHANGELOG를 생성할 수 있다. 이제 저장하고 실제로 CHANGELOG를 생성하여 확인해 보도록 하자.\n예제를 위해 fix, feat, chore 3가지 type으로 커밋을 해보도록 하자.\ngit commit -m &quot;chore(initial): first commit&quot;    // 최초 commitgit commit -m &quot;feat: add log&quot;                   // core 패키지 수정 후 commitgit commit -m &quot;fix: update log&quot;                 // tempalte 패키지 수정 후 commitgit push -u origin master\n\ncommit message를 작성 후 push까지 진행하였다면 lerna version을 사용하여 버전 상향과 동시에 CHANGELOG를 생성자. 이때 CHANGELOG가 생성되고 git에 자동으로 push까지 이루어진다.\nlerna version\n\ngithub에서 CHANGELOG가 생성되었는지 확인해보자.\nroot&#x2F;CHANGELOG.md\nroot 경로의 CHANGELOG를 살펴보면 두 패키지 간 커밋된 내용이 작성되어있다. 즉 모든 커밋 메시지는 root의 CHANGELOG에 남게 되어있다.\n이제 각 패키지의 CHANGELOG를 살펴보자. \ncore&#x2F;CHANGELOG.md\ntemplate&#x2F;CHANGELOG.md\n각 패키지는 해당 패키지에서 수정되고 커밋된 내용이 남아있는 것을 확인 할 수 있으며 우리가 커스텀하게 작성한 타이틀도 반영된 것을 볼수 있다. 또한 chore를 사용해 남긴 📣 Other에 대한 메시지도 남아있는 것을 확인 할 수 있다.\n\n여기까지 해서 CHANGELOG에 대해 알아보았다. \nCHANGELOG를 릴리즈 노트와 동일하며 이력을 남기기 때문에 가장 최적으로 작성하는 것이 바람직하다. 이를 위해서는 위 내용을 알아두면 좋다. 특히 Mono-Repo 구조에서는 같은 버저닝으로 간다하더라도 패키지가 다르기 때문에 CHANGELOG를 생성하는 것이 까다로울 수 있다. 하지만 위와 같은 방법으로 각 패키지 별로 CHANGELOG를 작성한다면 이력 관리에서 좋은 영향을 준다. \n\n더 알아보기Performant NPM - PNPM[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정오픈 소스(Open-Source) 구조와 모듈 파악하기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지를 배워보자!Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.\n","dateCreated":"2020-11-27T12:52:05+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-11-27T12:52:05+00:00","description":" \nMono-Repo를 생성할 수 있는 도구인 Lerna에서 CHANGELOG를 생성하는 방법에 대하여 알아보자. lerna를 사용하여 직접 Mono-Repo 구조를 생성하고 수정과 commit, 그리고 push를 통하여 Git에 반영 후 CHANGELOG를 생성하는 방법을 배워보자. Mono-Repo 구조에서는 패키지가 다르기 때문에 서로 다른 CHANGELOG를 생성해야한다. 이를 위해서 lerna의 명령어인 lerna version을 사용하여 생성할 수 있다. 물론 이를 더 쉽게 생성해 줄 수 있는 lerna-changelog라는 훌륭한 오픈 소스가 있지만 이번 포스트에서 순수하게 lerna version을 사용하여 내 입맛대로 릴리즈 노트를 작성하는 방법에 대해 말해보려한다.\n","headline":"Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.","image":["lerna-changelog-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/11/27/lerna-changelog/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/11/27/lerna-changelog/","keywords":"git, lerna, mono-repo, multi-repo, poly-repo, repository, lerna tutorial, lerna example","thumbnailUrl":"lerna-changelog-cover.png"}</script>
+    <meta name="description" content="Mono-Repo를 생성할 수 있는 도구인 Lerna에서 CHANGELOG를 생성하는 방법에 대하여 알아보자. lerna를 사용하여 직접 Mono-Repo 구조를 생성하고 수정과 commit, 그리고 push를 통하여 Git에 반영 후 CHANGELOG를 생성하는 방법을 배워보자. Mono-Repo 구조에서는 패키지가 다르기 때문에 서로 다른 CHANG">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.">
+<meta property="og:url" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Mono-Repo를 생성할 수 있는 도구인 Lerna에서 CHANGELOG를 생성하는 방법에 대하여 알아보자. lerna를 사용하여 직접 Mono-Repo 구조를 생성하고 수정과 commit, 그리고 push를 통하여 Git에 반영 후 CHANGELOG를 생성하는 방법을 배워보자. Mono-Repo 구조에서는 패키지가 다르기 때문에 서로 다른 CHANG">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/lerna-changelog-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/changelog.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/root-changelog.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/core-changelog.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/template-changelog.png">
+<meta property="article:published_time" content="2020-11-27T12:52:05.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.789Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="lerna">
+<meta property="article:tag" content="mono-repo">
+<meta property="article:tag" content="multi-repo">
+<meta property="article:tag" content="poly-repo">
+<meta property="article:tag" content="repository">
+<meta property="article:tag" content="lerna tutorial">
+<meta property="article:tag" content="lerna example">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/lerna-changelog-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/lerna-changelog-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/11/27/lerna-changelog/lerna-changelog-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-11-27T12:52:05+00:00">
+	
+		    2020-11-27
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/git/">git</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/">repository</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/mono-repo/">mono-repo</a>, <a class="category-link" href="/categories/javascript/nodejs/git/repository/mono-repo/lerna/">lerna</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/11/27/lerna-changelog/lerna-changelog-cover.png" alt="lerna-changelog-cover"></p>
+<p><code>Mono-Repo</code>를 생성할 수 있는 도구인 <code>Lerna</code>에서 <code>CHANGELOG</code>를 생성하는 방법에 대하여 알아보자.</p>
+<p>Mono-Repo 구조에서는 패키지가 다르기 때문에 서로 다른 CHANGELOG를 생성해야 한다. 이를 위해서 lerna의 명령어인 <code>lerna version</code>을 사용하여 생성할 수 있다. 물론 이를 더 쉽게 생성해 줄 수 있는 <a target="_blank" rel="noopener" href="https://github.com/lerna/lerna-changelog">lerna-changelog</a>라는 훌륭한 오픈 소스가 있지만 이번 포스트에서 순수하게 <code>lerna version</code>을 사용하여 내 입맛대로 릴리즈 노트를 작성하는 방법에 대해 말해보려 한다.</p>
+<p>lerna를 사용하여 직접 Mono-Repo 구조를 생성하고 수정과 commit, 그리고 push를 통하여 Git에 반영 후 CHANGELOG를 생성하는 방법을 배워보자.</p>
+<p>먼저 이번 포스팅을 보기 전 Mono-Repo와 Lerna에 대한 설명은 <a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a>와 <a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a> 참고하도록 하자.</p>
+<h1 id="예제-프로젝트-생성"><a href="#예제-프로젝트-생성" class="headerlink" title="예제 프로젝트 생성"></a>예제 프로젝트 생성</h1><p>예를 위해 간단하게 Mono-Repo 구조를 가진 프로젝트와 패키지를 생성하고 기본적으로 필요한 모듈을 설치해보도록 하겠다. 그리고 <strong>실제 Github에 commit과 push가 필요하므로 적당한 Repository를 하나 생성해 놓도록 하자.</strong></p>
+<p>먼저 <code>lerna</code> 사용을 위해 설치를 진행하자.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install -g lerna<br></code></pre></td></tr></table></figure>
+
+<p>그리고 <code>lerna-changelog-example</code> 폴더를 생성한 다음 해당 경로에서 prompt를 열고 git을 먼저 연동하자. </p>
+<div class="alert info no-icon"><p>lerna는 기본적으로 git과 연동된 상태에서 사용할 수 있다.</p>
+</div>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">git init<br>git remote add origin [REPOSITORY_URL]<br></code></pre></td></tr></table></figure>
+
+<p>git을 사용할 준비가 되었다면 <code>.gitignore</code>를 생성하여 commit을 제외하도록 하자.</p>
+<p><strong>.gitignore</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">.idea<br>node_modules<br></code></pre></td></tr></table></figure>
+
+<p><code>package.json</code>과 <code>lerna.json</code>을 수정하자.</p>
+<p>설정들은 가장 기본적인 설정이기 때문에 별도의 설명은 하지 않겠다. <a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a>와 <a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a> 참고하도록 하자.</p>
+<p><strong>package.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;root&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;private&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;workspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;lerna&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^3.20.2&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>lerna.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;packages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.1.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;useWorkspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>이제 두 가지 모듈을 설치할 것이다. <code>commitlint</code>와 <code>husky</code>를 설치할 것인데 <code>conventional-commit</code>을 위해 <code>commitlint</code>를 설치할 것이고, 이를 <code>git hook</code>에서 사용하기 위해 <code>husky</code>를 설치할 것이다. </p>
+<p>이 두 가지에 대해서는 <a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a>에서 확인해 보도록 하자.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">npm install @commitlint/cli @commitlint/config-conventional husky -D<br></code></pre></td></tr></table></figure>
+
+<p>위 모듈을 설치하였다면 설정 파일을 생성하여 설정을 지정해주자.</p>
+<p><strong>husky.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">hooks</span>: &#123;<br>    <span class="hljs-string">&#x27;commit-msg&#x27;</span>: <span class="hljs-string">&#x27;commitlint -E HUSKY_GIT_PARAMS&#x27;</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>commitlint.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">extends</span>: [<br>    <span class="hljs-string">&#x27;@commitlint/config-conventional&#x27;</span><br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>commitlint</code>와 <code>husky</code>를 지정해 주었기 때문에 이제 <code>conventional-commit</code>의 규칙대로 commit-message를 작성하지 않으면 commit을 허용할 수 없다.</p>
+<p>이제 가장 기본적인 설정이 완료되었으니 패키지를 생성하자.<br>이 예제에서는 패키지 명을 <code>template</code>와 <code>core</code>로 지정하도록 하겠습니다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">lerna create template<br>lerna create core<br></code></pre></td></tr></table></figure>
+
+<p>위 명령어대로 생성한다면 기본적인 패키지가 생성될 것이다.</p>
+<hr>
+<p>여기까지 해서 아주 간단한 프로젝트를 생성하였다.</p>
+<p>이 상태에서 commit을 진행하고 push까지 진행 후 <code>lerna version</code>을 사용하면 아래와 같은 형식으로 <code>CHANGELOG</code>는 생성된다.</p>
+<p><strong>e.g) CHANGELOG.md</strong><br><img src="/2020/11/27/lerna-changelog/changelog.png" alt="change-log"></p>
+<p>하지만 이 포스트에서 설명하고자 하는 것은 이런 기본적인 내용을 포함하고 추가로 <strong>우리가 <code>CHANGELOG</code>를 커스텀하게 작성하는 방법</strong>을 적으려 한다.</p>
+<h2 id="CHANGELOG-커스텀"><a href="#CHANGELOG-커스텀" class="headerlink" title="CHANGELOG 커스텀"></a>CHANGELOG 커스텀</h2><p>사실 CHANGELOG 뿐 아니라 lerna의 Document를 살펴본다면 이외에 많은 설정이 있다. 그 설정은 다소 복잡할 수도 있고 하나의 블로그 글로는 담기 많기 때문에 여기서는 CHANGELOG에 대해서만 다뤄보자.</p>
+<p>최초 우리가 생성한 <code>lerna.json</code>을 수정하도록 하자.</p>
+<p><strong>lerna.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;packages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-string">&quot;packages/*&quot;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.1.0&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;useWorkspaces&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;conventionalCommits&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;changelogPreset&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;conventional-changelog-conventionalcommits&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;types&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;feat&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:rocket: New Features&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;fix&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:bug: Bug Fix&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;docs&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:memo: Documentation&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;style&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:sparkles: Styling&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;refactor&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:house: Code Refactoring&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;build&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:hammer: Build System&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;chore&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;section&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;:mega: Other&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;hidden&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>          <span class="hljs-punctuation">&#125;</span><br>        <span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;publish&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;conventionalCommits&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>위 내용은 lerna의 command 명령어에 대한 설정을 지정한 것이다.</p>
+<p><code>command</code> 속성에 <code>version</code>이라고 명시가 되어있기 때문에 이는 <code>lerna version</code>에 대한 명령어를 설정한 것이다. 우선 <code>conventionalCommits: true</code>로 인하여 <code>conventional-commit</code> 사용하며, 그 아래에서 <code>changelogPreset</code>을 통하여 CHANGELOG에 대한 사전 설정을 한다.</p>
+<p><code>changelogPreset</code>의 속성을 하나씩 보도록 하자.<br><br/></p>
+<div class="alert info no-icon"><ul>
+<li><strong>name</strong>: conventional-commit 설정에 대한 preset 이름을 지정해 준다. <code>conventional-changelog-conventionalcommits</code> 이외의 설정은 <code>conventional-changelog-angular</code>와 같은 것들이 있다. </li>
+<li><strong>type</strong>: type은 conventional-commit의 type을 말한다. type에 따라 작성되는 타이틀을 커스텀하게 작성할 수 있다. 또한 기본적으로 <code>chore</code>와 같은 type은 CHANGELOG에 작성되지 않는데 <code>hidden</code> 속성을 <code>false</code>로 지정해 주면 <code>chore</code>와 같은 type도 CHANGELOG에 작성된다.</li>
+</ul>
+</div>
+
+<p>위 두 가지의 설정만으로도 그럴싸한 CHANGELOG를 생성할 수 있다. 이제 저장하고 실제로 CHANGELOG를 생성하여 확인해 보도록 하자.</p>
+<p>예제를 위해 <code>fix</code>, <code>feat</code>, <code>chore</code> 3가지 type으로 커밋을 해보도록 하자.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">git commit -m &quot;chore(initial): first commit&quot;    // 최초 commit<br>git commit -m &quot;feat: add log&quot;                   // core 패키지 수정 후 commit<br>git commit -m &quot;fix: update log&quot;                 // tempalte 패키지 수정 후 commit<br><br>git push -u origin master<br></code></pre></td></tr></table></figure>
+
+<p>commit message를 작성 후 push까지 진행하였다면 <code>lerna version</code>을 사용하여 버전 상향과 동시에 CHANGELOG를 생성자. 이때 CHANGELOG가 생성되고 git에 자동으로 push까지 이루어진다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">lerna version<br></code></pre></td></tr></table></figure>
+
+<p>github에서 CHANGELOG가 생성되었는지 확인해보자.</p>
+<p><strong>root&#x2F;CHANGELOG.md</strong><br><img src="/2020/11/27/lerna-changelog/root-changelog.png" alt="root-change-log"></p>
+<p>root 경로의 CHANGELOG를 살펴보면 두 패키지 간 커밋된 내용이 작성되어있다. 즉 <strong>모든 커밋 메시지는 root의 CHANGELOG에 남게 되어있다.</strong></p>
+<p>이제 각 패키지의 CHANGELOG를 살펴보자. </p>
+<p><strong>core&#x2F;CHANGELOG.md</strong><br><img src="/2020/11/27/lerna-changelog/core-changelog.png" alt="core-change-log"></p>
+<p><strong>template&#x2F;CHANGELOG.md</strong><br><img src="/2020/11/27/lerna-changelog/template-changelog.png" alt="template-change-log"></p>
+<p>각 패키지는 해당 패키지에서 수정되고 커밋된 내용이 남아있는 것을 확인 할 수 있으며 우리가 커스텀하게 작성한 타이틀도 반영된 것을 볼수 있다. 또한 <code>chore</code>를 사용해 남긴 <code>📣 Other</code>에 대한 메시지도 남아있는 것을 확인 할 수 있다.</p>
+<hr>
+<p>여기까지 해서 CHANGELOG에 대해 알아보았다. </p>
+<p>CHANGELOG를 릴리즈 노트와 동일하며 이력을 남기기 때문에 가장 최적으로 작성하는 것이 바람직하다. 이를 위해서는 위 내용을 알아두면 좋다. 특히 Mono-Repo 구조에서는 같은 버저닝으로 간다하더라도 패키지가 다르기 때문에 CHANGELOG를 생성하는 것이 까다로울 수 있다. 하지만 위와 같은 방법으로 각 패키지 별로 CHANGELOG를 작성한다면 이력 관리에서 좋은 영향을 준다. </p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2023/09/28/electron-rce/">[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정</a><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지를 배워보자!</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/git/" rel="tag">git</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna/" rel="tag">lerna</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-example/" rel="tag">lerna example</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/lerna-tutorial/" rel="tag">lerna tutorial</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mono-repo/" rel="tag">mono-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/multi-repo/" rel="tag">multi-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/poly-repo/" rel="tag">poly-repo</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/repository/" rel="tag">repository</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/03/intellij-pair-programming/"
+                    data-tooltip="IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                    aria-label="PREVIOUS: IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/13/vuejs-provide-inject/"
+                    data-tooltip="[Vue.JS] Component provide/inject 이해하기"
+                    aria-label="NEXT: [Vue.JS] Component provide/inject 이해하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/03/intellij-pair-programming/"
+                    data-tooltip="IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                    aria-label="PREVIOUS: IntelliJ IDEA를 사용하여 페어 프로그래밍(Pair Programming)하기!"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/13/vuejs-provide-inject/"
+                    data-tooltip="[Vue.JS] Component provide/inject 이해하기"
+                    aria-label="NEXT: [Vue.JS] Component provide/inject 이해하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/11/27/lerna-changelog/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/11/27/lerna-changelog/';
+              
+            this.page.identifier = 'lerna-changelog';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

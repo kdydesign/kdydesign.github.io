@@ -1,0 +1,776 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Vue.JS] Vuex Store를 바인딩하는 4가지 방법!! - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"/>
+    
+        <meta name="keywords" content="javascript,nuxt.js,vue.js,vue.js tutorial,nuxt.js tutorial,vuex,vue 강좌,vuejs 튜토리얼,vue tutorial,nuxtjs,nuxt tutorial,vuex,vuex store,store,getters,computed,vue 배우기,vuejs 배우기">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n\nVue.js의 Vuex Store 패턴에서 Vue.js Component에 Store를 바인딩 시키는 여러가지 방법을 알아보자. Vuex의 Store를 Component에 바인딩하는 방법에는 여러가지가 있으며 상황에 따라 그 쓰임이 다르다. 그 중에서 가장 실무에 적합하고 가독성이 좋은 방법이 무엇인지 알아보고 활용해보자.\n해당 포스트에서는 Vuex의 설명과 사용법에 대해서는 언급하지 않았으며, 오로지 Vuex Store를 컴포넌트에 바인딩하는 방법을 설명한다.\n프로젝트의 규모가 크거나 작든 Vuex를 사용할 때는 Store를 Module 별로 분리하는 것이 바람직하다. 그렇지 않으면 각 컴포넌트마다 바인딩 된 Store의 state들이 다른 컴포넌트의 루틴에 의해 오염될 가능성과 코드의 복잡성이 높아지게 되어 있다. \n이번 포스트에서는 모듈별로 분리된 Store를 각 컴포넌트에서 효율적으로 바인딩시키는 여러 가지 방법들과 코드 스타일을 알아보자.\nBasicVue 공식 API에서는 명시된 기본 Store 바인딩 방법이다.\nimport &#123;mapState&#125; from &#x27;vuex&#x27;new Vue(&#123;    computed: mapState(&#123;        count: state =&gt; state.count,        countAlias: &#x27;count&#x27;    &#125;)&#125;)\n\n위 내용은 mapState라는 Helper를 이용하여 객체의 형태로 count를 바인딩 한 형태이고 아래처럼 state의 이름을 그대로 상속받아 정의할 수도 있다.\nimport &#123;mapState&#125; from &#x27;vuex&#x27;new Vue(&#123;    computed: mapState([        &#x27;count&#x27;    ])&#125;)\n\n기본적인 바인딩 방법은 가장 단순한 구조를 가진 Store를 바인딩하였을 때이다. 하지만 Store가 여러 모듈별로 분리되어 있고 하나의 컴포넌트에서는 여러 Store 모듈을 바인딩해야 한다면 매우 복잡해질 것이다.\n아래 가정을 가지고 각 바인딩 Style을 살펴보자.\n각각 User, Book 이라는 Store 모듈이 존재하고, User는 A/B 경로에 있으며, Book은 A/B/C 경로에 위치한다.\n\n\n프로젝트 구조는 다음과 같다.\n└─ A   └─ B      ├─ User      └─ C         └─ Book\n\n\nStyle 1 - Vuex Helperimport &#123;mapState, mapActions&#125; from &#x27;vuex&#x27;new Vue(&#123;    computed: &#123;        ... mapState(&#123;            bookList: state =&gt; state.A.B.C.Book.list        &#125;)    &#125;,    methods: &#123;        ...mapActions([            &#x27;A/B/C/Book/setList&#x27;        ])    &#125;&#125;)\n\n또는\nimport &#123;mapState&#125; from &#x27;vuex&#x27;new Vue(&#123;    computed: &#123;        ... mapState(&#x27;A/B/C/Book&#x27;, &#123;            bookList: state =&gt; state.list        &#125;)    &#125;,     methods: &#123;        ...mapActions(&#x27;A/B/C/Book&#x27;, [            &#x27;setList&#x27;        ])    &#125;&#125;)\n\n특정 경로에 포함된 Store 모듈을 사용하기 위해서는 해당 경로를 모두 명시해줘야 한다. 이렇게 사용을 한다면 어느 경로에 있든 서로 다른 Store 모듈을 하나의 컴포넌트 또는 여러 컴포넌트에서 바인딩하여 사용이 가능하다. 하지만 위 예제에서 A&#x2F;B&#x2F;C의 단순하고 짧은 명칭이지만 폴더나 Store 모듈의 명칭이 꽤나 길다면 역시나 가독성이 좀 떨어질 것이다. 그래서 우리는 Vuex에서 제공하는 Namespace Helper를 생성할 수 있는 createNamespacedHelpers 이용하여 바인딩하는 것을 가장 인상적으로 볼 수 있다.\nStyle 2 - createNamespacedHelpers 1import &#123;createNamespacedHelpers&#125; from &#x27;vuex&#x27;const &#123;mapState&#125; = createNamespacedHelpers(&#x27;A/B/C/Book&#x27;)new Vue(&#123;    computed: &#123;        ... mapState(&#123;            bookList: state =&gt; state.list        &#125;)    &#125;&#125;)\n\n또는\nimport &#123;createNamespacedHelpers&#125; from &#x27;vuex&#x27;const &#123;mapState&#125; = createNamespacedHelpers(&#x27;A/B/C/Book&#x27;)new Vue(&#123;    computed: &#123;        ... mapState([            &#x27;list&#x27;        ])    &#125;&#125;)\n\n모듈의 이름이 길고 구조가 복잡하다면 createNamespacedHelpers를 사용하여 바인딩한다면 computed 또는 methods가 간결하고 뛰어난 가독성을 보이는 것을 알 수 있다.\nStore 모듈들의 경로를 computed와 methods에 정의를 안 했을 뿐이지 무엇이 다르겠냐고 한다면 생각해보자. 우리는 개발을 하면서 코드를 살펴볼 때나 구현을 할 때 가장 상단에 삽입하거나 명시해 놓은 구현체는 자주 보지 않는다. 오히려 data, computed, methods를 가장 많이 볼 것이다. 이러한 상황에서 수많은 모듈의 경로가 명시되어 있다면 state나 mutation, action의 개체들을 찾기 어려울 것이다.\nStyle 3 - createNamespacedHelpers 2그러면 여기서 좀 더 깊이 한번 보자.\n만약 createNamespacedHelpers를 사용을 한다고 하지만 만약 하나의 컴포넌트에 서로 다른 경로에 있는 Store 모듈을 여러 개 바인딩할 경우에는 어떻게 해야 할까?지금까지 Book이라는 모듈만을 가지고 예제를 보았지만, 여기에서 User 모듈을 추가해보자.\nimport &#123;createNamespacedHelpers&#125; from &#x27;vuex&#x27;const    &#123;mapState: userMapState, mapActions: userMapActions&#125; = createNamespacedHelpers(&#x27;A/B/User&#x27;),    &#123;mapState: bookMapState, mapActions: bookMapActions&#125; = createNamespacedHelpers(&#x27;A/B/C/Book&#x27;)new Vue(&#123;    computed: &#123;        ... userMapState(&#123;            userList: state =&gt; state.user.userList        &#125;),        ... bookMapState([            &#x27;list&#x27;        ])    &#125;,    methods: &#123;        ...userMapActions(&#123;            setUserList: &#x27;setUserList&#x27;        &#125;),        ...bookMapActions([            &#x27;setBookList&#x27;        ])    &#125;&#125;)\n\n아래처럼 정의도 가능하다.\nimport &#123;createNamespacedHelpers&#125; from &#x27;vuex&#x27;const    userListHelper = createNamespacedHelpers(&#x27;A/B/User&#x27;),    bookListHelper = createNamespacedHelpers(&#x27;A/B/C/Book&#x27;)new Vue(&#123;    computed: &#123;        ... userListHelper.mapState(&#123;            userList: state =&gt; state.user.userList        &#125;),        ... bookListHelper.mapState([            &#x27;list&#x27;        ])    &#125;,    methods: &#123;        ...userListHelper.mapActions(&#123;            setUserList: &#x27;setUserList&#x27;        &#125;),        ...bookListHelper.mapActions([            &#x27;setBookList&#x27;        ])    &#125;&#125;)\n\n이렇게 한다면 하나의 컴포넌트에서도 많은 모듈을 바인딩하기가 쉬우며, 코드의 가독성 역시 좋아진다.\n\n각 개발자마다 코드 스타일은 모두 다르고 해당 포스트에 언급한 내용 이외에 더 좋은 방법이 있을 수 있다. 다만 중요한 것은 개발하기 전 또는 하면서 어느 방법이 가장 좋은지 몸소 느끼며 차근차근 수정해 나아가는 것이 중요하다고 본다. 어느 스타일이든 결과는 같겠지만 업무&#x2F;개발의 속도는 확연히 차이가 날 것이다.\n\n더 알아보기빠르게 배우는 Node.js와 NPM 설치부터 개념잡기빠르게 배우는 Vue.jsVue-CLI 3 시작하기Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)Vuex Store의 state를 효율적으로 초기화하기Nuxt.js 개념부터 설치까지 빠르게 배우기Vue.JS Component 개념을 익히고 만들어보자!!Vue Component provide&#x2F;inject 이해하기Vuex VS Event Bus\n","dateCreated":"2019-04-06T17:09:57+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2019-04-06T17:09:57+00:00","description":"\nVue.js의 Vuex Store 패턴에서 Vue.js Component에 Store를 바인딩 시키는 여러가지 방법을 알아보자. Vuex의 Store를 Component에 바인딩하는 방법에는 여러가지가 있으며 상황에 따라 그 쓰임이 다르다. 그 중에서 가장 실무에 적합하고 가독성이 좋은 방법이 무엇인지 알아보고 활용해보자.해당 포스트에서는 Vuex의 설명과 사용법에 대해서는 언급하지 않았으며, 오로지 Vuex Store를 컴포넌트에 바인딩하는 방법을 설명한다.프로젝트의 규모가 크거나 작든 Vuex를 사용할 때는 Store를 Module 별로 분리하는 것이 바람직하다. 그렇지 않으면 각 컴포넌트마다 바인딩 된 Store의 state들이 다른 컴포넌트의 루틴에 의해 오염될 가능성과 코드의 복잡성이 높아지게 되어 있다.이번 포스트에서는 모듈별로 분리된 Store를 각 컴포넌트에서 효율적으로 바인딩시키는 여러 가지 방법들과 코드 스타일을 알아보자. \n","headline":"[Vue.JS] Vuex Store를 바인딩하는 4가지 방법!!","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/","keywords":"vue.js, vuex, vue.js tutorial, vuex component binding, store","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="Vue.js의 Vuex Store 패턴에서 Vue.js Component에 Store를 바인딩 시키는 여러가지 방법을 알아보자. Vuex의 Store를 Component에 바인딩하는 방법에는 여러가지가 있으며 상황에 따라 그 쓰임이 다르다. 그 중에서 가장 실무에 적합하고 가독성이 좋은 방법이 무엇인지 알아보고 활용해보자.해당 포스트에서는 Vuex의 설명">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Vue.JS] Vuex Store를 바인딩하는 4가지 방법!!">
+<meta property="og:url" content="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Vue.js의 Vuex Store 패턴에서 Vue.js Component에 Store를 바인딩 시키는 여러가지 방법을 알아보자. Vuex의 Store를 Component에 바인딩하는 방법에는 여러가지가 있으며 상황에 따라 그 쓰임이 다르다. 그 중에서 가장 실무에 적합하고 가독성이 좋은 방법이 무엇인지 알아보고 활용해보자.해당 포스트에서는 Vuex의 설명">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/cover.png">
+<meta property="article:published_time" content="2019-04-06T17:09:57.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.837Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="vue.js">
+<meta property="article:tag" content="vuex">
+<meta property="article:tag" content="vue.js tutorial">
+<meta property="article:tag" content="vuex component binding">
+<meta property="article:tag" content="store">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Vue.JS] Vuex Store를 바인딩하는 4가지 방법!!
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-04-06T17:09:57+00:00">
+	
+		    2019-04-06
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/vue-js/">vue.js</a>, <a class="category-link" href="/categories/javascript/vue-js/vue-js-tutorial/">vue.js tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/">vuex tutorial</a>, <a class="category-link" href="/categories/javascript/vue-js/vue-js-tutorial/vuex-tutorial/vuex-helper/">vuex helper</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+
+<p><img src="/2019/04/06/vuejs-vuex-helper/cover.png" alt="cover"></p>
+<p>Vue.js의 Vuex Store 패턴에서 Vue.js Component에 Store를 바인딩 시키는 여러가지 방법을 알아보자. Vuex의 Store를 Component에 바인딩하는 방법에는 여러가지가 있으며 상황에 따라 그 쓰임이 다르다. 그 중에서 가장 실무에 적합하고 가독성이 좋은 방법이 무엇인지 알아보고 활용해보자.</p>
+<p>해당 포스트에서는 Vuex의 설명과 사용법에 대해서는 언급하지 않았으며, 오로지 Vuex Store를 컴포넌트에 바인딩하는 방법을 설명한다.</p>
+<p>프로젝트의 규모가 크거나 작든 <code>Vuex를 사용할 때는 Store를 Module 별로 분리</code>하는 것이 바람직하다. 그렇지 않으면 각 컴포넌트마다 바인딩 된 Store의 state들이 다른 컴포넌트의 루틴에 의해 오염될 가능성과 코드의 복잡성이 높아지게 되어 있다. </p>
+<p>이번 포스트에서는 모듈별로 분리된 Store를 각 컴포넌트에서 효율적으로 바인딩시키는 여러 가지 방법들과 코드 스타일을 알아보자.</p>
+<h1 id="Basic"><a href="#Basic" class="headerlink" title="Basic"></a>Basic</h1><p>Vue 공식 API에서는 명시된 기본 Store 바인딩 방법이다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;mapState&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: <span class="hljs-title function_">mapState</span>(&#123;<br>        <span class="hljs-attr">count</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">count</span>,<br>        <span class="hljs-attr">countAlias</span>: <span class="hljs-string">&#x27;count&#x27;</span><br>    &#125;)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>위 내용은 <code>mapState</code>라는 Helper를 이용하여 객체의 형태로 <code>count</code>를 바인딩 한 형태이고 아래처럼 state의 이름을 그대로 상속받아 정의할 수도 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;mapState&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: <span class="hljs-title function_">mapState</span>([<br>        <span class="hljs-string">&#x27;count&#x27;</span><br>    ])<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>기본적인 바인딩 방법은 가장 단순한 구조를 가진 Store를 바인딩하였을 때이다. 하지만 Store가 여러 모듈별로 분리되어 있고 하나의 컴포넌트에서는 여러 Store 모듈을 바인딩해야 한다면 매우 복잡해질 것이다.</p>
+<p>아래 가정을 가지고 각 바인딩 Style을 살펴보자.</p>
+<div class="alert danger no-icon"><p>각각 <strong>User</strong>, <strong>Book</strong> 이라는 Store 모듈이 존재하고, <strong>User</strong>는 <code>A/B</code> 경로에 있으며, <strong>Book</strong>은 <code>A/B/C</code> 경로에 위치한다.</p>
+</div>
+
+<p>프로젝트 구조는 다음과 같다.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">└─ A<br>   └─ B<br>      ├─ User<br>      └─ C<br>         └─ Book<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="Style-1-Vuex-Helper"><a href="#Style-1-Vuex-Helper" class="headerlink" title="Style 1 - Vuex Helper"></a>Style 1 - Vuex Helper</h1><figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;mapState, mapActions&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... <span class="hljs-title function_">mapState</span>(&#123;<br>            <span class="hljs-attr">bookList</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">A</span>.<span class="hljs-property">B</span>.<span class="hljs-property">C</span>.<span class="hljs-property">Book</span>.<span class="hljs-property">list</span><br>        &#125;)<br>    &#125;,<br>    <span class="hljs-attr">methods</span>: &#123;<br>        ...<span class="hljs-title function_">mapActions</span>([<br>            <span class="hljs-string">&#x27;A/B/C/Book/setList&#x27;</span><br>        ])<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>또는</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;mapState&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... <span class="hljs-title function_">mapState</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>, &#123;<br>            <span class="hljs-attr">bookList</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">list</span><br>        &#125;)<br>    &#125;,<br>     <span class="hljs-attr">methods</span>: &#123;<br>        ...<span class="hljs-title function_">mapActions</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>, [<br>            <span class="hljs-string">&#x27;setList&#x27;</span><br>        ])<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>특정 경로에 포함된 Store 모듈을 사용하기 위해서는 해당 경로를 모두 명시해줘야 한다. 이렇게 사용을 한다면 어느 경로에 있든 서로 다른 Store 모듈을 하나의 컴포넌트 또는 여러 컴포넌트에서 바인딩하여 사용이 가능하다. 하지만 위 예제에서 A&#x2F;B&#x2F;C의 단순하고 짧은 명칭이지만 폴더나 Store 모듈의 명칭이 꽤나 길다면 역시나 가독성이 좀 떨어질 것이다. 그래서 우리는 Vuex에서 제공하는 Namespace Helper를 생성할 수 있는 <code>createNamespacedHelpers</code> 이용하여 바인딩하는 것을 가장 인상적으로 볼 수 있다.</p>
+<h1 id="Style-2-createNamespacedHelpers-1"><a href="#Style-2-createNamespacedHelpers-1" class="headerlink" title="Style 2 - createNamespacedHelpers 1"></a>Style 2 - createNamespacedHelpers 1</h1><figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;createNamespacedHelpers&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">const</span> &#123;mapState&#125; = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>)<br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... <span class="hljs-title function_">mapState</span>(&#123;<br>            <span class="hljs-attr">bookList</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">list</span><br>        &#125;)<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>또는</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;createNamespacedHelpers&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">const</span> &#123;mapState&#125; = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>)<br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... <span class="hljs-title function_">mapState</span>([<br>            <span class="hljs-string">&#x27;list&#x27;</span><br>        ])<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>모듈의 이름이 길고 구조가 복잡하다면 <code>createNamespacedHelpers</code>를 사용하여 바인딩한다면 computed 또는 methods가 간결하고 뛰어난 가독성을 보이는 것을 알 수 있다.</p>
+<p>Store 모듈들의 경로를 computed와 methods에 정의를 안 했을 뿐이지 무엇이 다르겠냐고 한다면 생각해보자. 우리는 개발을 하면서 코드를 살펴볼 때나 구현을 할 때 가장 상단에 삽입하거나 명시해 놓은 구현체는 자주 보지 않는다. 오히려 data, computed, methods를 가장 많이 볼 것이다. 이러한 상황에서 수많은 모듈의 경로가 명시되어 있다면 state나 mutation, action의 개체들을 찾기 어려울 것이다.</p>
+<h1 id="Style-3-createNamespacedHelpers-2"><a href="#Style-3-createNamespacedHelpers-2" class="headerlink" title="Style 3 - createNamespacedHelpers 2"></a>Style 3 - createNamespacedHelpers 2</h1><p>그러면 여기서 좀 더 깊이 한번 보자.</p>
+<p>만약 <code>createNamespacedHelpers를</code> 사용을 한다고 하지만 만약 하나의 컴포넌트에 서로 다른 경로에 있는 Store 모듈을 여러 개 바인딩할 경우에는 어떻게 해야 할까?<br>지금까지 <code>Book</code>이라는 모듈만을 가지고 예제를 보았지만, 여기에서 <code>User</code> 모듈을 추가해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;createNamespacedHelpers&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">const</span><br>    &#123;<span class="hljs-attr">mapState</span>: userMapState, <span class="hljs-attr">mapActions</span>: userMapActions&#125; = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/User&#x27;</span>),<br>    &#123;<span class="hljs-attr">mapState</span>: bookMapState, <span class="hljs-attr">mapActions</span>: bookMapActions&#125; = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>)<br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... <span class="hljs-title function_">userMapState</span>(&#123;<br>            <span class="hljs-attr">userList</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">user</span>.<span class="hljs-property">userList</span><br>        &#125;),<br>        ... <span class="hljs-title function_">bookMapState</span>([<br>            <span class="hljs-string">&#x27;list&#x27;</span><br>        ])<br>    &#125;,<br>    <span class="hljs-attr">methods</span>: &#123;<br>        ...<span class="hljs-title function_">userMapActions</span>(&#123;<br>            <span class="hljs-attr">setUserList</span>: <span class="hljs-string">&#x27;setUserList&#x27;</span><br>        &#125;),<br>        ...<span class="hljs-title function_">bookMapActions</span>([<br>            <span class="hljs-string">&#x27;setBookList&#x27;</span><br>        ])<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>아래처럼 정의도 가능하다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> &#123;createNamespacedHelpers&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vuex&#x27;</span><br><br><span class="hljs-keyword">const</span><br>    userListHelper = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/User&#x27;</span>),<br>    bookListHelper = <span class="hljs-title function_">createNamespacedHelpers</span>(<span class="hljs-string">&#x27;A/B/C/Book&#x27;</span>)<br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Vue</span>(&#123;<br>    <span class="hljs-attr">computed</span>: &#123;<br>        ... userListHelper.<span class="hljs-title function_">mapState</span>(&#123;<br>            <span class="hljs-attr">userList</span>: <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> state.<span class="hljs-property">user</span>.<span class="hljs-property">userList</span><br>        &#125;),<br>        ... bookListHelper.<span class="hljs-title function_">mapState</span>([<br>            <span class="hljs-string">&#x27;list&#x27;</span><br>        ])<br>    &#125;,<br>    <span class="hljs-attr">methods</span>: &#123;<br>        ...userListHelper.<span class="hljs-title function_">mapActions</span>(&#123;<br>            <span class="hljs-attr">setUserList</span>: <span class="hljs-string">&#x27;setUserList&#x27;</span><br>        &#125;),<br>        ...bookListHelper.<span class="hljs-title function_">mapActions</span>([<br>            <span class="hljs-string">&#x27;setBookList&#x27;</span><br>        ])<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>이렇게 한다면 하나의 컴포넌트에서도 많은 모듈을 바인딩하기가 쉬우며, 코드의 가독성 역시 좋아진다.</p>
+<hr>
+<p>각 개발자마다 코드 스타일은 모두 다르고 해당 포스트에 언급한 내용 이외에 더 좋은 방법이 있을 수 있다. 다만 중요한 것은 개발하기 전 또는 하면서 어느 방법이 가장 좋은지 몸소 느끼며 차근차근 수정해 나아가는 것이 중요하다고 본다. 어느 스타일이든 결과는 같겠지만 업무&#x2F;개발의 속도는 확연히 차이가 날 것이다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a><br><a href="https://kdydesign.github.io/2017/11/15/vuejs-tutorial/">빠르게 배우는 Vue.js</a><br><a href="https://kdydesign.github.io/2019/04/22/vue-cli3-tutorial/">Vue-CLI 3 시작하기</a><br><a href="https://kdydesign.github.io/2019/04/10/vuejs-performance/">Vue.js 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)</a><br><a href="https://kdydesign.github.io/2019/04/10/vue-store-state/">Vuex Store의 state를 효율적으로 초기화하기</a><br><a href="https://kdydesign.github.io/2019/04/10/nuxtjs-tutorial/">Nuxt.js 개념부터 설치까지 빠르게 배우기</a><br><a href="https://kdydesign.github.io/2019/04/27/vue-component/">Vue.JS Component 개념을 익히고 만들어보자!!</a><br><a href="https://kdydesign.github.io/2020/11/13/vuejs-provide-inject/">Vue Component provide&#x2F;inject 이해하기</a><br><a href="https://kdydesign.github.io/2021/01/14/vue-eventbus-vs-vuex/">Vuex VS Event Bus</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/store/" rel="tag">store</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-js/" rel="tag">vue.js</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vue-js-tutorial/" rel="tag">vue.js tutorial</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vuex/" rel="tag">vuex</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/vuex-component-binding/" rel="tag">vuex component binding</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/vuejs-performance/"
+                    data-tooltip="[Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                    aria-label="PREVIOUS: [Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/11/15/vuejs-tutorial/"
+                    data-tooltip="[Vue.JS] 빠르게 배우는 Vue.js"
+                    aria-label="NEXT: [Vue.JS] 빠르게 배우는 Vue.js"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/04/10/vuejs-performance/"
+                    data-tooltip="[Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                    aria-label="PREVIOUS: [Vue.JS] 대용량 데이터의 처리 방법과 성능 최적화 방법 (Vue.js Performance)"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/11/15/vuejs-tutorial/"
+                    data-tooltip="[Vue.JS] 빠르게 배우는 Vue.js"
+                    aria-label="NEXT: [Vue.JS] 빠르게 배우는 Vue.js"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2019/04/06/vuejs-vuex-helper/';
+              
+            this.page.identifier = 'vuex-helper-style';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

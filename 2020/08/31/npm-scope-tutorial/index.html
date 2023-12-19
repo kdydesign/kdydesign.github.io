@@ -1,0 +1,804 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>NPM-SCOPE 패키지 어디까지 알고 있니? - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"/>
+    
+        <meta name="keywords" content="javascript,nodejs,npm,npm tutorial,nodejs tutorial,npm 설치,npm,npm 패키지,npm 모듈,node module 배포,npm 배포,npm 만들기,node module 만들기,node module,npm scope,npm 범위,scope,scope package,npm group,npm scope package,npm organizations,npm 조직">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n이번 섹션에서는 npm scope에 대해서 알아보고 이 scope 패키지를 통해서 어떻게 npm registry에 배포하는지 파악해보고 npm 패키지를 실제로 배포까지 해보도록하자.\nnpm에는 scope라는 개념이 존재한다.npm의 scope 개념은 조직 또는 그룹이다. 우리는 이 scope를 통해서 협업이 가능하며, 여러개의 분산된 패키지를 하나의 조직으로 관리 또는 배포 할 수 있다. \n빠르게 배우는 Node.js와 NPM 설치부터 개념 잡기에서 NPM과 Node.js에 대한 개념을 잡고 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드에서 NPM 패키지를 실제로 생성하고 배포까지 해보았다면 이제는 NPM Scope에 대해서 알아보자.\nNPM ScopeNPM Scope 패키지는 NPM 패키지와 같이 동일한 패키지이며 사용법도 같다. 다만 다른 게 있다면 NPM Scope 패키지는 범위 또는 그룹을 가진다. 이렇게 그룹을 가지게 되면 패키지 이름에 일반적인 규칙을 가지게 되며 패키지를 처리하는 방법에 약간의 영향을 준다.\n각 NPM 사용자와 조직(Organizations)은 자체 범위를 가지고 이 범위에서 패키지를 추가할 수 있다. 이 범위는 그룹으로 볼 수 있으며, 그룹으로 지정된 패키지는 NPM 기본 Registry에 배포 및 설치된다. 그룹으로 지정되지 않은 패키지는 그룹으로 지정된 패키지에 종속적일 수 있으며 반대도 마찬가지며, 범위가 있는 패키지는 1개의 범위에 원하는 개수만큼 패키지를 포함 시킬 수 있다.\n@node module을 설치하고 node_modules 폴더를 보게 되면 **@**가 붙은 패키지를 볼 수 있을 것이다. 이러한 패키지가 모두 범위가 있는 패키지이며, 아래와 같이 @로 표현된다.\n@somescope/somepackagename\n\nNPM Scope InstallNPM Scope 패키지도 일반 패키지와 설치하는 방법은 같다.\nnpm install @scopeName/pacakgeName\n\n다른 게 있다면 위에서 말한 것과 같이 범위가 있는 패키지는 @가 붙고 범위 명칭이 붙기 때문에 패키지 이름에 있어서 주의만 하면 되고 일반 패키지는 node_modules/packageName 설치가 된다면 범위가 있는 패키지는 node_modules/@scopeName/packageName에 설치가 된다.\n&#123;    &quot;dependencies&quot;: &#123;      &quot;@scopeName/packageName&quot;: &quot;^1.0.0&quot;    &#125;&#125;\n\n\nNPM Scope의 사용require를 통해 NPM Scope 패키지를 사용할 때도 동일하게 @ 범위 이름으로 사용하면 된다.\nrequire(&#x27;@scopeName/packageName&#x27;)\n\n\nNPM Scope의 배포위 NPM Scope의 사용하는 방법까지는 일반 패키지와 비슷하지만, 배포부터는 조금 까다롭고 다르다.\nNPM Scope 패키지는 일반 패키지와 동일하게 배포할 수는 없다. 배포를 위해서는 두 가지의 NPM Registry 형태로만 가능하다.\n\n비공개 패키지 게시 권한이 있는 개인 Registry\n조직(Organizations)으로 생성된 Registry\n\n\n\n위 내용을 토대로 각 Registry에 배포하는 방법을 보자.\n1. 비공개 패키지 게시 권한이 있는 개인 Registry개인 비공개 패키지를 배포하기 위해서는 $7의 결제가 필요하다.7가 아깝다면 여긴 넘어가자.\n만약 개인 비공개 Registry로 업그레이드하였다면 npm publish 또는 npm publish --access=restricted로 모듈을 게시 할 수 있다.\n2. 조직(Organizations)으로 생성된 Registry조직(Organizations) 생성조직으로 생성된 Registry에 배포하기 위해서는 먼저 조직(Organizations)을 생성해야 한다. NPM에 로그인 후 개인 Package 항목으로 가서 생성하자.\n\n조직을 생성하게 되면 아래 그림처럼 현재 계정을 조직으로 변경하거나 새로운 조직을 만들 수 있다. 현재 계정을 변경하게 되면 @계정명과 같이 scope가 생성이 된다. 이 포스팅에서는 devdy라는 새로운 조직으로 생성하겠다.\n\n조직을 생성하게 되면 기본적으로 Members 탭이 보인다. 조직은 말 그대로 조직이기 때문에 여러 사용자를 포함할 수 있으니 참고하자. 또한 조직은 기본적으로 Public 범위를 가진다. Private 조직을 가지기 위해서는 결제가 필요하니 참고해두자.\n\n조직(Organizations) 범위로의 배포이제 생성된 조직에 배포해보자. 여기서 주의할 점은 조직을 생성하였으며 이 조직은 scope가 되기 때문에 패키지 명을 범위에 맞게 지정해야 한다. 여기서 조직명을 devdy로 했기 때문에 패키지 명을 **@devdy/sample-package**로 하겠다.\nscope로 생성된 패키지는 일반 npm publish 명령으로 배포하면 오류가 출력된다. 조직 자체의 Registry는 공개이지만 배포에 있어서는 limited로 설정되어 있기 때문에 범위 패키지를 배포하기 위해서는 --access=public 하거나 최초 게시 후 npm access public 명령어를 사용하여 해당 액세스를 공개로 설정해야 한다.\nnpm publish 시에 --access=public 옵션을 주도록 하자. \nnpm publish --access=public\n\n정상적으로 패키지가 배포된 것을 확인하자.\n\nNPM Repository에 배포된 패키지는 72시간이 지나면 직접 지울 수 없어서 불필요하다면 즉시 삭제하기 바란다.\nnpm unpublish @scopeName/packageName -f\n\n범위를 가진 Registry에 연결하기이 부분은 NPM Registry가 registry.npmjs.org가 아닌 사설 Registry 이거나 여러 개의 Registry가 필요한 상황에서의 범위 연결 방법이다.\nN개의 Registry가 존재할 경우 각 Registry는 범위를 지정할 수가 있는데 두 가지 형태로 지정할 수 있다. 이 두 가지에 대하여 간략하게 설명하겠다.\n\n로그인 시 범위를 가진 Registry 연결\nnpm config를 통하여 범위를 가진 Registry 연결\n\n\n\n\n범위는 하나의 Registry와 N:1 관계를 맺는다. 하나의 Registry는 여러 범위에 호스팅할 수 있지만 하나의 범위(scope)는 하나의 Registry만 연결할 수 있다.\n이렇게 범위와 Registry를 연결 후 npm install을 통해 node module을 설치할 경우 만약 해당 Registry에 모듈이 없을 때 기본 Registry인 https://registry.npmjs.org/로 연결되게 되어있다.\n1. 로그인 시 범위를 가진 Registry 연결로그인 시 범위를 가진 Registry에 연결하는 방법은 명령어를 통해서 npm login 시 Registry와 범위(scope)를 직접 지정하는 방법이다.\nnpm login --registry=REGISTRY_PATH --scope=@SCOPE_NAME\n\n\n2. npm config를 통하여 범위를 가진 Registry 연결config를 통한 방법은 npm의 설정을 직접 변경하여 Registry 연결과 범위(scope)를 지정하는 방법이다.\nnpm config set @SCOPE_NAME:registry REGISTRY_PATH\n\n지정된 registry와 범위(scope)는 .npmrc를 확인해보자.\n\nNPM 패키지의 scope까지 배웠다면 NPM 패키지 배포에 있어서는 전반적으로 본 것이다.\n필수조건으로 npm scope가 필요한 것은 아니지만 특정 패키지는 협업이 필요할 수도 있다. 여러 패키지의 Owner를 각각 두고 말이다. 이럴 때는 범위(scope)를 가진 패키지가 필요할 것이며, 또한 보통 혼자서 NPM 패키지를 만든다고 하더라도 하나만 만들지는 않을 것이다. 앞으로도 계속 만든다는 가정하에 이제는 범위(scope)가 있는 패키지를 만들도록 하자. \n\n더 알아보기Performant NPM - PNPMNVM으로 Windows 환경에서 Node 버전 관리하기빠르게 배우는 Node.js와 NPM 설치부터 개념잡기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.\n","dateCreated":"2020-08-31T13:24:10+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-08-31T13:24:10+00:00","description":"\n이번 섹션에서는 npm scope에 대해서 알아보고 이 scope 패키지를 통해서 어떻게 npm registry에 배포하는지 파악해보고 npm 패키지를 실제로 배포까지 해보도록하자.npm에는 scope라는 개념이 존재한다.npm의 scope 개념은 조직 또는 그룹이다. 우리는 이 scope를 통해서 협업이 가능하며, 여러개의 분산된 패키지를 하나의 조직으로 관리 또는 배포 할 수 있다. \n","headline":"NPM-SCOPE 패키지 어디까지 알고 있니?","image":["cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/","keywords":"javascript, nodejs, npm, npm scope","thumbnailUrl":"cover.png"}</script>
+    <meta name="description" content="이번 섹션에서는 npm scope에 대해서 알아보고 이 scope 패키지를 통해서 어떻게 npm registry에 배포하는지 파악해보고 npm 패키지를 실제로 배포까지 해보도록하자.npm에는 scope라는 개념이 존재한다.npm의 scope 개념은 조직 또는 그룹이다. 우리는 이 scope를 통해서 협업이 가능하며, 여러개의 분산된 패키지를 하나의 조직으">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="NPM-SCOPE 패키지 어디까지 알고 있니?">
+<meta property="og:url" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이번 섹션에서는 npm scope에 대해서 알아보고 이 scope 패키지를 통해서 어떻게 npm registry에 배포하는지 파악해보고 npm 패키지를 실제로 배포까지 해보도록하자.npm에는 scope라는 개념이 존재한다.npm의 scope 개념은 조직 또는 그룹이다. 우리는 이 scope를 통해서 협업이 가능하며, 여러개의 분산된 패키지를 하나의 조직으">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/npm-organizations.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/new-organization.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/success-organizations.png">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/publish-package.png">
+<meta property="article:published_time" content="2020-08-31T13:24:10.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.797Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="npm">
+<meta property="article:tag" content="npm scope">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            NPM-SCOPE 패키지 어디까지 알고 있니?
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-31T13:24:10+00:00">
+	
+		    2020-08-31
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/npm/">npm</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/08/31/npm-scope-tutorial/cover.png" alt="cover"></p>
+<p>이번 섹션에서는 <code>npm scope</code>에 대해서 알아보고 이 scope 패키지를 통해서 어떻게 <code>npm registry</code>에 배포하는지 파악해보고 npm 패키지를 실제로 배포까지 해보도록하자.</p>
+<p>npm에는 scope라는 개념이 존재한다.<br>npm의 scope 개념은 조직 또는 그룹이다. 우리는 이 scope를 통해서 협업이 가능하며, 여러개의 분산된 패키지를 하나의 조직으로 관리 또는 배포 할 수 있다. </p>
+<p><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념 잡기</a>에서 <a target="_blank" rel="noopener" href="https://www.npmjs.com/">NPM</a>과 <a target="_blank" rel="noopener" href="https://nodejs.org/ko/">Node.js</a>에 대한 개념을 잡고 <a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a>에서 NPM 패키지를 실제로 생성하고 배포까지 해보았다면 이제는 <code>NPM Scope</code>에 대해서 알아보자.</p>
+<h1 id="NPM-Scope"><a href="#NPM-Scope" class="headerlink" title="NPM Scope"></a>NPM Scope</h1><p><a target="_blank" rel="noopener" href="https://docs.npmjs.com/using-npm/scope.html">NPM Scope</a> 패키지는 <code>NPM 패키지</code>와 같이 동일한 패키지이며 사용법도 같다. 다만 다른 게 있다면 <code>NPM Scope 패키지</code>는 <code>범위</code> 또는 <code>그룹</code>을 가진다. 이렇게 그룹을 가지게 되면 패키지 이름에 일반적인 규칙을 가지게 되며 패키지를 처리하는 방법에 약간의 영향을 준다.</p>
+<p>각 NPM <code>사용자</code>와 <code>조직(Organizations)</code>은 자체 범위를 가지고 이 범위에서 패키지를 추가할 수 있다. 이 범위는 그룹으로 볼 수 있으며, 그룹으로 지정된 패키지는 NPM 기본 Registry에 배포 및 설치된다. 그룹으로 지정되지 않은 패키지는 그룹으로 지정된 패키지에 종속적일 수 있으며 반대도 마찬가지며, 범위가 있는 패키지는 1개의 범위에 원하는 개수만큼 패키지를 포함 시킬 수 있다.</p>
+<h1 id=""><a href="#" class="headerlink" title="@"></a>@</h1><p>node module을 설치하고 <code>node_modules</code> 폴더를 보게 되면 **<code>@</code>**가 붙은 패키지를 볼 수 있을 것이다. 이러한 패키지가 모두 범위가 있는 패키지이며, 아래와 같이 <code>@</code>로 표현된다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">@somescope/somepackagename<br></code></pre></td></tr></table></figure>
+
+<h1 id="NPM-Scope-Install"><a href="#NPM-Scope-Install" class="headerlink" title="NPM Scope Install"></a>NPM Scope Install</h1><p><code>NPM Scope</code> 패키지도 일반 패키지와 설치하는 방법은 같다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install @scopeName/pacakgeName<br></code></pre></td></tr></table></figure>
+
+<p>다른 게 있다면 위에서 말한 것과 같이 범위가 있는 패키지는 <code>@</code>가 붙고 범위 명칭이 붙기 때문에 패키지 이름에 있어서 주의만 하면 되고 일반 패키지는 <code>node_modules/packageName</code> 설치가 된다면 범위가 있는 패키지는 <code>node_modules/@scopeName/packageName</code>에 설치가 된다.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;@scopeName/packageName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.0.0&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="NPM-Scope의-사용"><a href="#NPM-Scope의-사용" class="headerlink" title="NPM Scope의 사용"></a>NPM Scope의 사용</h1><p><code>require</code>를 통해 <code>NPM Scope</code> 패키지를 사용할 때도 동일하게 <code>@</code> 범위 이름으로 사용하면 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@scopeName/packageName&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="NPM-Scope의-배포"><a href="#NPM-Scope의-배포" class="headerlink" title="NPM Scope의 배포"></a>NPM Scope의 배포</h1><p>위 <code>NPM Scope의 사용</code>하는 방법까지는 일반 패키지와 비슷하지만, 배포부터는 조금 까다롭고 다르다.</p>
+<p><code>NPM Scope 패키지</code>는 일반 패키지와 동일하게 배포할 수는 없다. 배포를 위해서는 두 가지의 NPM Registry 형태로만 가능하다.</p>
+<div class="alert info no-icon"><ol>
+<li>비공개 패키지 게시 권한이 있는 개인 Registry</li>
+<li>조직(Organizations)으로 생성된 Registry</li>
+</ol>
+</div>
+
+<p>위 내용을 토대로 각 Registry에 배포하는 방법을 보자.</p>
+<h2 id="1-비공개-패키지-게시-권한이-있는-개인-Registry"><a href="#1-비공개-패키지-게시-권한이-있는-개인-Registry" class="headerlink" title="1. 비공개 패키지 게시 권한이 있는 개인 Registry"></a>1. 비공개 패키지 게시 권한이 있는 개인 Registry</h2><p>개인 비공개 패키지를 배포하기 위해서는 $7의 결제가 필요하다.<br>7가 아깝다면 여긴 넘어가자.</p>
+<p>만약 개인 비공개 Registry로 업그레이드하였다면 <code>npm publish</code> 또는 <code>npm publish --access=restricted</code>로 모듈을 게시 할 수 있다.</p>
+<h2 id="2-조직-Organizations-으로-생성된-Registry"><a href="#2-조직-Organizations-으로-생성된-Registry" class="headerlink" title="2. 조직(Organizations)으로 생성된 Registry"></a>2. 조직(Organizations)으로 생성된 Registry</h2><h3 id="조직-Organizations-생성"><a href="#조직-Organizations-생성" class="headerlink" title="조직(Organizations) 생성"></a>조직(Organizations) 생성</h3><p>조직으로 생성된 Registry에 배포하기 위해서는 먼저 조직(Organizations)을 생성해야 한다. <a target="_blank" rel="noopener" href="https://www.npmjs.com/">NPM</a>에 로그인 후 개인 Package 항목으로 가서 생성하자.</p>
+<p><img src="/2020/08/31/npm-scope-tutorial/npm-organizations.png" alt="npm-organization"></p>
+<p>조직을 생성하게 되면 아래 그림처럼 현재 계정을 조직으로 변경하거나 새로운 조직을 만들 수 있다. 현재 계정을 변경하게 되면 <code>@계정명</code>과 같이 scope가 생성이 된다. 이 포스팅에서는 <code>devdy</code>라는 새로운 조직으로 생성하겠다.</p>
+<p><img src="/2020/08/31/npm-scope-tutorial/new-organization.png" alt="new-organization"></p>
+<p>조직을 생성하게 되면 기본적으로 <code>Members</code> 탭이 보인다. 조직은 말 그대로 조직이기 때문에 여러 사용자를 포함할 수 있으니 참고하자. 또한 조직은 기본적으로 <code>Public</code> 범위를 가진다. <code>Private</code> 조직을 가지기 위해서는 결제가 필요하니 참고해두자.</p>
+<p><img src="/2020/08/31/npm-scope-tutorial/success-organizations.png" alt="success-organization"></p>
+<h3 id="조직-Organizations-범위로의-배포"><a href="#조직-Organizations-범위로의-배포" class="headerlink" title="조직(Organizations) 범위로의 배포"></a>조직(Organizations) 범위로의 배포</h3><p>이제 생성된 조직에 배포해보자. 여기서 주의할 점은 조직을 생성하였으며 이 조직은 <code>scope</code>가 되기 때문에 패키지 명을 범위에 맞게 지정해야 한다. 여기서 조직명을 <code>devdy</code>로 했기 때문에 패키지 명을 **<code>@devdy/sample-package</code>**로 하겠다.</p>
+<p><code>scope</code>로 생성된 패키지는 일반 <code>npm publish</code> 명령으로 배포하면 오류가 출력된다. 조직 자체의 Registry는 공개이지만 배포에 있어서는 <code>limited</code>로 설정되어 있기 때문에 범위 패키지를 배포하기 위해서는 <code>--access=public</code> 하거나 최초 게시 후 <code>npm access public</code> 명령어를 사용하여 해당 액세스를 공개로 설정해야 한다.</p>
+<p><code>npm publish</code> 시에 <code>--access=public</code> 옵션을 주도록 하자. </p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm publish --access=public<br></code></pre></td></tr></table></figure>
+
+<p>정상적으로 패키지가 배포된 것을 확인하자.</p>
+<p><img src="/2020/08/31/npm-scope-tutorial/publish-package.png" alt="publish-package"></p>
+<div class="alert danger no-icon"><p>NPM Repository에 배포된 패키지는 <strong>72시간</strong>이 지나면 직접 지울 수 없어서 불필요하다면 즉시 삭제하기 바란다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm unpublish @scopeName/packageName -f<br></code></pre></td></tr></table></figure></div>
+
+<h1 id="범위를-가진-Registry에-연결하기"><a href="#범위를-가진-Registry에-연결하기" class="headerlink" title="범위를 가진 Registry에 연결하기"></a>범위를 가진 Registry에 연결하기</h1><p>이 부분은 <strong>NPM Registry가 registry.npmjs.org가 아닌 사설 Registry 이거나 여러 개의 Registry가 필요한 상황</strong>에서의 범위 연결 방법이다.</p>
+<p>N개의 Registry가 존재할 경우 각 Registry는 범위를 지정할 수가 있는데 두 가지 형태로 지정할 수 있다. 이 두 가지에 대하여 간략하게 설명하겠다.</p>
+<div class="alert info no-icon"><ol>
+<li>로그인 시 범위를 가진 Registry 연결</li>
+<li>npm config를 통하여 범위를 가진 Registry 연결</li>
+</ol>
+</div>
+
+
+<p><em>범위는 하나의 Registry와 N:1 관계를 맺는다. 하나의 Registry는 여러 범위에 호스팅할 수 있지만 하나의 범위(scope)는 하나의 Registry만 연결할 수 있다.</em></p>
+<p>이렇게 범위와 Registry를 연결 후 <code>npm install</code>을 통해 node module을 설치할 경우 만약 해당 Registry에 모듈이 없을 때 기본 Registry인 <a target="_blank" rel="noopener" href="https://registry.npmjs.org/%EB%A1%9C">https://registry.npmjs.org/로</a> 연결되게 되어있다.</p>
+<h2 id="1-로그인-시-범위를-가진-Registry-연결"><a href="#1-로그인-시-범위를-가진-Registry-연결" class="headerlink" title="1. 로그인 시 범위를 가진 Registry 연결"></a>1. 로그인 시 범위를 가진 Registry 연결</h2><p>로그인 시 범위를 가진 Registry에 연결하는 방법은 명령어를 통해서 <code>npm login</code> 시 Registry와 범위(scope)를 직접 지정하는 방법이다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm login --registry=REGISTRY_PATH --scope=@SCOPE_NAME<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="2-npm-config를-통하여-범위를-가진-Registry-연결"><a href="#2-npm-config를-통하여-범위를-가진-Registry-연결" class="headerlink" title="2. npm config를 통하여 범위를 가진 Registry 연결"></a>2. npm config를 통하여 범위를 가진 Registry 연결</h2><p>config를 통한 방법은 npm의 설정을 직접 변경하여 Registry 연결과 범위(scope)를 지정하는 방법이다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm config <span class="hljs-built_in">set</span> @SCOPE_NAME:registry REGISTRY_PATH<br></code></pre></td></tr></table></figure>
+
+<p>지정된 registry와 범위(scope)는 <code>.npmrc</code>를 확인해보자.</p>
+<hr>
+<p>NPM 패키지의 <code>scope</code>까지 배웠다면 NPM 패키지 배포에 있어서는 전반적으로 본 것이다.</p>
+<p>필수조건으로 <code>npm scope</code>가 필요한 것은 아니지만 특정 패키지는 협업이 필요할 수도 있다. 여러 패키지의 Owner를 각각 두고 말이다. 이럴 때는 <code>범위(scope)를 가진 패키지</code>가 필요할 것이며, 또한 보통 혼자서 NPM 패키지를 만든다고 하더라도 하나만 만들지는 않을 것이다. 앞으로도 계속 만든다는 가정하에 이제는 <code>범위(scope)가 있는 패키지를</code> 만들도록 하자. </p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2020/09/16/nvm-for-windows/">NVM으로 Windows 환경에서 Node 버전 관리하기</a><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/npm/" rel="tag">npm</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/npm-scope/" rel="tag">npm scope</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/09/16/nvm-for-windows/"
+                    data-tooltip="NVM으로 Windows 환경에서 Node 버전 관리하기"
+                    aria-label="PREVIOUS: NVM으로 Windows 환경에서 Node 버전 관리하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/28/npm-tutorial/"
+                    data-tooltip="빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                    aria-label="NEXT: 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/09/16/nvm-for-windows/"
+                    data-tooltip="NVM으로 Windows 환경에서 Node 버전 관리하기"
+                    aria-label="PREVIOUS: NVM으로 Windows 환경에서 Node 버전 관리하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/28/npm-tutorial/"
+                    data-tooltip="빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                    aria-label="NEXT: 빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/';
+              
+            this.page.identifier = 'npmscopetutorial';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,1022 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Firebase를 활용한 PWA(Progressive Web App) 앱 만들기 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"/>
+    
+        <meta name="keywords" content="firebase,pwa,progressive web app,nodejs,javascript,aws,android,mobile,ios,web,google,native app,mobile web app,hybrid app,realtime database,hosting,authentication">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n\n예전부터 Firebase를 겉핥기식으로나마 다뤄보고 싶었지만 회사 업무 및 특성상 Firebase를 사용해 볼 기회가 없었다. 그러다보니 손을 놓고 있었지만 최근 다시 관심이 생겨서 규모가 작지만 PWA(Progressive Web App)을 만들어 Firebase에 올려보면서 실제로 사용해보기로 하였다. 이러한 과정에서 습득한 내용을 간단하게 공유해보고자한다.\nFirebase 개념만 파악하고 이것만 사용하기에는 피부로 와 닿지 않는 부분이 있어서 실제 업무에 적용해 본다는 느낌으로 간단한 PWA(Progressive Web App)를 만들어 Firebase에 올려보기로 하였다. 이 과정에서 Firebase의 간단한 개념과 PWA(Progressive Web App)에 대한 개념을 알아야하지만, 이런 개념보다는 실제로 PWA 애플리케이션을 만들고, 외부 CI와 연동하여 자동으로 빌드하고, 배포 및 호스팅까지 할수 있는 Firebase와 PWA(Progressive Web App)을 바로 사용할 수 있는 방법을 중점으로 포스팅하겠다.\n해당 포스팅에서 다룰 내용은 간략하게 아래와 같다.\n\n\nFirebase 파악하기\nPWA(Progressive Web App) 파악하기\nVue를 사용하여 Prototype 만들기\nFirebase의 Realtime Database를 활용한 PWA 애플리케이션 데이터 저장하기\nFirebase의 Storage를 활용한 이미지 저장하기\nPWA 애플리케이션을 CircleCI와 연동하여 빌드 및 배포하기\nFirebase를 사용하여 PWA 애플리케이션 호스팅하기\nPWA 애플리케이션을 App Store(Android, IOS)에 업로드하지 않고 모바일에 설치하기\n호스팅된 PWA 애플리케이션을 Google Ananlytics를 통하여 서비스 분석하기\n\n\n다룰 내용이 많아보이지만 하나의 흐름으로 흘러가기 때문에 사실상 많지는 않다.\n이제 하나하나 따라해보도록 하자. 여기서 PWA의 개발은 Vue를 사용하였지만 React나 Angular와 같은 다른 프레임워크를 사용해도 상관없다. Vue에 대해서 아는 바가 없다면 빠르게 배우는 Vue.js를 참고핮.\n위 과정만 잘 파악한다면 앞으로 Firebase를 사용한 애플리케이션 서비스는 쉽게 할 수 있을 것이다.\n그럼 이제 차근차근 보도록 하자.\nFirebase\nFirebase가 성공적인 앱을 빌드하고 실행하도록 도와줍니다.\n\n\nFirebase는 2011년도 Firebase 사(Firebase. inc)에서 개발되어 2014년도 Google에 인수된 모바일&#x2F;웹 서비스 구축에 필요한 도구들의 모음이라고 할 수 있다. 대표적인 기능으로는 사용자 인증(Authentication), 실시간 데이터 베이스(Realtime Database), 리소스 저장소(Storage), 호스팅(Hosting), 단일 함수(Functions) 등이 있다.\n보통 웹을 구축할 때 필요한 지식은 Front-End, Back-End, Database, Publishing, Design 등등으로 방대해야하지만 Firebase를 사용한다면 이 중 일부를 손쉽게 사용할 수 있다. 고도의 서버 구축 지식이 없어도 되며, 특정 OS의 커맨드를 몰라된다. 특히, 웹 서비스에 필요한 도메인 호스팅 역시 제공하므로 별도의 비용을 내면서 도메인을 구입할 필요가 없다.\n플랫폼\nFirebase가 지원하는 플랫폼이다. Web을 포함하여 Android, IOS까지 지원하므로 웹 애플리케이션과 모바일 애플리케이션까지 지원하기에 부족함이 없다.\n우리는 이번 포스팅에서 PWA(Progressive Web App)을 만들 것이기 때문에 Web을  사용할 것이다.\nFirebase의 기능\nAWS(Amazon Web Services)에 비해서는 비교적 적은 기능들이지만 명확한 카테고리들로 구성되어있다.\nFirebase의 기능을 덩어리로 보자면, 앱을 개발&#x2F;구축 및 배포에 필요한 Build(빌드)와 애플리케이션 품질 향상에 필요한 Release &amp; Monotoring(앱 품질 향상) 그리고 서비스의 잠재고객, 유입, 색인 등 비즈니스 적 앱 성장에 필요한 Engage(비즈니스 성장 도구)로 나눌 수 있다.\n하나하나 다 훑어보기에는 양이 꽤 있고 우리는 바로 배워서 바로 써 먹어야하기 때문에 Build(빌드) 항목만 가볍게 보기로 하자.\nCloud Functions\n\n\nBack-End 처리시 사용되며, REST API 제작 가능\n데이터 베이스 제어, 사진 및 동영상 변환, 푸시 전송\n\n\nAuthentication\n\n\n사용자 계정 인증 및 등록 기능 제공\nE-Mail, 전화, SNS 로그인 등의 로그인 방식 제공\n\n\nHosting\n\n\n웹 애플리케이션 호스팅 제공\nCI와 연동하여 배포 가능\n\n\nCloud Storage\n\n\n사진 및 동영상 파일 저장 제공\n기본 5GB 제공\n\n\nRealtime Database\n\n\n실시간 NoSQL 데이터 베이스 제공\n연경된 모든 클라이언트와 실시간 동기화 제공\n\n\nPWA (Progressive Web App)모바일 영역도 웹과 같이 빠른 성장을 보이고 있다. Native App 부터 PWA까지 그 사이에는 수많은 모바일 애플리케이션은 위한 기술과 프레임워크들이 존재한다. PWA 역시 이에 속하며 엄연히 기술이라기 보다는 개념으로 보는 것이 옳다.\nPWA를 설명하기 전에 몇 가지 모바일 애플리케이션을 보고 넘어가자.\nNative ApplicationNative Application은 모바일에 최적화 된 앱이며 앱이 구동되는 플랫폼과 밀착관계에 있다. Android는 SDK를 이용한 Java 언어로 개발되며 IOS는 IOS 기반 SDK를 이용하여 Swift로 개발된다. 여타 다른 형태의 애플리케이션보다 플랫폼과 밀착관계에 있으므로 높은 성능을 보이지만 반대로 플랫폼 및 개발 언어가 한정적이고 하나의 애플리케이션을 두 플랫폼에서 서비스하기 위해서는 중복적으로 개발을 해야한다는 단점이 있다. Native 애플리케이션은 각 플랫폼 Store에 배포하며 서비스를 하기 위해서는 플랫폼에 설치가 필요하다.\n\n\nMobile Web ApplicationMobile Web Application은 Mobile Web과 Native App의 장점을 가져다 만든 개념이다. 플랫폼의 브라우저를 통해 웹을 실행하는 방식으로 반응형 앱이 인기를 끌었으며, SPA (Single Page Application) 방식 도입으로 페이지 간 전환이 라우팅을 통해 빠르게 전환될 수 있다. 웹 앱을 실행을하므로 Native App과는 다르게 플랫폼에 설치가 불필요하다.모든 클라이언트(PC, Mobile)와 브라우저 접근이 가능헀지만 Native App과 같은 친화적 터치 이벤트 구현에 어려움이 있었으며, Native App과 같이 플랫폼과 친화적이지 않기 때문에 카메라와 같은 플랫폼 API 사용에 제한이 있다.\n\n\nHybrid ApplicationHybrid Application은 Native App과 Web App을 합쳐놓은 것과 같다. Native App의 webview를 사용하여 동작되며 Native App 및 Web의 API를 사용하여 다양한 개발이 가능하다. 하지만 두 API를 사용해야하는 것과 같이 Native App 및 Web 기술 지식을 필요로한다.Hybrid Application은 Webview를 사용함으로써 Native App과 다르게 하나의 개발로 모든 플랫폼 및 디바이스에서 사용이 가능하지만 퍼포먼스는 Webview의 성능과 비례한다.\n\n\n다시 본론으로 들어가 PWA (Progressive Web App)에 대해 알아보자.\nPWA는 Progressive Web App으로 처음에 설명했지만 PWA는 하나의 특정 기술로 생성된 새로운 기술이 아닌 일부 패턴, API, 기타 기능을 포함하는 웹 앱을 구축하는 새로운 철학으로 볼 수 있다.\nNative App과 Web App의 장점만 결합된 App으로 Hybrid App과 유사하다. 하지만 엄연히 PWA는 PWA만의 특징을 가지고 있는데 오프라인 동작, 설치가 가능한 App, 푸쉬 알림, 쉬운 동기화 등 있으며 이러한 기능이 구현되었을 때 비로소 PWA (Progressive Web App)으로 볼 수 있다.\nPWA 특징위에서 PWA만의 특징을 몇가지 나열하였는데 가볍게 PWA의 특징에 대해서 알아보자.\nSecure (보안)\n\nPWA는 HTTPS 프로토콜에서만 동작되므로 기본적 안정성 확보\n\nManifest\n\nManifest를 통하여 애플리케이션을 홈 화면 추가함으로써 별도의 설치 없이 Native App의 사용감을 제공\n\nService Worker\n\nService Worker를 사용하여 오프라인에서도 동작되며 백그라운드 동작으로 애플리케이션을 최신 업데이트 상태로 유지 및 캐시 상태로 빠른 리소스 로딩\n\nNative Resource\n\n카메라, 푸쉬 알림 등 Native App의 API 사용 제공\n\nPerformance (성능)\n\n일반적으로 PWA를 채택하고 사용함으로써 애플리케이션 성능이 최대 300% 향상\n\nLightweight (경량화)\n\n경량화\n\nPush Notifications (푸쉬 알림)\n\nNative App과 같은 푸쉬 알림 기능으로 사용자 경험 제공\n\nOffline Browsing (오프라인 동작)\n\nService Worker 브라우저 캐싱으로 오프라인 동작\n\nHome Screen (홈 화면 추가)\n\nManifest를 통해서 설치없이 Native App과 같이 홈 화면에 추가\n\nPlatform\n\n플랫폼에 관계없이 모든 사용자에게 동일한 사용자 경험 제공\n\nUpdate\n\nService Worker로 실시간으로 능동적 애플리케이션 업데이트\n\nPWA Success Stories– PWA success stories 사진 –PWA 개념이 나온 당시에는 빠른 성능이 대표되는 특징이었지만 많은 애플리케이션들이 PWA를 도입하진 않았다. 하지만 이 대표되는 특징 하나로 인해 나비효과와 같이 많은 성공을 나타내는 사례들이 생기면서 점차 서비스 되는 애플리케이션을 PWA로 전향하고 있다.\n기업들 역시 Native App&#x2F;Hybrid App에서 PWA로 전환하면서 많은 이점을 얻었다.\n기업이 PWA 사용으로 인하여 얻은 이점\n\n페이지 전환율 증가\n향상된 사용자 경험\n애플리케이션 유지 비용 감소\n사용자 참여도 상승\n홈 화면에 앱 저장\n\n위 이점으로 인한 기업 수익 증가\n\n\n\n여기까지 Firebase와 PWA (Progressive Web App)에 대한 개념을 알아보았다. 이제 애플리케이션을 만들어서 서비스를 해보도록 하자.\nTo-Do List Application 만들기만들 애플리케이션은 제일 만만한 To-Do List이다.\n사용자 입장의 애플리케이션 기능은 다음과 같다.\nFeatures\n\n사용자는 URL을 통해 애플리케이션에 접속한다. (Firebase - Hosting)\n사용자는 금일 날짜의 To-Do 항목을 생성하고 적당한 타이틀 이미지를 업로드한다. (Firebase - Realtime Database &#x2F; Storage)\n생성한 To-Do 항목에 할 일을 기록&#x2F;편집&#x2F;삭제한다. (Firebase - Realtime Database)\n사용자는 애플리케이션에 자주 접속하기 위해 홈 화면에 추가한다 (PWA - Home Screen)\n\n그리고 개발자 입장의 개발 순서는 다음과 같다.\nFlow\n\n애플리케이션 개발 (Manifest, ServiceWorker)\nFirebase 프로젝트 생성\n외부 CI 연동\nFirebase hosting\nFirebase Realtime Database 및 Storage 생성 및 애플리케이션 API 연동\n\n애플리케이션 예시는 To-Do List 이지만 굳이 따라하지 않고 원하는대로 해도 되며, 예제 코드는 firebase-pwa-sample을 참고하도록하며, 내부 소스 중 firebase 설정에 필요한 ID는 직접 입력하도록 하자.\n소스코드에 대한 설명은 넘어가고, 2.Firebase 프로젝트 생성 부터 진행하도록 하겠다.\nFirebase 프로젝트 생성Firebase 설정Firebase 공식 사이트에 접속하고 프로젝트를 생성하자.\n처음 프로젝트를 생성 시 적당한 프로젝트 이름을 입력하자. 이후 필요시 애플리케이션 또는 사이트의 분석을 위해 Google Analytics 연동하자.\n\n이렇게 3단계의 설정만 진행하면 하나의 프로젝트를 만들 수 있다. \n프로젝트를 생성하였으니 이제 이 프로젝트에 추가할 앱을 설정하자. IOS, Android, Web 중 우리는 Web을 선택하도록 하자.\n\n그러면 애플리케이션에 대한 닉네임, 호스팅 주소, Firebase SDK, Firebase CLI 설치 등 정보를 입력할 수 있다. \n\n여기서 Firebase SDK의 경우 apikey, project Id 등 애플리케이션에 필요한 정보가 들어 있다. 이 정보를 예제 코드인 firebase-pwa-sample에서 아래와 같이 입력하자.\nfirebase.config.js\nexport default &#123;  apiKey: &#x27;&#x27;,  authDomain: &#x27;&#x27;,  databaseURL: &#x27;&#x27;,  projectId: &#x27;&#x27;,  storageBucket: &#x27;&#x27;,  messagingSenderId: &#x27;&#x27;,  appId: &#x27;&#x27;,  measurementId: &#x27;&#x27;&#125;\n\n이제 로컬에서 firebase를 컨트롤하기 위해 절차대로 Firebase CLI인 firebase-tools를 설치하자.\n\n$ npm i -g firebase$ npm i -g firebase-tools\n\nFirebase CLI를 설치하였다면 명령 프롬프트를 통해서 firebase에 로그인이 가능하다. \n\n$ firebase login\n\n예제를 생성한 프로젝트에서 firebae init을 통해 Firebase 프로젝트로 초기화하도록하자.\n$ firebase init\n\n\n기본적으로 .firebaserc 와 database.rules.json, firebase.json, storage.rules 파일이 생성되었을 것이다.\n우리가 사용할 기능은 Realtime Database, Hosting, Storage 이기 때문에 각 파일들을 설정해주도록 하자.\n.firebaserc\n&#123;  &quot;projects&quot;: &#123;    &quot;default&quot;: &quot;todo-tutorial-4ccd2&quot;  &#125;&#125;\n\ndatabase.rules.json\n&#123;  &quot;rules&quot;: &#123;    &quot;.read&quot;: true,    &quot;.write&quot;: true  &#125;&#125;\n\nfirebase.json\n&#123;  &quot;database&quot;: &#123;    &quot;rules&quot;: &quot;database.rules.json&quot;  &#125;,  &quot;hosting&quot;: &#123;    &quot;site&quot;: &quot;pwa-todo-tutorial&quot;,    &quot;public&quot;: &quot;dist&quot;,    &quot;ignore&quot;: [      &quot;firebase.json&quot;,      &quot;**/.*&quot;,      &quot;**/node_modules/**&quot;    ],    &quot;rewrites&quot;: [      &#123;        &quot;source&quot;: &quot;**&quot;,        &quot;destination&quot;: &quot;/index.html&quot;      &#125;    ]  &#125;,  &quot;storage&quot;: &#123;    &quot;rules&quot;: &quot;storage.rules&quot;  &#125;&#125;\n\n여기까지 진행하였다면 웹 애플리케이션이 생성되었을 것이고 여기서 프로젝트 정보 및 애플리케이션 정보와 위에서 입력한 Firebase API 정보를 볼 수 있다.\n\nHosting호스팅의 경우 애플리케이션을 배포 할 경우 자동으로 호스팅이 된다. 또한 위에서 호스팅을 위해 배포 할 시 배포되는 정보를 firebase.json에 입력하였었다.\n\n배포는 아래 명령어로 실행할 수 있지만 우리는 외부 CI와 연동 할 것이다.\n$ firebase deploy --only hosting: pwa-todo-tutorial\n\nRealtime DatabaseFirebase에서 Realtime Database 메뉴에 접속하여 데이터베이스를 생성하자.\n\n설정을 어떻게 하여도 테스트 용도이기에 무방하지만 설정 이후 Rules 탭에서 규칙을 아래와 같이 수정하도록하자.권한을 주지 않으면 이후 테스트 중 데이터베이스를 사용할 수 없다.\n&#123;  &quot;rules&quot;: &#123;    &quot;.read&quot;: true,    &quot;.write&quot;: true  &#125;&#125;\n\n\nStorageStorage 역시 데이터베이스와 동일하게 설정하고 Rules 탭에서 규칙을 수정하도록하자.\n\nrules_version = &#x27;2&#x27;;service firebase.storage &#123;  match /b/&#123;bucket&#125;/o &#123;    match /&#123;allPaths=**&#125; &#123;      allow write: if true;      allow read: if true;    &#125;  &#125;&#125;\n\n여기까지 진행하였다면 Firebase의 호스팅, Realtime Database, Storage를 모두 사용할 수 있다. 예제 프로젝트이기에 설정이 매우 간편한 편이다.\n배포가 궁금하다면 미리 배포 후 URL로 접속해보도록하자.\nCI애플리케이션을 매번 수정 후 배포할 수 없기에 보통 Jenkins, Travis CI, Circle CI 등 CI의 도움을 받아 자동으로 빌드하여 배포하도록 한다.\n이 포스트에서는 Circle CI를 사용할 것이다. \nCircle CI 가입 후 프로젝트를 연동해보자. CI를 사용할 때는 애플리케이션 프로젝트 경로에 .circleci 폴더가 있고 안에는 config.yml로 CircleCI에 대한 동작 방식들을 지정할 수 있다.\n.circleci&#x2F;config.yml\nversion: 2jobs:  build:    docker:      - image: circleci/node:14.9.0    working_directory: ~/repo    steps:      - checkout      -       - restore_cache:          keys: v1-dependencies-&#123;&#123; checksum &quot;package.json&quot; &#125;&#125;                - run:          name: Install Dependencies          command: npm install                - save_cache:          key: v1-npm-deps-&#123;&#123; checksum &quot;package-lock.json&quot; &#125;&#125;          paths:            - ./node_modules                  - run:          name: Build          command: npm run build                - run:          name: Firebase Deploy          command: ./node_modules/.bin/firebase deploy --token &quot;$FIREBASE_TOKEN&quot; --only hosting:pwa-todo-tutorial\n\n위 설정에서 맨 마지막 ./node_modules/.bin/firebase deploy --token &quot;$FIREBASE_TOKEN&quot; --only hosting:pwa-todo-tutorial 코드를 보게 되면 빌드 후 FIREBASE에 배포하게 된다. 하지만 외부 CI에서 배포이기에 CircleCI에서 Firebase에 접근할 수 있는 권한을 줘야하기 때문에 $FIREBASE_TOKEN을 사용한다. 토큰은 뒤에서 설명하기로하고 우선 CircleCI와 Github를 연동하도록하자.\nSet Up Project를 클릭하여 프로젝트 설정을 진행하자.\n\n위에서 설명한 .circleci 설정을 git에 올렸다면 기존 설정을 사용할 수 있다.\n연동이 끝나면 아래와 같이 config.yml에 명시한 jobs대로 빌드와 배포를 진행하게 된다. 하지만 위에서 설명하였듯 아직 $FIREBASE_TOKEN을 CircleCI에 정의하지 않았기 때문에 빌드는 실패 할 것이다.\nFIREBASE TOKEN아래 명령어를 통해서 ci token을 생성할 수 있다.\nfirebase ci:login\n\n웹을 통해 로그인 시 아래와 같이 token 정보가 생성된다.\n\n이 토큰을 Circle CI의 프로젝트 설정에 환경 변수로 지정하도록하자.\n\n이렇게 되면 ci를 통해 빌드 후 Firebase에 배포까지 완료된다.\nPWA workbox 설치PWA의 workbox는 pwa의 service-worker 또는 캐싱 기능을 편리하게 구현할 수 있도록 지원해주는 PWA의 라이브러리이다. \nworkbox-cli를 통해서 기본적인 pwa의  \n설치\nnpm install workbox-cli -g\n\n사용\nworkbox wizardworkbox generateSW ./workbox-config.jsworkbox injectManifest ./workbox-config.js\n\n\n\n더 알아보기[Deno] Node.js의 대안!! Deno 알아보기Performant NPM - PNPM[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정Vanilla JS에서 SPA 라우팅 시스템 구현하기오픈 소스(Open-Source) 구조와 모듈 파악하기Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.\n","dateCreated":"2022-03-04T12:52:05+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2022-03-04T12:52:05+00:00","description":"\n\n이번 포스팅에서는 Firebase의 간단한 개념과 PWA(Progressive Web App)에 대한 개념을 알아야하지만, 이런 개념보다는 실제로 PWA 애플리케이션을 만들고, 외부 CI와 연동하여 자동으로 빌드하고, 배포 및 호스팅까지 할수 있는 Firebase와 PWA(Progressive Web App)을 바로 사용할 수 있는 방법을 중점으로 포스팅하겠다.\n","headline":"Firebase를 활용한 PWA(Progressive Web App) 앱 만들기","image":["firebase-pwa-tutorial-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/","keywords":"javascript, nodejs, firebase, pwa, progressive web app, aws, android, mobile, ios, web, google, native app, mobile web app, hybrid app","thumbnailUrl":"firebase-pwa-tutorial-cover.png"}</script>
+    <meta name="description" content="이번 포스팅에서는 Firebase의 간단한 개념과 PWA(Progressive Web App)에 대한 개념을 알아야하지만, 이런 개념보다는 실제로 PWA 애플리케이션을 만들고, 외부 CI와 연동하여 자동으로 빌드하고, 배포 및 호스팅까지 할수 있는 Firebase와 PWA(Progressive Web App)을 바로 사용할 수 있는 방법을 중점으로 포스">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Firebase를 활용한 PWA(Progressive Web App) 앱 만들기">
+<meta property="og:url" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="이번 포스팅에서는 Firebase의 간단한 개념과 PWA(Progressive Web App)에 대한 개념을 알아야하지만, 이런 개념보다는 실제로 PWA 애플리케이션을 만들고, 외부 CI와 연동하여 자동으로 빌드하고, 배포 및 호스팅까지 할수 있는 Firebase와 PWA(Progressive Web App)을 바로 사용할 수 있는 방법을 중점으로 포스">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-pwa-tutorial-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-platform.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-features.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-4.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-5.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-6.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-7.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-8.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/cli-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/cli-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/cli-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-9.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-10.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-11.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/hosting-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/hosting-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/hosting-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/realtimedatabase-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/realtimedatabase-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/realtimedatabase-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/realtimedatabase-4.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/storage-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/storage-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/storage-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/storage-4.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/ci-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/ci-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/ci-3.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-login-ci-token.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-ci-token-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-ci-token-2.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/workbox-1.png">
+<meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/workbox-2.png">
+<meta property="article:published_time" content="2022-03-04T12:52:05.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.761Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="firebase">
+<meta property="article:tag" content="pwa">
+<meta property="article:tag" content="progressive web app">
+<meta property="article:tag" content="aws">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="mobile">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="google">
+<meta property="article:tag" content="native app">
+<meta property="article:tag" content="mobile web app">
+<meta property="article:tag" content="hybrid app">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-pwa-tutorial-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-pwa-tutorial-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/firebase-pwa-tutorial-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Firebase를 활용한 PWA(Progressive Web App) 앱 만들기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-03-04T12:52:05+00:00">
+	
+		    2022-03-04
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/pwa/">pwa</a>, <a class="category-link" href="/categories/javascript/nodejs/pwa/firebase/">firebase</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+
+<!-- excerpt -->
+
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-pwa-tutorial-cover.png" alt="firebase-pwa-tutorial-cover"></p>
+<p>예전부터 <code>Firebase</code>를 겉핥기식으로나마 다뤄보고 싶었지만 회사 업무 및 특성상 Firebase를 사용해 볼 기회가 없었다. 그러다보니 손을 놓고 있었지만 최근 다시 관심이 생겨서 규모가 작지만 <code>PWA(Progressive Web App)</code>을 만들어 Firebase에 올려보면서 실제로 사용해보기로 하였다. 이러한 과정에서 습득한 내용을 간단하게 공유해보고자한다.</p>
+<p><code>Firebase</code> 개념만 파악하고 이것만 사용하기에는 피부로 와 닿지 않는 부분이 있어서 실제 업무에 적용해 본다는 느낌으로 간단한 PWA(Progressive Web App)를 만들어 Firebase에 올려보기로 하였다. 이 과정에서 Firebase의 간단한 개념과 PWA(Progressive Web App)에 대한 개념을 알아야하지만, 이런 개념보다는 <strong>실제로 PWA 애플리케이션을 만들고, 외부 CI와 연동하여 자동으로 빌드하고, 배포 및 호스팅</strong>까지 할수 있는 <code>Firebase와 PWA(Progressive Web App)을 바로 사용</code>할 수 있는 방법을 중점으로 포스팅하겠다.</p>
+<p>해당 포스팅에서 다룰 내용은 간략하게 아래와 같다.</p>
+<blockquote>
+<ol>
+<li>Firebase 파악하기</li>
+<li>PWA(Progressive Web App) 파악하기</li>
+<li>Vue를 사용하여 Prototype 만들기</li>
+<li>Firebase의 Realtime Database를 활용한 PWA 애플리케이션 데이터 저장하기</li>
+<li>Firebase의 Storage를 활용한 이미지 저장하기</li>
+<li>PWA 애플리케이션을 CircleCI와 연동하여 빌드 및 배포하기</li>
+<li>Firebase를 사용하여 PWA 애플리케이션 호스팅하기</li>
+<li>PWA 애플리케이션을 App Store(Android, IOS)에 업로드하지 않고 모바일에 설치하기</li>
+<li>호스팅된 PWA 애플리케이션을 Google Ananlytics를 통하여 서비스 분석하기</li>
+</ol>
+</blockquote>
+<p>다룰 내용이 많아보이지만 하나의 흐름으로 흘러가기 때문에 사실상 많지는 않다.</p>
+<p>이제 하나하나 따라해보도록 하자. 여기서 PWA의 개발은 <code>Vue</code>를 사용하였지만 <code>React</code>나 <code>Angular</code>와 같은 다른 프레임워크를 사용해도 상관없다. <code>Vue</code>에 대해서 아는 바가 없다면 <a href="https://kdydesign.github.io/2017/11/15/vuejs-tutorial/">빠르게 배우는 Vue.js</a>를 참고핮.</p>
+<p>위 과정만 잘 파악한다면 앞으로 Firebase를 사용한 애플리케이션 서비스는 쉽게 할 수 있을 것이다.</p>
+<p>그럼 이제 차근차근 보도록 하자.</p>
+<h1 id="Firebase"><a href="#Firebase" class="headerlink" title="Firebase"></a>Firebase</h1><hr>
+<p style="text-align: center;font-weight: bold">Firebase가 성공적인 앱을 빌드하고 실행하도록 도와줍니다.</p>
+
+<hr>
+<p><code>Firebase</code>는 2011년도 Firebase 사(Firebase. inc)에서 개발되어 2014년도 Google에 인수된 모바일&#x2F;웹 서비스 구축에 필요한 도구들의 모음이라고 할 수 있다. 대표적인 기능으로는 <code>사용자 인증(Authentication)</code>, <code>실시간 데이터 베이스(Realtime Database)</code>, <code>리소스 저장소(Storage)</code>, <code>호스팅(Hosting)</code>, <code>단일 함수(Functions)</code> 등이 있다.</p>
+<p>보통 웹을 구축할 때 필요한 지식은 <code>Front-End</code>, <code>Back-End</code>, <code>Database,</code> <code>Publishing</code>, <code>Design</code> 등등으로 방대해야하지만 Firebase를 사용한다면 이 중 일부를 손쉽게 사용할 수 있다. 고도의 서버 구축 지식이 없어도 되며, 특정 OS의 커맨드를 몰라된다. 특히, 웹 서비스에 필요한 도메인 호스팅 역시 제공하므로 별도의 비용을 내면서 도메인을 구입할 필요가 없다.</p>
+<h2 id="플랫폼"><a href="#플랫폼" class="headerlink" title="플랫폼"></a>플랫폼</h2><p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-platform.png" alt="firebase-platform"></p>
+<p>Firebase가 지원하는 플랫폼이다. Web을 포함하여 Android, IOS까지 지원하므로 웹 애플리케이션과 모바일 애플리케이션까지 지원하기에 부족함이 없다.</p>
+<p>우리는 이번 포스팅에서 PWA(Progressive Web App)을 만들 것이기 때문에 <code>Web</code>을  사용할 것이다.</p>
+<h2 id="Firebase의-기능"><a href="#Firebase의-기능" class="headerlink" title="Firebase의 기능"></a>Firebase의 기능</h2><p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-features.png" alt="firebase-features"></p>
+<p><code>AWS(Amazon Web Services)</code>에 비해서는 비교적 적은 기능들이지만 명확한 카테고리들로 구성되어있다.</p>
+<p><code>Firebase</code>의 기능을 덩어리로 보자면, 앱을 개발&#x2F;구축 및 배포에 필요한 <code>Build(빌드)</code>와 애플리케이션 품질 향상에 필요한 <code>Release &amp; Monotoring(앱 품질 향상)</code> 그리고 서비스의 잠재고객, 유입, 색인 등 비즈니스 적 앱 성장에 필요한 <code>Engage(비즈니스 성장 도구)</code>로 나눌 수 있다.</p>
+<p>하나하나 다 훑어보기에는 양이 꽤 있고 우리는 바로 배워서 바로 써 먹어야하기 때문에 <code>Build(빌드)</code> 항목만 가볍게 보기로 하자.</p>
+<p><strong>Cloud Functions</strong></p>
+<blockquote>
+<ul>
+<li>Back-End 처리시 사용되며, REST API 제작 가능</li>
+<li>데이터 베이스 제어, 사진 및 동영상 변환, 푸시 전송</li>
+</ul>
+</blockquote>
+<p><strong>Authentication</strong></p>
+<blockquote>
+<ul>
+<li>사용자 계정 인증 및 등록 기능 제공</li>
+<li>E-Mail, 전화, SNS 로그인 등의 로그인 방식 제공</li>
+</ul>
+</blockquote>
+<p><strong>Hosting</strong></p>
+<blockquote>
+<ul>
+<li>웹 애플리케이션 호스팅 제공</li>
+<li>CI와 연동하여 배포 가능</li>
+</ul>
+</blockquote>
+<p><strong>Cloud Storage</strong></p>
+<blockquote>
+<ul>
+<li>사진 및 동영상 파일 저장 제공</li>
+<li>기본 5GB 제공</li>
+</ul>
+</blockquote>
+<p><strong>Realtime Database</strong></p>
+<blockquote>
+<ul>
+<li>실시간 NoSQL 데이터 베이스 제공</li>
+<li>연경된 모든 클라이언트와 실시간 동기화 제공</li>
+</ul>
+</blockquote>
+<h1 id="PWA-Progressive-Web-App"><a href="#PWA-Progressive-Web-App" class="headerlink" title="PWA (Progressive Web App)"></a>PWA (Progressive Web App)</h1><p>모바일 영역도 웹과 같이 빠른 성장을 보이고 있다. <code>Native App</code> 부터 <code>PWA</code>까지 그 사이에는 수많은 모바일 애플리케이션은 위한 기술과 프레임워크들이 존재한다. PWA 역시 이에 속하며 엄연히 기술이라기 보다는 개념으로 보는 것이 옳다.</p>
+<p>PWA를 설명하기 전에 몇 가지 모바일 애플리케이션을 보고 넘어가자.</p>
+<div class="alert info no-icon"><p><strong>Native Application</strong><br><code>Native Application</code>은 모바일에 최적화 된 앱이며 앱이 구동되는 플랫폼과 밀착관계에 있다. Android는 SDK를 이용한 Java 언어로 개발되며 IOS는 IOS 기반 SDK를 이용하여 Swift로 개발된다. 여타 다른 형태의 애플리케이션보다 플랫폼과 밀착관계에 있으므로 높은 성능을 보이지만 반대로 플랫폼 및 개발 언어가 한정적이고 하나의 애플리케이션을 두 플랫폼에서 서비스하기 위해서는 중복적으로 개발을 해야한다는 단점이 있다. Native 애플리케이션은 각 플랫폼 Store에 배포하며 서비스를 하기 위해서는 플랫폼에 설치가 필요하다.</p>
+</div>
+
+<div class="alert info no-icon"><p><strong>Mobile Web Application</strong><br><code>Mobile Web Application</code>은 <code>Mobile Web</code>과 <code>Native App</code>의 장점을 가져다 만든 개념이다. 플랫폼의 브라우저를 통해 웹을 실행하는 방식으로 반응형 앱이 인기를 끌었으며, <code>SPA (Single Page Application)</code> 방식 도입으로 페이지 간 전환이 라우팅을 통해 빠르게 전환될 수 있다. 웹 앱을 실행을하므로 Native App과는 다르게 플랫폼에 설치가 불필요하다.<br>모든 클라이언트(PC, Mobile)와 브라우저 접근이 가능헀지만 Native App과 같은 친화적 터치 이벤트 구현에 어려움이 있었으며, Native App과 같이 플랫폼과 친화적이지 않기 때문에 카메라와 같은 플랫폼 API 사용에 제한이 있다.</p>
+</div>
+
+<div class="alert info no-icon"><p><strong>Hybrid Application</strong><br><code>Hybrid Application</code>은 <code>Native App</code>과 <code>Web App</code>을 합쳐놓은 것과 같다. Native App의 <code>webview</code>를 사용하여 동작되며 Native App 및 Web의 API를 사용하여 다양한 개발이 가능하다. 하지만 두 API를 사용해야하는 것과 같이 Native App 및 Web 기술 지식을 필요로한다.<br>Hybrid Application은 Webview를 사용함으로써 Native App과 다르게 하나의 개발로 모든 플랫폼 및 디바이스에서 사용이 가능하지만 퍼포먼스는 Webview의 성능과 비례한다.</p>
+</div>
+
+<p>다시 본론으로 들어가 <code>PWA (Progressive Web App)</code>에 대해 알아보자.</p>
+<p>PWA는 <strong>Progressive Web App</strong>으로 처음에 설명했지만 <strong>PWA는 하나의 특정 기술로 생성된 새로운 기술이 아닌 일부 패턴, API, 기타 기능을 포함하는 웹 앱을 구축하는 새로운 철학</strong>으로 볼 수 있다.</p>
+<p><code>Native App</code>과 <code>Web App</code>의 장점만 결합된 App으로 <code>Hybrid App</code>과 유사하다. 하지만 엄연히 PWA는 PWA만의 특징을 가지고 있는데 <strong>오프라인 동작</strong>, <strong>설치가 가능한 App</strong>, <strong>푸쉬 알림</strong>, <strong>쉬운 동기화</strong> 등 있으며 이러한 기능이 구현되었을 때 비로소 <code>PWA (Progressive Web App)</code>으로 볼 수 있다.</p>
+<h2 id="PWA-특징"><a href="#PWA-특징" class="headerlink" title="PWA 특징"></a>PWA 특징</h2><p>위에서 PWA만의 특징을 몇가지 나열하였는데 가볍게 PWA의 특징에 대해서 알아보자.</p>
+<p><strong>Secure (보안)</strong></p>
+<blockquote>
+<p>PWA는 HTTPS 프로토콜에서만 동작되므로 기본적 안정성 확보</p>
+</blockquote>
+<p><strong>Manifest</strong></p>
+<blockquote>
+<p><code>Manifest</code>를 통하여 애플리케이션을 홈 화면 추가함으로써 별도의 설치 없이 Native App의 사용감을 제공</p>
+</blockquote>
+<p><strong>Service Worker</strong></p>
+<blockquote>
+<p><code>Service Worker</code>를 사용하여 오프라인에서도 동작되며 백그라운드 동작으로 애플리케이션을 최신 업데이트 상태로 유지 및 캐시 상태로 빠른 리소스 로딩</p>
+</blockquote>
+<p><strong>Native Resource</strong></p>
+<blockquote>
+<p>카메라, 푸쉬 알림 등 Native App의 API 사용 제공</p>
+</blockquote>
+<p><strong>Performance (성능)</strong></p>
+<blockquote>
+<p>일반적으로 PWA를 채택하고 사용함으로써 애플리케이션 성능이 최대 300% 향상</p>
+</blockquote>
+<p><strong>Lightweight (경량화)</strong></p>
+<blockquote>
+<p>경량화</p>
+</blockquote>
+<p><strong>Push Notifications (푸쉬 알림)</strong></p>
+<blockquote>
+<p>Native App과 같은 푸쉬 알림 기능으로 사용자 경험 제공</p>
+</blockquote>
+<p><strong>Offline Browsing (오프라인 동작)</strong></p>
+<blockquote>
+<p><code>Service Worker</code> 브라우저 캐싱으로 오프라인 동작</p>
+</blockquote>
+<p><strong>Home Screen (홈 화면 추가)</strong></p>
+<blockquote>
+<p>Manifest를 통해서 설치없이 Native App과 같이 홈 화면에 추가</p>
+</blockquote>
+<p><strong>Platform</strong></p>
+<blockquote>
+<p>플랫폼에 관계없이 모든 사용자에게 동일한 사용자 경험 제공</p>
+</blockquote>
+<p><strong>Update</strong></p>
+<blockquote>
+<p><code>Service Worker</code>로 실시간으로 능동적 애플리케이션 업데이트</p>
+</blockquote>
+<h2 id="PWA-Success-Stories"><a href="#PWA-Success-Stories" class="headerlink" title="PWA Success Stories"></a>PWA Success Stories</h2><p>– PWA success stories 사진 –<br>PWA 개념이 나온 당시에는 <code>빠른 성능</code>이 대표되는 특징이었지만 많은 애플리케이션들이 PWA를 도입하진 않았다. 하지만 이 대표되는 특징 하나로 인해 나비효과와 같이 많은 성공을 나타내는 사례들이 생기면서 점차 서비스 되는 애플리케이션을 PWA로 전향하고 있다.</p>
+<p>기업들 역시 Native App&#x2F;Hybrid App에서 PWA로 전환하면서 많은 이점을 얻었다.</p>
+<div class="alert info no-icon"><p><strong>기업이 PWA 사용으로 인하여 얻은 이점</strong></p>
+<ul>
+<li>페이지 전환율 증가</li>
+<li>향상된 사용자 경험</li>
+<li>애플리케이션 유지 비용 감소</li>
+<li>사용자 참여도 상승</li>
+<li>홈 화면에 앱 저장</li>
+</ul>
+<p><strong>위 이점으로 인한 기업 수익 증가</strong></p>
+</div>
+
+<hr>
+<p>여기까지 <code>Firebase</code>와 <code>PWA (Progressive Web App)</code>에 대한 개념을 알아보았다. 이제 애플리케이션을 만들어서 서비스를 해보도록 하자.</p>
+<h1 id="To-Do-List-Application-만들기"><a href="#To-Do-List-Application-만들기" class="headerlink" title="To-Do List Application 만들기"></a>To-Do List Application 만들기</h1><p>만들 애플리케이션은 제일 만만한 <code>To-Do List</code>이다.</p>
+<p>사용자 입장의 애플리케이션 기능은 다음과 같다.</p>
+<p><strong>Features</strong></p>
+<ol>
+<li>사용자는 URL을 통해 애플리케이션에 접속한다. (Firebase - Hosting)</li>
+<li>사용자는 금일 날짜의 To-Do 항목을 생성하고 적당한 타이틀 이미지를 업로드한다. (Firebase - Realtime Database &#x2F; Storage)</li>
+<li>생성한 To-Do 항목에 할 일을 기록&#x2F;편집&#x2F;삭제한다. (Firebase - Realtime Database)</li>
+<li>사용자는 애플리케이션에 자주 접속하기 위해 홈 화면에 추가한다 (PWA - Home Screen)</li>
+</ol>
+<p>그리고 개발자 입장의 개발 순서는 다음과 같다.</p>
+<p><strong>Flow</strong></p>
+<ol>
+<li>애플리케이션 개발 (Manifest, ServiceWorker)</li>
+<li>Firebase 프로젝트 생성</li>
+<li>외부 CI 연동</li>
+<li>Firebase hosting</li>
+<li>Firebase Realtime Database 및 Storage 생성 및 애플리케이션 API 연동</li>
+</ol>
+<p>애플리케이션 예시는 To-Do List 이지만 굳이 따라하지 않고 원하는대로 해도 되며, 예제 코드는 <a target="_blank" rel="noopener" href="https://github.com/kdydesign/blog-firebase-pwa-sample">firebase-pwa-sample</a>을 참고하도록하며, <strong>내부 소스 중 firebase 설정에 필요한 ID는 직접 입력</strong>하도록 하자.</p>
+<p>소스코드에 대한 설명은 넘어가고, <code>2.Firebase 프로젝트 생성</code> 부터 진행하도록 하겠다.</p>
+<h2 id="Firebase-프로젝트-생성"><a href="#Firebase-프로젝트-생성" class="headerlink" title="Firebase 프로젝트 생성"></a>Firebase 프로젝트 생성</h2><h3 id="Firebase-설정"><a href="#Firebase-설정" class="headerlink" title="Firebase 설정"></a>Firebase 설정</h3><p><a target="_blank" rel="noopener" href="https://firebase.google.com/">Firebase 공식</a> 사이트에 접속하고 프로젝트를 생성하자.</p>
+<p>처음 프로젝트를 생성 시 적당한 프로젝트 이름을 입력하자. 이후 필요시 애플리케이션 또는 사이트의 분석을 위해 Google Analytics 연동하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-1.png" alt="firebase-tutorial-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-2.png" alt="firebase-tutorial-2"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-3.png" alt="firebase-tutorial-3"></p>
+<p>이렇게 3단계의 설정만 진행하면 하나의 프로젝트를 만들 수 있다. </p>
+<p>프로젝트를 생성하였으니 이제 이 프로젝트에 추가할 앱을 설정하자. <code>IOS</code>, <code>Android</code>, <code>Web</code> 중 우리는 <code>Web</code>을 선택하도록 하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-4.png" alt="firebase-tutorial-4"></p>
+<p>그러면 애플리케이션에 대한 닉네임, 호스팅 주소, Firebase SDK, Firebase CLI 설치 등 정보를 입력할 수 있다. </p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-5.png" alt="firebase-tutorial-5"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-6.png" alt="firebase-tutorial-6"></p>
+<p>여기서 <code>Firebase SDK</code>의 경우 apikey, project Id 등 애플리케이션에 필요한 정보가 들어 있다. 이 정보를 예제 코드인 <a target="_blank" rel="noopener" href="https://github.com/kdydesign/blog-firebase-pwa-sample">firebase-pwa-sample</a>에서 아래와 같이 입력하자.</p>
+<p><strong>firebase.config.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;<br>  <span class="hljs-attr">apiKey</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">authDomain</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">databaseURL</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">projectId</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">storageBucket</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">messagingSenderId</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-attr">measurementId</span>: <span class="hljs-string">&#x27;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>이제 로컬에서 firebase를 컨트롤하기 위해 절차대로 Firebase CLI인 <code>firebase-tools</code>를 설치하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-7.png" alt="firebase-tutorial-7"></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">npm i -g firebase</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">npm i -g firebase-tools</span><br></code></pre></td></tr></table></figure>
+
+<p>Firebase CLI를 설치하였다면 명령 프롬프트를 통해서 firebase에 로그인이 가능하다. </p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-8.png" alt="firebase-tutorial-8"></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">firebase login</span><br></code></pre></td></tr></table></figure>
+
+<p>예제를 생성한 프로젝트에서 <code>firebae init</code>을 통해 Firebase 프로젝트로 초기화하도록하자.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">firebase init</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/firebase-pwa-tutorial/cli-1.png" alt="cli-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/cli-2.png" alt="cli-2"><br><img src="/2022/03/04/firebase-pwa-tutorial/cli-3.png" alt="cli-3"></p>
+<p>기본적으로 <code>.firebaserc</code> 와 <code>database.rules.json</code>, <code>firebase.json</code>, <code>storage.rules</code> 파일이 생성되었을 것이다.</p>
+<p>우리가 사용할 기능은 <code>Realtime Database</code>, <code>Hosting</code>, <code>Storage</code> 이기 때문에 각 파일들을 설정해주도록 하자.</p>
+<p><strong>.firebaserc</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;projects&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;default&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;todo-tutorial-4ccd2&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>database.rules.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;.read&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;.write&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>firebase.json</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;database&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;database.rules.json&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;hosting&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;site&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pwa-todo-tutorial&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;public&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;dist&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;ignore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>      <span class="hljs-string">&quot;firebase.json&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-string">&quot;**/.*&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-string">&quot;**/node_modules/**&quot;</span><br>    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;rewrites&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>      <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;**&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;destination&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/index.html&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;storage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;storage.rules&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>여기까지 진행하였다면 웹 애플리케이션이 생성되었을 것이고 여기서 프로젝트 정보 및 애플리케이션 정보와 위에서 입력한 Firebase API 정보를 볼 수 있다.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-9.png" alt="firebase-tutorial-9"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-10.png" alt="firebase-tutorial-10"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-tutorial-11.png" alt="firebase-tutorial-11"></p>
+<h3 id="Hosting"><a href="#Hosting" class="headerlink" title="Hosting"></a>Hosting</h3><p>호스팅의 경우 애플리케이션을 배포 할 경우 자동으로 호스팅이 된다. 또한 위에서 호스팅을 위해 배포 할 시 배포되는 정보를 <code>firebase.json</code>에 입력하였었다.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/hosting-1.png" alt="hosting-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/hosting-2.png" alt="hosting-2"><br><img src="/2022/03/04/firebase-pwa-tutorial/hosting-3.png" alt="hosting-3"></p>
+<p>배포는 아래 명령어로 실행할 수 있지만 우리는 외부 CI와 연동 할 것이다.</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">firebase deploy --only hosting: pwa-todo-tutorial</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Realtime-Database"><a href="#Realtime-Database" class="headerlink" title="Realtime Database"></a>Realtime Database</h2><p>Firebase에서 Realtime Database 메뉴에 접속하여 데이터베이스를 생성하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/realtimedatabase-1.png" alt="realtimedatabase-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/realtimedatabase-2.png" alt="realtimedatabase-2"><br><img src="/2022/03/04/firebase-pwa-tutorial/realtimedatabase-3.png" alt="realtimedatabase-3"><br><img src="/2022/03/04/firebase-pwa-tutorial/realtimedatabase-4.png" alt="realtimedatabase-4"></p>
+<p>설정을 어떻게 하여도 테스트 용도이기에 무방하지만 설정 이후 <strong>Rules</strong> 탭에서 규칙을 아래와 같이 수정하도록하자.<br>권한을 주지 않으면 이후 테스트 중 데이터베이스를 사용할 수 없다.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;.read&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;.write&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+
+<h3 id="Storage"><a href="#Storage" class="headerlink" title="Storage"></a>Storage</h3><p>Storage 역시 데이터베이스와 동일하게 설정하고 <strong>Rules</strong> 탭에서 규칙을 수정하도록하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/storage-1.png" alt="storage-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/storage-2.png" alt="storage-2"><br><img src="/2022/03/04/firebase-pwa-tutorial/storage-3.png" alt="storage-3"><br><img src="/2022/03/04/firebase-pwa-tutorial/storage-4.png" alt="storage-4"></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">rules_version = &#x27;2&#x27;;<br>service firebase.storage &#123;<br>  match /b/&#123;bucket&#125;/o &#123;<br>    match /&#123;allPaths=**&#125; &#123;<br>      allow write: if true;<br>      allow read: if true;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>여기까지 진행하였다면 Firebase의 호스팅, Realtime Database, Storage를 모두 사용할 수 있다. 예제 프로젝트이기에 설정이 매우 간편한 편이다.</p>
+<p>배포가 궁금하다면 미리 배포 후 URL로 접속해보도록하자.</p>
+<h2 id="CI"><a href="#CI" class="headerlink" title="CI"></a>CI</h2><p>애플리케이션을 매번 수정 후 배포할 수 없기에 보통 Jenkins, Travis CI, Circle CI 등 CI의 도움을 받아 자동으로 빌드하여 배포하도록 한다.</p>
+<p>이 포스트에서는 <a target="_blank" rel="noopener" href="https://circleci.com/vcs-authorize/?return-to=https://app.circleci.com/projects/project-dashboard/github/kdydesign/">Circle CI</a>를 사용할 것이다. </p>
+<p>Circle CI 가입 후 프로젝트를 연동해보자. CI를 사용할 때는 애플리케이션 프로젝트 경로에 <code>.circleci</code> 폴더가 있고 안에는 <code>config.yml</code>로 CircleCI에 대한 동작 방식들을 지정할 수 있다.</p>
+<p><strong>.circleci&#x2F;config.yml</strong></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">version:</span> <span class="hljs-number">2</span><br><span class="hljs-attr">jobs:</span><br>  <span class="hljs-attr">build:</span><br>    <span class="hljs-attr">docker:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">circleci/node:14.9.0</span><br>    <span class="hljs-attr">working_directory:</span> <span class="hljs-string">~/repo</span><br>    <span class="hljs-attr">steps:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span><br>      <span class="hljs-bullet">-</span> <br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">restore_cache:</span><br>          <span class="hljs-attr">keys:</span> <span class="hljs-string">v1-dependencies-&#123;&#123;</span> <span class="hljs-string">checksum</span> <span class="hljs-string">&quot;package.json&quot;</span> <span class="hljs-string">&#125;&#125;</span><br>          <br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Install</span> <span class="hljs-string">Dependencies</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">npm</span> <span class="hljs-string">install</span><br>          <br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">save_cache:</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">v1-npm-deps-&#123;&#123;</span> <span class="hljs-string">checksum</span> <span class="hljs-string">&quot;package-lock.json&quot;</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">paths:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">./node_modules</span><br>            <br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Build</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">npm</span> <span class="hljs-string">run</span> <span class="hljs-string">build</span><br>          <br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">Firebase</span> <span class="hljs-string">Deploy</span><br>          <span class="hljs-attr">command:</span> <span class="hljs-string">./node_modules/.bin/firebase</span> <span class="hljs-string">deploy</span> <span class="hljs-string">--token</span> <span class="hljs-string">&quot;$FIREBASE_TOKEN&quot;</span> <span class="hljs-string">--only</span> <span class="hljs-string">hosting:pwa-todo-tutorial</span><br></code></pre></td></tr></table></figure>
+
+<p>위 설정에서 맨 마지막 <code>./node_modules/.bin/firebase deploy --token &quot;$FIREBASE_TOKEN&quot; --only hosting:pwa-todo-tutorial</code> 코드를 보게 되면 빌드 후 FIREBASE에 배포하게 된다. 하지만 외부 CI에서 배포이기에 CircleCI에서 Firebase에 접근할 수 있는 권한을 줘야하기 때문에 <code>$FIREBASE_TOKEN</code>을 사용한다. 토큰은 뒤에서 설명하기로하고 우선 CircleCI와 Github를 연동하도록하자.</p>
+<p><code>Set Up Project</code>를 클릭하여 프로젝트 설정을 진행하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/ci-1.png" alt="ci-1"></p>
+<p>위에서 설명한 <code>.circleci</code> 설정을 git에 올렸다면 기존 설정을 사용할 수 있다.<br><img src="/2022/03/04/firebase-pwa-tutorial/ci-2.png" alt="ci-2"></p>
+<p>연동이 끝나면 아래와 같이 <code>config.yml</code>에 명시한 <code>jobs</code>대로 빌드와 배포를 진행하게 된다. 하지만 위에서 설명하였듯 아직 <code>$FIREBASE_TOKEN</code>을 CircleCI에 정의하지 않았기 때문에 빌드는 실패 할 것이다.<br><img src="/2022/03/04/firebase-pwa-tutorial/ci-3.png" alt="ci-3"></p>
+<h3 id="FIREBASE-TOKEN"><a href="#FIREBASE-TOKEN" class="headerlink" title="FIREBASE TOKEN"></a>FIREBASE TOKEN</h3><p>아래 명령어를 통해서 ci token을 생성할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">firebase ci:login<br></code></pre></td></tr></table></figure>
+
+<p>웹을 통해 로그인 시 아래와 같이 token 정보가 생성된다.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-login-ci-token.png" alt="firebase-login-ci-token"></p>
+<p>이 토큰을 Circle CI의 프로젝트 설정에 환경 변수로 지정하도록하자.</p>
+<p><img src="/2022/03/04/firebase-pwa-tutorial/firebase-ci-token-1.png" alt="firebase-ci-token-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/firebase-ci-token-2.png" alt="firebase-ci-token-2"></p>
+<p>이렇게 되면 ci를 통해 빌드 후 Firebase에 배포까지 완료된다.</p>
+<h2 id="PWA-workbox-설치"><a href="#PWA-workbox-설치" class="headerlink" title="PWA workbox 설치"></a>PWA workbox 설치</h2><p><a target="_blank" rel="noopener" href="https://developer.chrome.com/docs/workbox/">PWA의 workbox</a>는 pwa의 service-worker 또는 캐싱 기능을 편리하게 구현할 수 있도록 지원해주는 PWA의 라이브러리이다. </p>
+<p>workbox-cli를 통해서 기본적인 pwa의  </p>
+<p><strong>설치</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install workbox-cli -g<br></code></pre></td></tr></table></figure>
+
+<p><strong>사용</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">workbox wizard<br>workbox generateSW ./workbox-config.js<br>workbox injectManifest ./workbox-config.js<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/firebase-pwa-tutorial/workbox-1.png" alt="workbox-1"><br><img src="/2022/03/04/firebase-pwa-tutorial/workbox-2.png" alt="workbox-2"></p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/02/17/deno-tutorial/">[Deno] Node.js의 대안!! Deno 알아보기</a><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2023/09/28/electron-rce/">[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정</a><br><a href="https://kdydesign.github.io/2020/10/06/spa-route-tutorial/">Vanilla JS에서 SPA 라우팅 시스템 구현하기</a><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/android/" rel="tag">android</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/aws/" rel="tag">aws</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/firebase/" rel="tag">firebase</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/google/" rel="tag">google</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/hybrid-app/" rel="tag">hybrid app</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ios/" rel="tag">ios</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mobile/" rel="tag">mobile</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/mobile-web-app/" rel="tag">mobile web app</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/native-app/" rel="tag">native app</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/nodejs/" rel="tag">nodejs</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/progressive-web-app/" rel="tag">progressive web app</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/pwa/" rel="tag">pwa</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/web/" rel="tag">web</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/25/pnpm-tutorial/"
+                    data-tooltip="Performant NPM - PNPM"
+                    aria-label="PREVIOUS: Performant NPM - PNPM"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/02/17/deno-tutorial/"
+                    data-tooltip="[Deno] Node.js의 대안!! Deno 알아보기"
+                    aria-label="NEXT: [Deno] Node.js의 대안!! Deno 알아보기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/25/pnpm-tutorial/"
+                    data-tooltip="Performant NPM - PNPM"
+                    aria-label="PREVIOUS: Performant NPM - PNPM"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/02/17/deno-tutorial/"
+                    data-tooltip="[Deno] Node.js의 대안!! Deno 알아보기"
+                    aria-label="NEXT: [Deno] Node.js의 대안!! Deno 알아보기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/';
+              
+            this.page.identifier = 'create-pwa-by-firebase';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,815 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>Web Icon Font 제작 방법을 배워보자! - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2020/08/25/web-icon-font/"/>
+    
+        <meta name="keywords" content="icon font,web font,fontagon,web icon font,icon font 생성,icon font 제작,web font 만들기,fontagon,svg,icon 생성,vector icon 만들기,icon font tutorial">
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n흔히 아는 Material-Icon, Font-Awesome, Ionic-Icon은 SVG를 토대로 font 형식으로 생성하여 사용되는 web icon font이다.보통 위 icon set을 가져다가 쓰겠지만 프로젝트를 하면서 내가 원하는 아이콘이 없다면 어떡할까? 대부분 아이콘은 png로 제작되고 icon font를 생성하여 만들지 않는다.\n이번 포스트에서는 매일 가져다가 쓰지 않으며 Image Sprite를 통해서 Image Icon을 사용하지 않는 직접 web icon font를 만들어서 사용하는 방법에 대해 알아보자.\nIcon FontIcon Font는 SVG 기반의 Vector 그래픽을 Font 파일 화 하여 CSS를 통해서 Icon을 사용하는 방식이다.수많은 이미지 아이콘을 관리해야 하는 방법과 다르게 단순히 Font 파일과 CSS만 관리하면 된다.대표적으로는 Material-Icon, FontAwesome 이 있으며, 이 외에 여러 프레임워크에서 자체 Icon Font를 지원하기도 한다.\n과거와 현재Image SpriteIcon을 표현하고 작업하는 데 있어서 이전에도 그렇고 현재도 동일하게 사용하는 방식은 Image Sprite 방식이다.Image Sprite는 여러 아이콘을 하나의 큰 이미지에 모두 포함해 CSS의 Position을 이용하여 해당 위치에 있는 아이콘만 보여주는 방식이다.\nImage Sprite의 장점은 최소화된 HTTP 요청을 통해 문서에 삽입한다. 하지만 스마트 폰의 활성화와 다양한 DPI를 제공하는 기기들이 늘어나면서 이미지가 강제로 DPI에 맞게 늘어나 뿌옇게 보이거나 깨지는 현상이 발생한다.이러한 이유로 Sprite 된 이미지의 크기를 변경해야 하거나 수정해야 하는데 이럴 때 불편함을 보인다.\n이러한 단점에도 불구하고 장점이 더욱더 많기 때문에 현재까지도 많이 사용되는 방식이다.\nWeb Font현재에 와서 이렇게 다양한 디스플레이 크기에 픽셀 기반의 이미지는 대응하지 못하기 때문에 온전한 이미지를 대체하기 위해 초기에는 SVG를 사용했지만, 구형 브라우저 및 모던 브라우저들이 당시에는 SVG를 지원하지 못했다.이를 극복하기 위해 Vector 형식의 아이콘을 Web Font로 만들어서 사용하였는데 이러한 방식이 많이 애용되면서 FontAwesome이란 Vector 기반의 Web Font가 무료로 제공되기 시작했다.이 Font-Awesome을 시작으로 다양한 Web Icon Font가 개발되기 시작했다.\n추이10년간의 Font-Awesome과 Material-Icon의 추세를 보면 계속 증가하는 추세로 보이며, Icon Font의 선두주자답게 FontAwesome에 대한 관심도가 가장 높은 것으로 보인다.\n  trends.embed.renderExploreWidget(\"TIMESERIES\", {\"comparisonItem\":[{\"keyword\":\"fontawesome\",\"geo\":\"\",\"time\":\"2010-01-01 2020-08-05\"},{\"keyword\":\"material icon\",\"geo\":\"\",\"time\":\"2010-01-01 2020-08-05\"}],\"category\":0,\"property\":\"\"}, {\"exploreQuery\":\"date=2010-01-01%202020-08-05&q=fontawesome,material%20icon\",\"guestPath\":\"https://trends.google.co.kr:443/trends/embed/\"}); \n\nIcon FontIcon Font 장점1. 하나의 글꼴 파일에 다양한 아이콘을 넣어두고 사용\nImage Sprite와 비슷하게 Icon Font도 모든 Icon을 Font 파일 하나에 넣어서 사용이 가능하다.Image Sprite는 모든 Icon을 담기에는 무리가 있기에 형태 별, 종류별로 분리를 하지만 Icon Font는 구분 없이 모든 아이콘을 하나로 관리할 수 있다. 그렇기 때문에 HTTP 요청 역시 단 한 번만 진행된다.\n2. CSS로 확장하여 모든 작업이 가능\nImage Icon과 동일하게 CSS를 통해서 크기, 변형, 회전 등 모든 작업이 가능하다. 특히 color를 사용한다면 하나의 아이콘으로도 여러 가지 색을 가진 Icon을 표현할 수 있다.\n3. Vector Graphic이기 때문에 크기 변형에 제한이 없음\n픽셀 기반의 Image는 기본 크기에 비례하여 확대할 경우 이미지가 깨지는 현상을 볼 수 있는데 Icon Font는 Vector 기반으로 연산 된 그래픽 이기 때문에 제한 없이 확대를 한다 하더라도 Icon 형태 그대로 유지 할 수 있다.\n4. Unicode 또는 Ligature 사용\nImage Icon의 경우 CSS로 class를 정의하여 해당 class만을 사용하지만, Icon Font의 경우 Unicode 및 Ligature를 사용할 수 있다.Ligature는 Icon Font로 생성된 CSS의 class를 사용하지 않고 Text 형식으로 사용할 수 있다.\n아래 코드를 보자.\nLigature\n&lt;span class=&quot;icon-class sub-class&quot;&gt;arrow_up&lt;/span&gt;\n\n해당 코드에서 arrow_up은 Icon Font에서 Ligature이다. CSS class를 통한 사용이 아닌 Text 형식으로 삽입하게 되면 Icon이 출력되게 되어 있다.만약 CSS를 통한 사용이 된다면 아래와 같을 것이다.\nLigature - CSS\n&lt;span class=&quot;icon-class sub-class icon-arrow_up&quot;&gt;&lt;/span&gt;\n\nUnicode 및 Ligature의 key는 SVG를 Font 파일로 변환 시 지정할 수 있으며, 수많은 아이콘 중 Unicode를 사용하면 특정 아이콘만 사용이 가능하다.\nLocale 별 서로 다른 아이콘이 Font 파일에 있을 경우 모두 사용될 필요는 없다. 이럴 경우에 Unicode를 사용하여 해당 지역에서 사용되는 Icon만 사용할 수 있다.\n\n\n\n5. 전체 서체보다 적은 문자를 포함하여 파일의 크기가 작음\nIcon Font 역시 Font 파일이지만 일반 서체용 Font 파일보다는 단순하게 아이콘만 저장되어 있기 때문에 일반 Font보다 파일의 용량이 적다.Image Icon으로 비교해 보자면 약 1,000개의 Image Icon이 1.3MB라고 할 경우 동일하게 1,000개의 Icon을 Icon Font로 만들 경우 5KB밖에 되지 않는다.\nIcon Font 단점이렇게 장점이 많지만 단 하나의 단점이 있다. 이 단점으로 인해 모든 Icon을 Icon Font로 만들지 못하는 이유이다.\n다양한 색상의 Icon 표현 불가\nIcon Font 자체만 놓고 보았을 때는 Font 파일이다. Font 파일의 글꼴은 색상 정보가 포함되어 있지 않기 때문에 여러 색상을 가진 Icon Font는 생성할 수 없다.굳이 하자면 여러 글리프를 색상별로 분리해 놓고 하나로 겹쳐 하나의 폰트처럼 보일 수 있지만 이렇게 하면 아이콘 제작에 많은 시간을 투자하게 되기 때문에 효율 적이지 않다.\n여러 글리프를 겹쳐 하나의 글꼴을 만드는 것을 크로마 틱 글꼴이라고 한다.\n\n\n\nIcon Font 생성 도구Icon Font를 가장 쉽게 만들 방법은 도구를 사용하는 것이다. 이미 상용화된 소스들이 많을뿐더러 SVG만 있다면 누구나 SVG를 통하여 Icon Font로 제작할 수 있다.대표적인 도구로는 IcoMoon, Glyphter, Fontello가 있으며 웹 페이지에 SVG를 업로드하면 Font 파일로 변환하여 다운로드할 수 있다.이 과정에서 대부분 위에서 언급한 Unicode 및 Ligature를 설정하거나 볼 수 있다.\nIcon Font 제작 도구Icon Font 제작을 위해서는 SVG를 생성하고 이 SVG를 Font 파일 및 CSS로 변환해야 한다. 이러한 과정을 도와주는 여러 가지 도구가 있어서 소개하고 간략하게 집고 넘어가자.\nSVG 생성 도구Icon Font로 생성하기 SVG는 보통 일러스트를 통해서 제작한다. 어떤 방법이든 SVG를 만들면 되지만 일러스트의 경우 유료라이센스이며 inkscape는 무료 라이센스이기 때문에 선택에 따라서 사용하면 된다.\nFontagonIcon Font 변환 도구를 통해서 Icon Font를 제작할 수 있지만, 자체 내 Build System 구축을 하고 싶다면, Fontagon을 보자.Fontagon은 Webfonts-Generator를 기반으로 재구축한 오픈 소스이며, Build System을 지원할 뿐만 아니라 CLI를 통하여 간단하고 빠르게 SVG를 Font로 변환할 수 있다.\nFontagon을 사용하면 SVG를 모든 형식의 폰트 파일로 생성할 수 있으며, 이 폰트를 사용이 가능하도록 CSS를 구성해 준다. 사용자는 만들어져 있는 CSS의 class만을 사용하면 된다.\nFontagon의 기능은 다음과 같다.\n\nWOFF2, WOFF, TTF, EOT, TTF, SVG를 지원\nCSS, Sass, Less 모두 지원 및 생성\n사용자 정의 CSS Template 생성 가능\nligature 지원\n\nFont 종류 및 특징\n\neot: IE 전용, 기본적으로 압축되지 않음\nttf: 부분적인 IE 지원, 기본적으로 압축되지 않음\nwoff: 지원 범위가 가장 넓지만 몇몇 이전 브라우저에서는 사용 불가, 압축이 기본적으로 지원\nwoff2: 현재 많은 브라우저에서 지원, 맞춤형 처리 및 압축 알고리즘을 사용하여 다른 폰트 형식보다 30% 파일 크기 절감\n\n\n\n설치Fontagon-CLI는 Global로 설치하여 사용 할 수 있다.\nnpm install fontagonnpm install -g fontagon-cli  // cli \n\nBuild ScriptFontagon의 옵션은 Document에서 확인해보자.\nindex.js\nconst Fontagon = require(&#x27;fontagon&#x27;)Fontagon(&#123;  files: [    &#x27;path/**/*.svg&#x27;  ],  dist: &#x27;dist/&#x27;,  fontName: &#x27;fontagon-icons&#x27;,  style: &#x27;all&#x27;,  classOptions: &#123;    baseClass: &#x27;fontagon-icons&#x27;,    classPrefix: &#x27;ft&#x27;  &#125;&#125;).then((opts) =&gt; &#123;  console.log(&#x27;done! &#x27; ,opts)&#125;).catch((err) =&gt; &#123;  console.log(&#x27;fail! &#x27;, err)&#125;)\n\n사용Fontagon을 통해서 Build가 진행되면 CSS 파일이 추출된다. 이 CSS 파일에는 같이 추출된 Font 파일들을 Import하고 있으며 해당 CSS를 삽입하여 사용하면 된다.\n&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;dist/fontagon-icons.css&quot;&gt;\n\nimport &#x27;../dist/fontagon-icons.css&#x27;\n\n&lt;i class=&quot;fontagon-icons ft-icon&quot;&gt;SVG FILE NAME&lt;/i&gt;&lt;i class=&quot;fontagon-icons ft-icon ft-SVG FILE NAME&quot;&gt;&lt;/i&gt;\n\n\n단점에서 설명했듯이 Icon Font 하나만으로는 사용이 불가능하기 때문에 Image Icon 역시 같이 사용해야 한다.하지만 같이 사용한다 하더라도 많은 양의 리소스를 줄일 수 있으며, Icon Font를 사용하면 확실히 이점을 남길 수 있다.\n이전부터 Material-Icon과 Font-Awesome을 대다수가 사용하면서 목적과 디자인이 다른 웹 페이지 및 애플리케이션들이 어딘가 모르게 비슷한 느낌을 준다. 본인이 어떤 프로젝트를 하고 있고 차별화된 느낌을 주면서 효율성도 챙기고 싶다면 회사, 디자이너, 퍼블리셔에서 Icon Font 제작을 권해보자.\n\n더 알아보기Firebase를 활용한 PWA(Progressive Web App) 앱 만들기오픈 소스(Open-Source) 구조와 모듈 파악하기Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?빠르게 배우는 Node.js와 NPM 설치부터 개념잡기\n","dateCreated":"2020-08-25T10:20:57+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2020-08-25T10:20:57+00:00","description":"\n우리는 항상 Icon-Font를 오픈 소스를 통해 사용만 해 왔고 오픈 소스에 없는 Icon은 PNG로 직접 만들어 사용해 왔다. 하지만 이 Web Icon Font 제작 방법의 포스팅을 보고 앞으로 PNG가 아닌 Web Icon Font를 직접 제작해서 사용해보자. 이번 포스트에서는 매일 가져다가 쓰지 않으며 Image Sprite를 통해서 Image Icon을 사용하지 않는 직접 web icon font를 만들어서 사용하는 방법에 대해 알아보자.흔히 아는 Material-Icon, Font-Awesome, Ionic-Icon은 SVG를 토대로 font 형식으로 생성하여 사용되는 web icon font이다.보통 위 icon set을 가져다가 쓰겠지만 프로젝트를 하면서 내가 원하는 아이콘이 없다면 어떡할까? 대부분 아이콘은 png로 제작되고 icon font를 생성하여 만들지 않는다.이번 포스트에서는 매일 가져다가 쓰지 않으며 Image Sprite를 통해서 Image Icon을 사용하지 않는 직접 web icon font를 만들어서 사용하는 방법에 대해 알아보자.\n","headline":"Web Icon Font 제작 방법을 배워보자!","image":["web-icon-font-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2020/08/25/web-icon-font/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2020/08/25/web-icon-font/","keywords":"icon-font, svg, font, web font, web icon font, fontagon, material icon, ionic icon, fontawesome","thumbnailUrl":"web-icon-font-cover.png"}</script>
+    <meta name="description" content="우리는 항상 Icon-Font를 오픈 소스를 통해 사용만 해 왔고 오픈 소스에 없는 Icon은 PNG로 직접 만들어 사용해 왔다. 하지만 이 Web Icon Font 제작 방법의 포스팅을 보고 앞으로 PNG가 아닌 Web Icon Font를 직접 제작해서 사용해보자. 이번 포스트에서는 매일 가져다가 쓰지 않으며 Image Sprite를 통해서 Image">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Web Icon Font 제작 방법을 배워보자!">
+<meta property="og:url" content="https://kdydesign.github.io/2020/08/25/web-icon-font/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="우리는 항상 Icon-Font를 오픈 소스를 통해 사용만 해 왔고 오픈 소스에 없는 Icon은 PNG로 직접 만들어 사용해 왔다. 하지만 이 Web Icon Font 제작 방법의 포스팅을 보고 앞으로 PNG가 아닌 Web Icon Font를 직접 제작해서 사용해보자. 이번 포스트에서는 매일 가져다가 쓰지 않으며 Image Sprite를 통해서 Image">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2020/08/25/web-icon-font/web-icon-font-cover.png">
+<meta property="article:published_time" content="2020-08-25T10:20:57.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.845Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="icon-font">
+<meta property="article:tag" content="svg">
+<meta property="article:tag" content="font">
+<meta property="article:tag" content="web font">
+<meta property="article:tag" content="web icon font">
+<meta property="article:tag" content="fontagon">
+<meta property="article:tag" content="material icon">
+<meta property="article:tag" content="ionic icon">
+<meta property="article:tag" content="fontawesome">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2020/08/25/web-icon-font/web-icon-font-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2020/08/25/web-icon-font/web-icon-font-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2020/08/25/web-icon-font/web-icon-font-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            Web Icon Font 제작 방법을 배워보자!
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-25T10:20:57+00:00">
+	
+		    2020-08-25
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/nodejs/">nodejs</a>, <a class="category-link" href="/categories/javascript/nodejs/fontagon/">fontagon</a>, <a class="category-link" href="/categories/javascript/nodejs/fontagon/icon-font-generate/">icon font generate</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+<!-- excerpt -->
+
+<p><img src="/2020/08/25/web-icon-font/web-icon-font-cover.png" alt="cover"></p>
+<p>흔히 아는 <a target="_blank" rel="noopener" href="https://material.io/resources/icons/?style=baseline">Material-Icon</a>, <a target="_blank" rel="noopener" href="https://fontawesome.com/">Font-Awesome</a>, <a target="_blank" rel="noopener" href="https://ionicons.com/">Ionic-Icon</a>은 SVG를 토대로 font 형식으로 생성하여 사용되는 web icon font이다.<br>보통 위 icon set을 가져다가 쓰겠지만 프로젝트를 하면서 내가 원하는 아이콘이 없다면 어떡할까? 대부분 아이콘은 png로 제작되고 icon font를 생성하여 만들지 않는다.</p>
+<p>이번 포스트에서는 매일 가져다가 쓰지 않으며 <a target="_blank" rel="noopener" href="https://www.w3schools.com/css/css_image_sprites.asp">Image Sprite</a>를 통해서 Image Icon을 사용하지 않는 직접 web icon font를 만들어서 사용하는 방법에 대해 알아보자.</p>
+<h1 id="Icon-Font"><a href="#Icon-Font" class="headerlink" title="Icon Font"></a>Icon Font</h1><p><code>Icon Font</code>는 SVG 기반의 Vector 그래픽을 Font 파일 화 하여 CSS를 통해서 Icon을 사용하는 방식이다.<br>수많은 이미지 아이콘을 관리해야 하는 방법과 다르게 단순히 Font 파일과 CSS만 관리하면 된다.<br>대표적으로는 <a target="_blank" rel="noopener" href="https://material.io/resources/icons/?style=baseline">Material-Icon</a>, <a target="_blank" rel="noopener" href="https://fontawesome.com/">FontAwesome</a> 이 있으며, 이 외에 여러 프레임워크에서 자체 Icon Font를 지원하기도 한다.</p>
+<h1 id="과거와-현재"><a href="#과거와-현재" class="headerlink" title="과거와 현재"></a>과거와 현재</h1><h2 id="Image-Sprite"><a href="#Image-Sprite" class="headerlink" title="Image Sprite"></a>Image Sprite</h2><p>Icon을 표현하고 작업하는 데 있어서 이전에도 그렇고 현재도 동일하게 사용하는 방식은 Image Sprite 방식이다.<br><a target="_blank" rel="noopener" href="https://www.w3schools.com/css/css_image_sprites.asp">Image Sprite</a>는 여러 아이콘을 하나의 큰 이미지에 모두 포함해 CSS의 Position을 이용하여 해당 위치에 있는 아이콘만 보여주는 방식이다.</p>
+<p>Image Sprite의 장점은 최소화된 HTTP 요청을 통해 문서에 삽입한다. 하지만 스마트 폰의 활성화와 다양한 DPI를 제공하는 기기들이 늘어나면서 이미지가 강제로 DPI에 맞게 늘어나 뿌옇게 보이거나 깨지는 현상이 발생한다.<br>이러한 이유로 Sprite 된 이미지의 크기를 변경해야 하거나 수정해야 하는데 이럴 때 불편함을 보인다.</p>
+<p>이러한 단점에도 불구하고 장점이 더욱더 많기 때문에 현재까지도 많이 사용되는 방식이다.</p>
+<h2 id="Web-Font"><a href="#Web-Font" class="headerlink" title="Web Font"></a>Web Font</h2><p>현재에 와서 이렇게 다양한 디스플레이 크기에 픽셀 기반의 이미지는 대응하지 못하기 때문에 온전한 이미지를 대체하기 위해 초기에는 <a target="_blank" rel="noopener" href="https://ko.wikipedia.org/wiki/%EC%8A%A4%EC%BC%80%EC%9D%BC%EB%9F%AC%EB%B8%94_%EB%B2%A1%ED%84%B0_%EA%B7%B8%EB%9E%98%ED%94%BD%EC%8A%A4">SVG</a>를 사용했지만, 구형 브라우저 및 모던 브라우저들이 당시에는 SVG를 지원하지 못했다.<br>이를 극복하기 위해 Vector 형식의 아이콘을 Web Font로 만들어서 사용하였는데 이러한 방식이 많이 애용되면서 <code>FontAwesome</code>이란 Vector 기반의 Web Font가 무료로 제공되기 시작했다.<br>이 <a target="_blank" rel="noopener" href="https://fontawesome.com/">Font-Awesome</a>을 시작으로 다양한 <code>Web Icon Font</code>가 개발되기 시작했다.</p>
+<h1 id="추이"><a href="#추이" class="headerlink" title="추이"></a>추이</h1><p>10년간의 <a target="_blank" rel="noopener" href="https://fontawesome.com/">Font-Awesome</a>과 <a target="_blank" rel="noopener" href="https://material.io/resources/icons/?style=baseline">Material-Icon</a>의 추세를 보면 계속 증가하는 추세로 보이며, Icon Font의 선두주자답게 <code>FontAwesome</code>에 대한 관심도가 가장 높은 것으로 보인다.</p>
+<script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/2213_RC01/embed_loader.js"></script> <script type="text/javascript"> trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"fontawesome","geo":"","time":"2010-01-01 2020-08-05"},{"keyword":"material icon","geo":"","time":"2010-01-01 2020-08-05"}],"category":0,"property":""}, {"exploreQuery":"date=2010-01-01%202020-08-05&q=fontawesome,material%20icon","guestPath":"https://trends.google.co.kr:443/trends/embed/"}); </script>
+
+<h1 id="Icon-Font-1"><a href="#Icon-Font-1" class="headerlink" title="Icon Font"></a>Icon Font</h1><h2 id="Icon-Font-장점"><a href="#Icon-Font-장점" class="headerlink" title="Icon Font 장점"></a>Icon Font 장점</h2><p><strong>1. 하나의 글꼴 파일에 다양한 아이콘을 넣어두고 사용</strong></p>
+<p>Image Sprite와 비슷하게 Icon Font도 모든 Icon을 Font 파일 하나에 넣어서 사용이 가능하다.<br>Image Sprite는 모든 Icon을 담기에는 무리가 있기에 형태 별, 종류별로 분리를 하지만 Icon Font는 구분 없이 모든 아이콘을 하나로 관리할 수 있다. 그렇기 때문에 HTTP 요청 역시 단 한 번만 진행된다.</p>
+<p><strong>2. CSS로 확장하여 모든 작업이 가능</strong></p>
+<p>Image Icon과 동일하게 CSS를 통해서 크기, 변형, 회전 등 모든 작업이 가능하다. 특히 <code>color</code>를 사용한다면 하나의 아이콘으로도 여러 가지 색을 가진 Icon을 표현할 수 있다.</p>
+<p><strong>3. Vector Graphic이기 때문에 크기 변형에 제한이 없음</strong></p>
+<p>픽셀 기반의 Image는 기본 크기에 비례하여 확대할 경우 이미지가 깨지는 현상을 볼 수 있는데 Icon Font는 Vector 기반으로 연산 된 그래픽 이기 때문에 제한 없이 확대를 한다 하더라도 Icon 형태 그대로 유지 할 수 있다.</p>
+<p><strong>4. Unicode 또는 Ligature 사용</strong></p>
+<p>Image Icon의 경우 CSS로 class를 정의하여 해당 class만을 사용하지만, Icon Font의 경우 Unicode 및 Ligature를 사용할 수 있다.<br>Ligature는 Icon Font로 생성된 CSS의 class를 사용하지 않고 Text 형식으로 사용할 수 있다.</p>
+<p>아래 코드를 보자.</p>
+<p><strong>Ligature</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;icon-class sub-class&quot;</span>&gt;</span>arrow_up<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>해당 코드에서 arrow_up은 Icon Font에서 Ligature이다. CSS class를 통한 사용이 아닌 Text 형식으로 삽입하게 되면 Icon이 출력되게 되어 있다.<br>만약 CSS를 통한 사용이 된다면 아래와 같을 것이다.</p>
+<p><strong>Ligature - CSS</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;icon-class sub-class icon-arrow_up&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>Unicode 및 Ligature의 key는 SVG를 Font 파일로 변환 시 지정할 수 있으며, 수많은 아이콘 중 Unicode를 사용하면 특정 아이콘만 사용이 가능하다.</p>
+<div class="alert info no-icon"><p>Locale 별 서로 다른 아이콘이 Font 파일에 있을 경우 모두 사용될 필요는 없다. 이럴 경우에 Unicode를 사용하여 해당 지역에서 사용되는 Icon만 사용할 수 있다.</p>
+</div>
+
+
+<p><strong>5. 전체 서체보다 적은 문자를 포함하여 파일의 크기가 작음</strong></p>
+<p>Icon Font 역시 Font 파일이지만 일반 서체용 Font 파일보다는 단순하게 아이콘만 저장되어 있기 때문에 일반 Font보다 파일의 용량이 적다.<br>Image Icon으로 비교해 보자면 약 1,000개의 Image Icon이 1.3MB라고 할 경우 동일하게 1,000개의 Icon을 Icon Font로 만들 경우 5KB밖에 되지 않는다.</p>
+<h2 id="Icon-Font-단점"><a href="#Icon-Font-단점" class="headerlink" title="Icon Font 단점"></a>Icon Font 단점</h2><p>이렇게 장점이 많지만 단 하나의 단점이 있다. 이 단점으로 인해 모든 Icon을 Icon Font로 만들지 못하는 이유이다.</p>
+<p><strong>다양한 색상의 Icon 표현 불가</strong></p>
+<p>Icon Font 자체만 놓고 보았을 때는 Font 파일이다. Font 파일의 글꼴은 색상 정보가 포함되어 있지 않기 때문에 여러 색상을 가진 Icon Font는 생성할 수 없다.<br>굳이 하자면 여러 글리프를 색상별로 분리해 놓고 하나로 겹쳐 하나의 폰트처럼 보일 수 있지만 이렇게 하면 아이콘 제작에 많은 시간을 투자하게 되기 때문에 효율 적이지 않다.</p>
+<div class="alert info no-icon"><p>여러 글리프를 겹쳐 하나의 글꼴을 만드는 것을 <a target="_blank" rel="noopener" href="https://www.myfonts.com/search/chromatic/">크로마 틱</a> 글꼴이라고 한다.</p>
+</div>
+
+
+<h1 id="Icon-Font-생성-도구"><a href="#Icon-Font-생성-도구" class="headerlink" title="Icon Font 생성 도구"></a>Icon Font 생성 도구</h1><p>Icon Font를 가장 쉽게 만들 방법은 도구를 사용하는 것이다. 이미 상용화된 소스들이 많을뿐더러 SVG만 있다면 누구나 SVG를 통하여 Icon Font로 제작할 수 있다.<br>대표적인 도구로는 <a target="_blank" rel="noopener" href="https://icomoon.io/">IcoMoon</a>, <a target="_blank" rel="noopener" href="https://glyphter.com/">Glyphter</a>, <a target="_blank" rel="noopener" href="http://fontello.com/">Fontello</a>가 있으며 웹 페이지에 SVG를 업로드하면 Font 파일로 변환하여 다운로드할 수 있다.<br>이 과정에서 대부분 위에서 언급한 <code>Unicode</code> 및 <code>Ligature</code>를 설정하거나 볼 수 있다.</p>
+<h1 id="Icon-Font-제작-도구"><a href="#Icon-Font-제작-도구" class="headerlink" title="Icon Font 제작 도구"></a>Icon Font 제작 도구</h1><p>Icon Font 제작을 위해서는 SVG를 생성하고 이 SVG를 Font 파일 및 CSS로 변환해야 한다. 이러한 과정을 도와주는 여러 가지 도구가 있어서 소개하고 간략하게 집고 넘어가자.</p>
+<h2 id="SVG-생성-도구"><a href="#SVG-생성-도구" class="headerlink" title="SVG 생성 도구"></a>SVG 생성 도구</h2><p>Icon Font로 생성하기 SVG는 보통 일러스트를 통해서 제작한다. 어떤 방법이든 SVG를 만들면 되지만 일러스트의 경우 유료라이센스이며 <a target="_blank" rel="noopener" href="https://inkscape.org/ko/">inkscape</a>는 무료 라이센스이기 때문에 선택에 따라서 사용하면 된다.</p>
+<h2 id="Fontagon"><a href="#Fontagon" class="headerlink" title="Fontagon"></a>Fontagon</h2><p>Icon Font 변환 도구를 통해서 Icon Font를 제작할 수 있지만, 자체 내 Build System 구축을 하고 싶다면, <a target="_blank" rel="noopener" href="https://github.com/kdydesign/fontagon">Fontagon</a>을 보자.<br><code>Fontagon</code>은 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/webfonts-generator">Webfonts-Generator</a>를 기반으로 재구축한 오픈 소스이며, Build System을 지원할 뿐만 아니라 CLI를 통하여 간단하고 빠르게 SVG를 Font로 변환할 수 있다.</p>
+<p>Fontagon을 사용하면 SVG를 모든 형식의 폰트 파일로 생성할 수 있으며, 이 폰트를 사용이 가능하도록 CSS를 구성해 준다. 사용자는 만들어져 있는 CSS의 class만을 사용하면 된다.</p>
+<p>Fontagon의 기능은 다음과 같다.</p>
+<ul>
+<li>WOFF2, WOFF, TTF, EOT, TTF, SVG를 지원</li>
+<li>CSS, Sass, Less 모두 지원 및 생성</li>
+<li>사용자 정의 CSS Template 생성 가능</li>
+<li>ligature 지원</li>
+</ul>
+<div class="alert info no-icon"><p><strong>Font 종류 및 특징</strong></p>
+<ul>
+<li><strong>eot</strong>: IE 전용, 기본적으로 압축되지 않음</li>
+<li><strong>ttf</strong>: 부분적인 IE 지원, 기본적으로 압축되지 않음</li>
+<li><strong>woff</strong>: 지원 범위가 가장 넓지만 몇몇 이전 브라우저에서는 사용 불가, 압축이 기본적으로 지원</li>
+<li><strong>woff2</strong>: 현재 많은 브라우저에서 지원, 맞춤형 처리 및 압축 알고리즘을 사용하여 다른 폰트 형식보다 30% 파일 크기 절감</li>
+</ul>
+</div>
+
+<h3 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h3><p>Fontagon-CLI는 Global로 설치하여 사용 할 수 있다.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><code class="hljs sh">npm install fontagon<br>npm install -g fontagon-cli  // cli <br></code></pre></td></tr></table></figure>
+
+<h3 id="Build-Script"><a href="#Build-Script" class="headerlink" title="Build Script"></a>Build Script</h3><p>Fontagon의 옵션은 <a target="_blank" rel="noopener" href="https://github.com/kdydesign/fontagon/tree/master/packages/fontagon">Document</a>에서 확인해보자.</p>
+<p><strong>index.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Fontagon</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fontagon&#x27;</span>)<br><br><span class="hljs-title class_">Fontagon</span>(&#123;<br>  <span class="hljs-attr">files</span>: [<br>    <span class="hljs-string">&#x27;path/**/*.svg&#x27;</span><br>  ],<br>  <span class="hljs-attr">dist</span>: <span class="hljs-string">&#x27;dist/&#x27;</span>,<br>  <span class="hljs-attr">fontName</span>: <span class="hljs-string">&#x27;fontagon-icons&#x27;</span>,<br>  <span class="hljs-attr">style</span>: <span class="hljs-string">&#x27;all&#x27;</span>,<br>  <span class="hljs-attr">classOptions</span>: &#123;<br>    <span class="hljs-attr">baseClass</span>: <span class="hljs-string">&#x27;fontagon-icons&#x27;</span>,<br>    <span class="hljs-attr">classPrefix</span>: <span class="hljs-string">&#x27;ft&#x27;</span><br>  &#125;<br>&#125;).<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">opts</span>) =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;done! &#x27;</span> ,opts)<br>&#125;).<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;fail! &#x27;</span>, err)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="사용"><a href="#사용" class="headerlink" title="사용"></a>사용</h3><p>Fontagon을 통해서 Build가 진행되면 CSS 파일이 추출된다. 이 CSS 파일에는 같이 추출된 Font 파일들을 Import하고 있으며 해당 CSS를 삽입하여 사용하면 된다.</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/css&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;dist/fontagon-icons.css&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;../dist/fontagon-icons.css&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;fontagon-icons ft-icon&quot;</span>&gt;</span>SVG FILE NAME<span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;fontagon-icons ft-icon ft-SVG FILE NAME&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<p>단점에서 설명했듯이 Icon Font 하나만으로는 사용이 불가능하기 때문에 Image Icon 역시 같이 사용해야 한다.<br>하지만 같이 사용한다 하더라도 많은 양의 리소스를 줄일 수 있으며, Icon Font를 사용하면 확실히 이점을 남길 수 있다.</p>
+<p>이전부터 <a target="_blank" rel="noopener" href="https://material.io/resources/icons/?style=baseline">Material-Icon</a>과 <a target="_blank" rel="noopener" href="https://fontawesome.com/">Font-Awesome</a>을 대다수가 사용하면서 목적과 디자인이 다른 웹 페이지 및 애플리케이션들이 어딘가 모르게 비슷한 느낌을 준다. 본인이 어떤 프로젝트를 하고 있고 차별화된 느낌을 주면서 효율성도 챙기고 싶다면 회사, 디자이너, 퍼블리셔에서 Icon Font 제작을 권해보자.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2022/03/04/firebase-pwa-tutorial/">Firebase를 활용한 PWA(Progressive Web App) 앱 만들기</a><br><a href="https://kdydesign.github.io/2020/10/19/open-source-flow/">오픈 소스(Open-Source) 구조와 모듈 파악하기</a><br><a href="https://kdydesign.github.io/2020/08/25/mono-repo-lerna/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리</a><br><a href="https://kdydesign.github.io/2020/08/27/mono-repo-lerna-example/">Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 예제를 통한 완벽 파악</a><br><a href="https://kdydesign.github.io/2020/11/27/lerna-changelog/">Lerna에서 lerna version을 사용하여 CHANGELOG를 생성해보자.</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/font/" rel="tag">font</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/fontagon/" rel="tag">fontagon</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/fontawesome/" rel="tag">fontawesome</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/icon-font/" rel="tag">icon-font</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ionic-icon/" rel="tag">ionic icon</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/material-icon/" rel="tag">material icon</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/svg/" rel="tag">svg</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/web-font/" rel="tag">web font</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/web-icon-font/" rel="tag">web icon font</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/mono-repo-lerna/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                    aria-label="PREVIOUS: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/05/12/css-preprocessor/"
+                    data-tooltip="CSS 전처리기(Pre-Processor) 배우기!"
+                    aria-label="NEXT: CSS 전처리기(Pre-Processor) 배우기!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/08/25/mono-repo-lerna/"
+                    data-tooltip="Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                    aria-label="PREVIOUS: Lerna를 활용한 Mono-Repo 구축 완벽 가이드 - 개념 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/05/12/css-preprocessor/"
+                    data-tooltip="CSS 전처리기(Pre-Processor) 배우기!"
+                    aria-label="NEXT: CSS 전처리기(Pre-Processor) 배우기!"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2020/08/25/web-icon-font/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2020/08/25/web-icon-font/';
+              
+            this.page.identifier = 'web-icon-font';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,774 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dev. DY">
+    <title>[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정 - Dev. DY</title>
+    <meta name="author" content="Dev. DY">
+
+    <!--ADSENSE-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-3611154972292213",
+        enable_page_level_ads: true
+      });
+    </script>
+     <!--STYLES END-->
+
+    <link rel="canonical" href="https://kdydesign.github.io/2023/09/28/electron-rce/"/>
+    
+    
+        <link rel="icon" href="https://kdydesign.github.io/assets/images/favicon.ico">
+    
+    
+        
+            <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png"},"articleBody":"\n\n\n\n\nElectron은 화면(UI)을 구성하는 Renderer Process와 기본 프로세스를 담당하는 Main Process로 나뉜다.\nRenderer Process와 Main Process이 둘 간의 통신은 기본적으로 ipcRenderer와 ipcMain으로 통신하는데 ipcRenderer는 Renderer Process에서 Main Process로 비동기 통신을 할 때 사용하며, ipcMain은 반대로 Main Process에서 Renderer Process로 비동기 통신할 때 사용된다. Electron의 프로세스 간 통신 방식에 대한 자세한 내용은 [Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기를 참고하도록 하자.\nRemote Code Execution (RCE)Electron의 두 프로세스를 쉽게 설명하면 Front-End (Renderer Process)와 Back-End (Main Process)로 볼 수 있다.\nFront-End는 Chromium을 기반으로 하고, Back-End는 전체 운영 체제의 액세스 권한을 갖는 Node.js 런타임으로 동작된다. 그렇기에 Main Process는 Electron 모듈 이외의 Node.js 내장 기능과 NPM을 통해 설치된 모든 패키지에 액세스할 수 있는 반면에, Renderer Process는 Chromiumn을 사용하여 웹 페이지를 실행하는데 보통 우리는 javascript로 UI를 구성할 때 외부 또는 내부 모듈을 자연스럽게 require() 또는 import를 사용하지만, 이 require()를 통해서 시스템 리소스에 충분히 접근할 수 있는 문제가 발생한다. 이러한 보안적 취약점은 Remote Code Execution(RCE), 임의 코드 실행이라고 한다.\nElectron에서 RCE(Remote Code Execution) 취약점이 발생하는 부분은 위에서 설명한 require()와 연관이 있다. Renderer Process에서 require()를 사용하기 위해서는 webPreference의 nodeIntegration 옵션과 연관이 있는데, 대부분 require is not defined 오류를 해결하기 위해 nodeIntegration을 true 지정하여 사용하지만, 무척이나 위험한 행위이다. stackoverflow나 검색된 어느 블로그 글들을 봐도 require is not defined 오류 해결 방안을 nodeIntegration을 true로 제안하고 있다.\n\n위 이미지를 보면 개발자 도구(dev tools)에서 require(&#39;child_process&#39;)를 접근하여 실제로 시스템의 계산기를 실해하는 모습을 볼 수 있다.\nnodeIntegrationnodeIntegation을 공식 문서의 설명을 보면 노드 통합이 활성화되어 있는지의 여부 라고, 하는데 Electron은 Node.js 기반에서 동작하기 때문에 이를 쉽게 설명하면 Renderer Process에서도 Node.js를 사용할 수 있게 하겠냐 것이다. 문제는 nodeIntegration의 기본값이 false인 데도 불구하고 이유도 모르고 true로 설정하였다가는 낭패를 볼 수 있다.\n\n그렇다면 nodeInteration을 사용하지 않고(false) 어떻게 Renderer Process에서 require()를 사용하라는 말인가?\n이 포스팅은 이 부분에 대하여 필자가 겪고 해결한 방법을 공유하고자 작성한다.\nRenderer Proces와 Main Process 간의 Context 분리Remote Code Execution(RCE) 취약점을 해결하기 위해서는 Renderer Process와 Main Process의 Context를 기본적으로 분리해야 한다. 이러한 역할을 하기 위해서는 BrowserWindow 객체 생성 시 nodeIntegration은 기본값인 false, 그리고 contextIsolation 옵션 역시 기본값 true로 사용하면 된다.\nwebPreferences: &#123;  nodeIntegration: false,  contextIsolation: true&#125;\n\ncontextIsolation은 Electron API와 지정된 스크립트를 별도의 Javascript 컨텍스트에서 실행할지 여부이며, Renderer Process에서 스크립트를 실행할 수 있는 컨텍스트는 오로지 preload를 통해서만 접근이 가능하다.\npreload 는 HTML DOM 과 Node.js 및 Electron API의 제한된 하위 집합에 모두 액세스할 수 있다. 쉽게 말하면 분리된 Renderer Process와 Main Process 모두 접근할 수 있는 컨텍스트에서 실행된다.\nnodeintegration: false로 인한 require is not defined 오류는 이 preload 통해 해결할 수 있다.\npreload.js\nconst &#123;ipcRenderer, contextBridge&#125; = require(&#x27;electron&#x27;)contextBridge.exposeInMainWorld(&#x27;api&#x27;, &#123;  send: (channel, data) =&gt; &#123;    const channels = [&#x27;channel&#x27;] // ipc 채널    if (channels.incluse(channel)) &#123;      ipcRenderer.send(channel, data)    &#125;  &#125;,  receive: (channel, func) =&gt; &#123;    const channels = [&#x27;onChannel&#x27;] //ipc 채널    if (channels.include(channel)) &#123;      ipcRenderer.on(channel, (event, ...args) =&gt; func(event, ...args))    &#125;  &#125;&#125;)\n\nElectron의 contextBridge는 Renderer Process에서 구동되며, 격리된 컨텍스트 간에 양방향 통신을 할 수 있도록 해준다. ContextBridge의 exposeInMainWorld는 Main Process 코드가 실행되는 javascript 컨텍스트로 Renderer Process에서 window 객체를 통해 접근할 수 있다.\npreload.js에 정의된 send와 receive는 쉽게 생각하면 Interceptor로 볼 수 있다. Renderer Process 또는 Main Process에서 ipcRenderer를 호출하는 대신 이 send와 receive를 호출하면 해당 메소드에서 ipcRenderer를 호출하게 된다.\n이렇게 정의한 preload.js를 BrowserWindow 객체를 생성할 때 webPreference의 옵션으로 지정한다.\nindex.js\nconst &#123; app, BrowserWindow, ipcMain &#125; = require(&#x27;electron&#x27;)const createWindow = () =&gt; &#123;  const win = new BrowserWindow(&#123;    width: 800,    height: 600,    webPreferences: &#123;      preload: join(__dirname, &#x27;./preload.js&#x27;)    &#125;  &#125;)  win.loadFile(&#x27;index.html&#x27;)&#125;app.whenReady().then(() =&gt; &#123;  createWindow()&#125;) ipcMain.on(&#x27;channel&#x27;, evt =&gt; &#123;  evt.reply(&#x27;onChannel&#x27;, &#x27;Main World!!&#x27;)&#125;)\n\nindex.js는 Main Process에 해당하기 때문에 가장 하단에 보면 ipcMain을 통해 channel을 호출한다. 이후 callback이 완료되면 다시 onChannel을 호출한다. 이때 evt.reply를 호출하게 되면 preload.js의 receive를 호출한다.\n이제 Renderer Process 부분에서 UI를 구성해 보자.\nindex.html\n&lt;html&gt;&lt;head&gt;  &lt;script type=&quot;text/javascript&quot; src=&quot;js/script.js&quot;&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;  &lt;h1 id=&quot;text-box&quot;&gt;Hello World&lt;/h1&gt;  &lt;button id=&quot;btn&quot;&gt;Change Text&lt;/button&gt;&lt;body&gt;&lt;/html&gt;\n\njs&#x2F;script.js\nwindow.addEventListener(&#x27;DOMContentLoaded&#x27;, () =&gt; &#123;  const btn = document.getElementById(&#x27;btn&#x27;)  btn.addEventListener(&#x27;click&#x27;, () =&gt; &#123;    window.api.send(&#x27;channel&#x27;)  &#125;)  window.api.receive(&#x27;onChannel&#x27;, (evt, text) =&gt; &#123;    const titleBox = document.getElementById(&#x27;text-box&#x27;)\t    titleBox.innerText = text  &#125;)&#125;)\n\njs/script.js를 보면 window.api.send(&#39;channel&#39;)로 preload.js에 선언된 send를 호출하고 있고, index.js에서 evt.reply(&#39;onChannel&#39;)에 대해 window.api.receive(&#39;onChannel&#39;)을 통해 수신하고 있다.\n전반적인 통신의 흐름을 보면 다음과 같다.\n\n\n이처럼 preload 와 nodeInegration을 적절하게 사용하여 Renderer Process와 Main Process 간의 Context를 분리하면 Remote Code Execution(RCE) 취약점을 해결할 수 있다.\n\n더 알아보기Performant NPM - PNPM[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정Electron IPC 모듈로 Electron 통신 방법 파헤치기빠르게 배우는 Node.js와 NPM 설치부터 개념잡기빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드NPM-Scope 패키지 어디까지 알고 있니?\n","dateCreated":"2023-09-28T12:52:05+00:00","dateModified":"2023-12-19T00:27:17+00:00","datePublished":"2023-09-28T12:52:05+00:00","description":"\n\nElectron에서 편의를 위해 사용하는 webPreference 옵션의 nodeIntegration을 사용하는데 이렇게 되면 Electron에서 require()를 통해 javascript 모듈을 무리 없이 호출할 수 있지만 REC(Remote Code Execution) 보안적 취약점이 발생한다. 이 포스트에서는 Electron의 ContextBridge를 사용하여 RCE 취약점을 해결하는 방법을 기록한다.\n","headline":"[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정","image":["electron-rce-cover.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://kdydesign.github.io/2023/09/28/electron-rce/"},"publisher":{"@type":"Organization","name":"Dev. DY","sameAs":["https://github.com/kdydesign","mailto:kdydesign@gmail.com"],"image":"auth2.png","logo":{"@type":"ImageObject","url":"auth2.png"}},"url":"https://kdydesign.github.io/2023/09/28/electron-rce/","keywords":"javascript, electron, rce, remote code execution, electron 보안 취약점, contextbridge","thumbnailUrl":"electron-rce-cover.png"}</script>
+    <meta name="description" content="Electron에서 편의를 위해 사용하는 webPreference 옵션의 nodeIntegration을 사용하는데 이렇게 되면 Electron에서 require()를 통해 javascript 모듈을 무리 없이 호출할 수 있지만 REC(Remote Code Execution) 보안적 취약점이 발생한다. 이 포스트에서는 Electron의 ContextBri">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정">
+<meta property="og:url" content="https://kdydesign.github.io/2023/09/28/electron-rce/index.html">
+<meta property="og:site_name" content="Dev. DY">
+<meta property="og:description" content="Electron에서 편의를 위해 사용하는 webPreference 옵션의 nodeIntegration을 사용하는데 이렇게 되면 Electron에서 require()를 통해 javascript 모듈을 무리 없이 호출할 수 있지만 REC(Remote Code Execution) 보안적 취약점이 발생한다. 이 포스트에서는 Electron의 ContextBri">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/28/electron-rce/electron-rce-cover.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/28/electron-rce/run-calculator.png">
+<meta property="og:image" content="https://kdydesign.github.io/2023/09/28/electron-rce/rce-flow.png">
+<meta property="article:published_time" content="2023-09-28T12:52:05.000Z">
+<meta property="article:modified_time" content="2023-12-19T00:27:17.757Z">
+<meta property="article:author" content="Dev. DY">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="electron">
+<meta property="article:tag" content="rce">
+<meta property="article:tag" content="remote code execution">
+<meta property="article:tag" content="electron 보안 취약점">
+<meta property="article:tag" content="contextbridge">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kdydesign.github.io/2023/09/28/electron-rce/electron-rce-cover.png">
+<meta property="fb:app_id" content="632708780267324">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/assets/images/auth2.png"/>
+    
+    
+        <meta property="og:image" content="https://kdydesign.github.io/2023/09/28/electron-rce/electron-rce-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://kdydesign.github.io/2023/09/28/electron-rce/electron-rce-cover.png"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ygftgvatdpl9jpdo5cpm5oimjqprswzc5pzj1zzozmw86c0kkro1cvz5l7fn.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-46198235-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-46198235-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Dev. DY
+        </a>
+    </div>
+    <div class="reading-progress-bar"></div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Öffne den Link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Lesen Sie mehr über den Autor"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Dev. DY</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Web Front-End Technology Lab</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="Search"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/kdydesign"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="mailto:kdydesign@gmail.com"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="Mail"
+                        >
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            [Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2023-09-28T12:52:05+00:00">
+	
+		    2023-09-28
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">javascript</a>, <a class="category-link" href="/categories/javascript/electron/">electron</a>, <a class="category-link" href="/categories/javascript/electron/%EB%B3%B4%EC%95%88-%EC%B7%A8%EC%95%BD%EC%A0%90/">보안 취약점</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="display: inline-block; float: right; font-size: 1.3rem;font-weight: 400;">
+                <span style="color: #50abf5;">Last Updated: </span>
+                <span style="color: #9eabb3;">2023-12-19</span>
+            </div>
+
+            <!-- 사각/adsense -->
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3611154972292213"
+                 data-ad-slot="8267110592"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- excerpt -->
+
+<!-- excerpt -->
+
+<p><img src="/2023/09/28/electron-rce/electron-rce-cover.png" alt="electron-rce-cover"></p>
+<p>Electron은 화면(UI)을 구성하는 Renderer Process와 기본 프로세스를 담당하는 Main Process로 나뉜다.</p>
+<h1 id="Renderer-Process와-Main-Process"><a href="#Renderer-Process와-Main-Process" class="headerlink" title="Renderer Process와 Main Process"></a>Renderer Process와 Main Process</h1><p>이 둘 간의 통신은 기본적으로 <strong>ipcRenderer</strong>와 <strong>ipcMain</strong>으로 통신하는데 ipcRenderer는 Renderer Process에서 Main Process로 비동기 통신을 할 때 사용하며, ipcMain은 반대로 Main Process에서 Renderer Process로 비동기 통신할 때 사용된다. Electron의 프로세스 간 통신 방식에 대한 자세한 내용은 <a href="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/">[Electron] Electron IPC 모듈로 Electron 통신 방법 파헤치기</a>를 참고하도록 하자.</p>
+<h1 id="Remote-Code-Execution-RCE"><a href="#Remote-Code-Execution-RCE" class="headerlink" title="Remote Code Execution (RCE)"></a>Remote Code Execution (RCE)</h1><p>Electron의 두 프로세스를 쉽게 설명하면 Front-End (Renderer Process)와 Back-End (Main Process)로 볼 수 있다.</p>
+<p>Front-End는 Chromium을 기반으로 하고, Back-End는 전체 운영 체제의 액세스 권한을 갖는 Node.js 런타임으로 동작된다. 그렇기에 Main Process는 Electron 모듈 이외의 Node.js 내장 기능과 NPM을 통해 설치된 모든 패키지에 액세스할 수 있는 반면에, Renderer Process는 Chromiumn을 사용하여 웹 페이지를 실행하는데 보통 우리는 javascript로 UI를 구성할 때 외부 또는 내부 모듈을 자연스럽게 require() 또는 import를 사용하지만, 이 require()를 통해서 시스템 리소스에 충분히 접근할 수 있는 문제가 발생한다. 이러한 보안적 취약점은 <strong>Remote Code Execution(RCE), 임의 코드 실행</strong>이라고 한다.</p>
+<p>Electron에서 RCE(Remote Code Execution) 취약점이 발생하는 부분은 위에서 설명한 require()와 연관이 있다. Renderer Process에서 require()를 사용하기 위해서는 <code>webPreference</code>의 <code>nodeIntegration</code> 옵션과 연관이 있는데, 대부분 <code>require is not defined</code> 오류를 해결하기 위해 <code>nodeIntegration</code>을 <code>true</code> 지정하여 사용하지만, 무척이나 위험한 행위이다. <strong>stackoverflow나 검색된 어느 블로그 글들을 봐도 require is not defined 오류 해결 방안을 nodeIntegration을 true로 제안</strong>하고 있다.</p>
+<p><img src="/2023/09/28/electron-rce/run-calculator.png" alt="run-calculator"></p>
+<p>위 이미지를 보면 개발자 도구(dev tools)에서 <code>require(&#39;child_process&#39;)</code>를 접근하여 실제로 시스템의 계산기를 실해하는 모습을 볼 수 있다.</p>
+<h2 id="nodeIntegration"><a href="#nodeIntegration" class="headerlink" title="nodeIntegration"></a>nodeIntegration</h2><p>nodeIntegation을 공식 문서의 설명을 보면 <code>노드 통합이 활성화되어 있는지의 여부</code> 라고, 하는데 Electron은 Node.js 기반에서 동작하기 때문에 이를 쉽게 설명하면 Renderer Process에서도 Node.js를 사용할 수 있게 하겠냐 것이다. 문제는 <strong>nodeIntegration의 기본값이 false</strong>인 데도 불구하고 이유도 모르고 true로 설정하였다가는 낭패를 볼 수 있다.</p>
+<hr>
+<p>그렇다면 nodeInteration을 사용하지 않고(false) 어떻게 Renderer Process에서 require()를 사용하라는 말인가?</p>
+<p>이 포스팅은 이 부분에 대하여 필자가 겪고 해결한 방법을 공유하고자 작성한다.</p>
+<h1 id="Renderer-Proces와-Main-Process-간의-Context-분리"><a href="#Renderer-Proces와-Main-Process-간의-Context-분리" class="headerlink" title="Renderer Proces와 Main Process 간의 Context 분리"></a>Renderer Proces와 Main Process 간의 Context 분리</h1><p>Remote Code Execution(RCE) 취약점을 해결하기 위해서는 <code>Renderer Process와 Main Process의 Context를 기본적으로 분리</code>해야 한다. 이러한 역할을 하기 위해서는 BrowserWindow 객체 생성 시 <strong>nodeIntegration은 기본값인 false, 그리고 contextIsolation 옵션 역시 기본값 true</strong>로 사용하면 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">webPreferences</span>: &#123;<br>  <span class="hljs-attr">nodeIntegration</span>: <span class="hljs-literal">false</span>,<br>  <span class="hljs-attr">contextIsolation</span>: <span class="hljs-literal">true</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>contextIsolation</code>은 Electron API와 지정된 스크립트를 별도의 Javascript 컨텍스트에서 실행할지 여부이며, Renderer Process에서 스크립트를 실행할 수 있는 컨텍스트는 오로지 <strong>preload</strong>를 통해서만 접근이 가능하다.</p>
+<p>preload 는 HTML DOM 과 Node.js 및 Electron API의 제한된 하위 집합에 모두 액세스할 수 있다. 쉽게 말하면 분리된 Renderer Process와 Main Process 모두 접근할 수 있는 컨텍스트에서 실행된다.</p>
+<p><code>nodeintegration: false</code>로 인한 <code>require is not defined</code> 오류는 이 preload 통해 해결할 수 있다.</p>
+<p><strong>preload.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123;ipcRenderer, contextBridge&#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br>contextBridge.<span class="hljs-title function_">exposeInMainWorld</span>(<span class="hljs-string">&#x27;api&#x27;</span>, &#123;<br>  <span class="hljs-attr">send</span>: <span class="hljs-function">(<span class="hljs-params">channel, data</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> channels = [<span class="hljs-string">&#x27;channel&#x27;</span>] <span class="hljs-comment">// ipc 채널</span><br><br>    <span class="hljs-keyword">if</span> (channels.<span class="hljs-title function_">incluse</span>(channel)) &#123;<br>      ipcRenderer.<span class="hljs-title function_">send</span>(channel, data)<br>    &#125;<br>  &#125;,<br>  <span class="hljs-attr">receive</span>: <span class="hljs-function">(<span class="hljs-params">channel, func</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> channels = [<span class="hljs-string">&#x27;onChannel&#x27;</span>] <span class="hljs-comment">//ipc 채널</span><br><br>    <span class="hljs-keyword">if</span> (channels.<span class="hljs-title function_">include</span>(channel)) &#123;<br>      ipcRenderer.<span class="hljs-title function_">on</span>(channel, <span class="hljs-function">(<span class="hljs-params">event, ...args</span>) =&gt;</span> <span class="hljs-title function_">func</span>(event, ...args))<br>    &#125;<br>  &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>Electron의 <code>contextBridge</code>는 Renderer Process에서 구동되며, 격리된 컨텍스트 간에 양방향 통신을 할 수 있도록 해준다. ContextBridge의 <code>exposeInMainWorld</code>는 Main Process 코드가 실행되는 javascript 컨텍스트로 Renderer Process에서 <strong>window 객체</strong>를 통해 접근할 수 있다.</p>
+<p><code>preload.js</code>에 정의된 <code>send</code>와 <code>receive</code>는 쉽게 생각하면 Interceptor로 볼 수 있다. Renderer Process 또는 Main Process에서 ipcRenderer를 호출하는 대신 이 <code>send</code>와 <code>receive</code>를 호출하면 해당 메소드에서 ipcRenderer를 호출하게 된다.</p>
+<p>이렇게 정의한 <code>preload.js</code>를 BrowserWindow 객체를 생성할 때 webPreference의 옵션으로 지정한다.</p>
+<p><strong>index.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> &#123; app, <span class="hljs-title class_">BrowserWindow</span>, ipcMain &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;electron&#x27;</span>)<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">createWindow</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> win = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BrowserWindow</span>(&#123;<br>    <span class="hljs-attr">width</span>: <span class="hljs-number">800</span>,<br>    <span class="hljs-attr">height</span>: <span class="hljs-number">600</span>,<br>    <span class="hljs-attr">webPreferences</span>: &#123;<br>      <span class="hljs-attr">preload</span>: <span class="hljs-title function_">join</span>(__dirname, <span class="hljs-string">&#x27;./preload.js&#x27;</span>)<br>    &#125;<br>  &#125;)<br><br>  win.<span class="hljs-title function_">loadFile</span>(<span class="hljs-string">&#x27;index.html&#x27;</span>)<br>&#125;<br><br>app.<span class="hljs-title function_">whenReady</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-title function_">createWindow</span>()<br>&#125;) <br><br>ipcMain.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;channel&#x27;</span>, <span class="hljs-function"><span class="hljs-params">evt</span> =&gt;</span> &#123;<br>  evt.<span class="hljs-title function_">reply</span>(<span class="hljs-string">&#x27;onChannel&#x27;</span>, <span class="hljs-string">&#x27;Main World!!&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p><code>index.js</code>는 Main Process에 해당하기 때문에 가장 하단에 보면 <code>ipcMain</code>을 통해 <code>channel</code>을 호출한다. 이후 callback이 완료되면 다시 <code>onChannel</code>을 호출한다. 이때 <code>evt.reply</code>를 호출하게 되면 preload.js의 <code>receive</code>를 호출한다.</p>
+<p>이제 Renderer Process 부분에서 UI를 구성해 보자.</p>
+<p><strong>index.html</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;js/script.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;text-box&quot;</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;btn&quot;</span>&gt;</span>Change Text<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>js&#x2F;script.js</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;DOMContentLoaded&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> btn = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;btn&#x27;</span>)<br><br>  btn.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">window</span>.<span class="hljs-property">api</span>.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;channel&#x27;</span>)<br>  &#125;)<br><br>  <span class="hljs-variable language_">window</span>.<span class="hljs-property">api</span>.<span class="hljs-title function_">receive</span>(<span class="hljs-string">&#x27;onChannel&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">evt, text</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> titleBox = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;text-box&#x27;</span>)<br>	<br>    titleBox.<span class="hljs-property">innerText</span> = text<br>  &#125;)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p><code>js/script.js</code>를 보면 <code>window.api.send(&#39;channel&#39;)</code>로 preload.js에 선언된 <code>send</code>를 호출하고 있고, <code>index.js</code>에서 <code>evt.reply(&#39;onChannel&#39;)</code>에 대해 <code>window.api.receive(&#39;onChannel&#39;)</code>을 통해 수신하고 있다.</p>
+<p>전반적인 통신의 흐름을 보면 다음과 같다.</p>
+<p><img src="/2023/09/28/electron-rce/rce-flow.png" alt="rce-flow"></p>
+<hr>
+<p>이처럼 preload 와 nodeInegration을 적절하게 사용하여 Renderer Process와 Main Process 간의 Context를 분리하면 Remote Code Execution(RCE) 취약점을 해결할 수 있다.</p>
+<hr>
+<div class="alert more no-icon"><p><strong>더 알아보기</strong><br><a href="https://kdydesign.github.io/2023/09/25/pnpm-tutorial/">Performant NPM - PNPM</a><br><a href="https://kdydesign.github.io/2023/09/28/electron-rce/">[Electron] ContextBridge를 사용한 Electron RCE(Remote Code Execution) 보안 취약점 수정</a><br><a href="https://kdydesign.github.io/2020/12/23/electron-ipc-communication/">Electron IPC 모듈로 Electron 통신 방법 파헤치기</a><br><a href="https://kdydesign.github.io/2017/07/15/nodejs-npm-tutorial/">빠르게 배우는 Node.js와 NPM 설치부터 개념잡기</a><br><a href="https://kdydesign.github.io/2020/08/28/npm-tutorial/">빠르게 배우는 NPM 패키지 생성부터 배포까지 완벽 가이드</a><br><a href="https://kdydesign.github.io/2020/08/31/npm-scope-tutorial/">NPM-Scope 패키지 어디까지 알고 있니?</a></p>
+</div>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/contextbridge/" rel="tag">contextbridge</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron/" rel="tag">electron</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/electron-%EB%B3%B4%EC%95%88-%EC%B7%A8%EC%95%BD%EC%A0%90/" rel="tag">electron 보안 취약점</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/rce/" rel="tag">rce</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/remote-code-execution/" rel="tag">remote code execution</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/10/08/module-system-bundler/"
+                    data-tooltip="Javascript 모듈시스템과 모듈번들러의 이해"
+                    aria-label="PREVIOUS: Javascript 모듈시스템과 모듈번들러의 이해"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/25/pnpm-tutorial/"
+                    data-tooltip="Performant NPM - PNPM"
+                    aria-label="NEXT: Performant NPM - PNPM"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2023 Dev. DY. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/10/08/module-system-bundler/"
+                    data-tooltip="Javascript 모듈시스템과 모듈번들러의 이해"
+                    aria-label="PREVIOUS: Javascript 모듈시스템과 모듈번들러의 이해"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2023/09/25/pnpm-tutorial/"
+                    data-tooltip="Performant NPM - PNPM"
+                    aria-label="NEXT: Performant NPM - PNPM"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://kdydesign.github.io/2023/09/28/electron-rce/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/auth2.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Dev. DY</h4>
+        
+            <div id="about-card-bio"><p>Web Front-End Technology Lab</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Front-End Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Republic of Korea, Seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ybbbea1lo5q5i0vvbwnprez0gwsh223jyxp6s7vjeupckpwitxu8ms13ttxq.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://kdydesign.github.io/2023/09/28/electron-rce/';
+              
+            this.page.identifier = 'electron-rce';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'kdydesign';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>
